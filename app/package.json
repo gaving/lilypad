@@ -1,0 +1,39 @@
+{
+  "name": "lilypad",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@blueprintjs/core": "^3.7.0",
+    "@blueprintjs/select": "^3.2.0",
+    "lodash": "^4.17.11",
+    "moment": "^2.22.2",
+    "react": "^16.5.2",
+    "react-copy-to-clipboard": "^5.0.1",
+    "react-dom": "^16.5.2",
+    "react-redux": "^5.0.7",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "2.0.4",
+    "reflexbox": "^3.0.1",
+    "styled-components": "^3.4.9"
+  },
+  "scripts": {
+    "start": "concurrently 'react-scripts start' 'npm start --prefix ../server'",
+    "build": "react-scripts build && mv build ../server",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "proxy": "http://localhost:4000",
+  "devDependencies": {
+    "concurrently": "^4.0.1",
+    "nodemon": "^1.18.4"
+  }
+}
