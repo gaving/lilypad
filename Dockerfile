@@ -1,14 +1,19 @@
-FROM alpine:latest
+FROM node:alpine AS deps
 
 ARG REACT_APP_CONTAINER_TAG
 ARG REACT_APP_CONTAINER_DESC
 
-RUN apk update && \
-    apk upgrade && \
-    apk add nodejs-npm && \
-    rm -rf /var/cache/apk/*
-
 ENV NODE_ENV production
 
-RUN mkdir -p /lilypad
-ENTRYPOINT ["node", "/lilypad/server/server.js"]
+WORKDIR /lilypad
+COPY . .
+
+RUN npm install --prefix ./app
+RUN npm run build --prefix ./app
+RUN npm install --prefix ./server
+
+FROM node:alpine AS release
+COPY --from=deps /lilypad/server ./lilypad
+
+EXPOSE 4000
+CMD ["node", "lilypad/server.js"]
