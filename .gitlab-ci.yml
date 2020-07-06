@@ -1,2 +1,12 @@
 include:
-  - template: Docker.gitlab-ci.yml
+  - project: "harlaw/gitlab/templates"
+    file: "/docker/build.yml"
+  - project: "harlaw/gitlab/templates"
+    file: "/docker/lint.yml"
+  - project: "harlaw/gitlab/templates"
+    file: "/docker/test.yml"
+
+stages:
+  - lint
+  - build
+  - test
