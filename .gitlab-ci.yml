@@ -10,3 +10,17 @@ stages:
   - lint
   - build
   - test
+  
+build:
+  image: docker:stable
+  stage: build
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+      --build-arg REACT_APP_CONTAINER_TAG=uk.pnn.police.scotland.review.name
+      --build-arg REACT_APP_CONTAINER_DESC=uk.pnn.police.scotland.review.desc
+      --build-arg http_proxy=$http_proxy
+      --build-arg https_proxy=$https_proxy .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  tags:
+    - docker
