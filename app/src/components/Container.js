@@ -402,11 +402,14 @@ class Container extends Component {
         <Card interactive>
           {container.Names.map((name, j) => {
             const disabled = container.Image.includes("lilypad");
-            const launchPrivatePort = container.Labels[process.env.REACT_APP_LAUNCH_PORT];
+            const launchPrivatePort =
+              container.Labels[process.env.REACT_APP_LAUNCH_PORT];
 
             let launchPublicPort = 0;
             if (container) {
-              const launchPorts = container.Ports.filter(c => c.PrivatePort === parseInt(launchPrivatePort)).pop();
+              const launchPorts = container.Ports.filter(
+                (c) => c.PrivatePort === parseInt(launchPrivatePort)
+              ).pop();
               if (launchPorts) {
                 launchPublicPort = launchPorts.PublicPort;
               }
@@ -529,23 +532,23 @@ class Container extends Component {
                       />
                     </Tooltip>
                   </ButtonGroup>
-                  {container.Ports[0] && container.Ports[0].IP && (
-                    <Tooltip content="Open site" position={Position.BOTTOM}>
-                      <AnchorButton
-                        disabled={disabled}
-                        minimal
-                        large
-                        icon="share"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          window.open(
-                            `http://${window.location.hostname}:${launchPublicPort ? launchPublicPort : 80}`,
-                            "_blank"
-                          );
-                        }}
-                      />
-                    </Tooltip>
-                  )}
+                  <Tooltip content="Open site" position={Position.BOTTOM}>
+                    <AnchorButton
+                      disabled={disabled}
+                      minimal
+                      large
+                      icon="share"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(
+                          `http://${window.location.hostname}:${
+                            launchPublicPort ? launchPublicPort : 80
+                          }`,
+                          "_blank"
+                        );
+                      }}
+                    />
+                  </Tooltip>
                 </Flex>
               </Flex>
             );
