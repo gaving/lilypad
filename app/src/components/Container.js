@@ -402,6 +402,15 @@ class Container extends Component {
         <Card interactive>
           {container.Names.map((name, j) => {
             const disabled = container.Image.includes("lilypad");
+            const launchPrivatePort = container.Labels[process.env.REACT_APP_LAUNCH_PORT];
+
+            let launchPublicPort = 0;
+            if (container) {
+              const launchPorts = container.Ports.filter(c => c.PrivatePort === parseInt(launchPrivatePort)).pop();
+              if (launchPorts) {
+                launchPublicPort = launchPorts.PublicPort;
+              }
+            }
 
             return (
               <Flex
@@ -530,9 +539,7 @@ class Container extends Component {
                         onClick={(e) => {
                           e.stopPropagation();
                           window.open(
-                            `http://${container.Ports[0].IP}:${
-                              container.Ports[0].PublicPort
-                            }`,
+                            `http://${window.location.hostname}:${launchPublicPort ? launchPublicPort : 80}`,
                             "_blank"
                           );
                         }}

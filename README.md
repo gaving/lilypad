@@ -12,6 +12,7 @@ This repository contains a review front-end for Docker containers.
 docker build \
   --build-arg REACT_APP_CONTAINER_TAG=uk.pnn.police.scotland.review.name \
   --build-arg REACT_APP_CONTAINER_DESC=uk.pnn.police.scotland.review.desc \
+  --build-arg REACT_APP_LAUNCH_PORT=uk.pnn.police.scotland.review.port \
   -t lilypad:latest .
 ```
 
