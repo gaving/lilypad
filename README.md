@@ -27,10 +27,22 @@ docker run -it -P -v /var/run/docker.sock:/var/run/docker.sock lilypad:latest
 
 ### Containers
 
+```bash
+docker run -P \
+  -l uk.pnn.police.scotland.review.desc="green branch feature" \
+  -l uk.pnn.police.scotland.review.name=greenbg \
+  -l uk.pnn.police.scotland.review.port=3000 \
+    containous/whoami
 ```
-docker run -P -l uk.pnn.police.scotland.review.desc="green branch feature" -l uk.pnn.police.scotland.review.name=greenbg containous/whoami
-docker run -P -l uk.pnn.police.scotland.review.desc="yellow branch feature" -l uk.pnn.police.scotland.review.name=yellowbg containous/whoami
+
+```bash
+docker run -P \
+  -l uk.pnn.police.scotland.review.desc="yellow branch feature" \
+  -l uk.pnn.police.scotland.review.name=yellowbg \
+  -l uk.pnn.police.scotland.review.port=81 \
+    containous/whoami
 ```
+
 
 ## Copyright
 
