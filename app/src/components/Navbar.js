@@ -5,8 +5,10 @@ import {
   NavbarGroup,
   Alignment,
   NavbarHeading,
-  Button
+  Button,
 } from "@blueprintjs/core";
+import { Icon, Intent } from "@blueprintjs/core";
+import { IconNames } from "@blueprintjs/icons";
 import { Flex } from "reflexbox";
 import styled from "styled-components";
 
@@ -21,7 +23,15 @@ const Navbar = ({ darkTheme, toggleDarkTheme }) => {
     <Nav>
       <Container>
         <NavbarGroup>
-          <NavbarHeading>Lilypad</NavbarHeading>
+          <NavbarHeading>
+            <Icon
+              icon={IconNames.FLAME}
+              iconSize={Icon.SIZE_LARGE}
+              intent={Intent.DANGER}
+              style={{ paddingRight: "0.5em" }}
+            />
+            Lilypad
+          </NavbarHeading>
         </NavbarGroup>
         <NavbarGroup align={Alignment.RIGHT}>
           <Flex align="center">
