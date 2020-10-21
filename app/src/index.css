@@ -15,13 +15,16 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  -webkit-user-select: none;
-  -webkit-app-region: drag;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+.bp3-navbar {
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
 }
 
 .bp3-popover-target {
