@@ -8,6 +8,7 @@ import {
   ButtonGroup,
   Position,
   Tooltip,
+  Intent,
   Tag,
   Icon,
 } from "@blueprintjs/core";
@@ -15,7 +16,23 @@ import { Flex, Box } from "reflexbox";
 import _ from "lodash";
 import moment from "moment";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import Emoji from "react-emoji-render";
 import Logs from "./Logs";
+
+const {
+  REACT_APP_LAUNCH_PORT = 80,
+  REACT_APP_CONTAINER_TAG,
+  REACT_APP_CONTAINER_DESC,
+  REACT_APP_CONTAINER_ICON = "flashlight",
+} = process.env;
+
+const containsOnlyEmojis = (text) => {
+  /* eslint-disable no-control-regex */
+  const onlyEmojis = text.replace(new RegExp("[\u0000-\u1eeff]", "g"), "");
+  /* eslint-disable no-control-regex */
+  const visibleChars = text.replace(new RegExp("[\n\rs]+|( )+", "g"), "");
+  return onlyEmojis.length === visibleChars.length;
+};
 
 const Card = styled(C)`
   padding-top: 5;
@@ -121,7 +138,7 @@ class Container extends Component {
       console.error(error);
     }
 
-    switch (await response.status) {
+    switch (response.status) {
       case 204:
         status = "Container stopped";
         intent = "success";
@@ -161,9 +178,9 @@ class Container extends Component {
       console.error(error);
     }
 
-    switch (await response.status) {
+    switch (response.status) {
       case 204:
-        status = "Container removed";
+        status = "App removed";
         intent = "success";
         break;
       case 400:
@@ -171,11 +188,11 @@ class Container extends Component {
         intent = "danger";
         break;
       case 404:
-        status = "No such container";
+        status = "No such app";
         intent = "danger";
         break;
       case 409:
-        status = "You cannot remove a running container";
+        status = "You cannot remove a running app";
         intent = "warning";
         break;
       case 500:
@@ -205,17 +222,17 @@ class Container extends Component {
       console.error(error);
     }
 
-    switch (await response.status) {
+    switch (response.status) {
       case 204:
-        status = "Container started";
+        status = "App started";
         intent = "success";
         break;
       case 304:
-        status = "Container already started";
+        status = "App already started";
         intent = "warning";
         break;
       case 404:
-        status = "No such container";
+        status = "No such app";
         intent = "danger";
         break;
       case 500:
@@ -244,13 +261,13 @@ class Container extends Component {
       console.error(error);
     }
 
-    switch (await response.status) {
+    switch (response.status) {
       case 204:
-        status = "Container restarted";
+        status = "App restarted";
         intent = "success";
         break;
       case 404:
-        status = "No such container";
+        status = "No such app";
         intent = "danger";
         break;
       case 500:
@@ -284,9 +301,9 @@ class Container extends Component {
       console.error(error);
     }
 
-    switch (await response.status) {
+    switch (response.status) {
       case 204:
-        status = `Container renamed to '${updatedName}'`;
+        status = `App renamed to '${updatedName}'`;
         intent = "success";
         break;
       case 400:
@@ -294,7 +311,7 @@ class Container extends Component {
         intent = "danger";
         break;
       case 404:
-        status = "No such container";
+        status = "No such app";
         intent = "danger";
         break;
       case 409:
@@ -326,13 +343,13 @@ class Container extends Component {
       console.error(error);
     }
 
-    switch (await response.status) {
+    switch (response.status) {
       case 204:
-        status = `Container paused`;
+        status = `App paused`;
         intent = "success";
         break;
       case 404:
-        status = "No such container";
+        status = "No such app";
         intent = "danger";
         break;
       case 500:
@@ -361,13 +378,13 @@ class Container extends Component {
       console.error(error);
     }
 
-    switch (await response.status) {
+    switch (response.status) {
       case 204:
-        status = `Container unpaused`;
+        status = `App unpaused`;
         intent = "success";
         break;
       case 404:
-        status = "No such container";
+        status = "No such app";
         intent = "danger";
         break;
       case 500:
@@ -384,8 +401,7 @@ class Container extends Component {
   };
 
   copyToClipboard = () => {
-    this.containerId.select();
-    document.execCommand("copy");
+    this.props.showToast("Copied to clipboard", "primary");
   };
 
   render() {
@@ -397,13 +413,13 @@ class Container extends Component {
       networks.push({ name: network, data: containerNetworks[network] });
     }
 
+    const icon = container.Labels[REACT_APP_CONTAINER_ICON];
+
     return (
       <Box mt={1}>
-        <Card interactive>
-          {container.Names.map((name, j) => {
-            const disabled = container.Image.includes("lilypad");
-            const launchPrivatePort =
-              container.Labels[process.env.REACT_APP_LAUNCH_PORT];
+        <Card interactive style={{ opacity: this.state.isOpen ? "1" : "0.8" }}>
+          {container.Names.map(() => {
+            const launchPrivatePort = container.Labels[REACT_APP_LAUNCH_PORT];
 
             let launchPublicPort = 0;
             if (container) {
@@ -418,144 +434,130 @@ class Container extends Component {
             return (
               <Flex
                 py={1}
-                justify="space-between"
+                justifyContent="space-between"
                 key={container.Id}
                 onClick={() => this.setOpen()}
               >
-                <Flex align="center">
-                  <Box mr={2}>
+                <Flex py={1} alignContent="center">
+                  <Box mr={10}>
                     <AnchorButton
-                      disabled={disabled}
                       minimal
                       loading={this.state.startIsLoading}
-                      icon="flash"
+                      text={
+                        <Emoji
+                          text={containsOnlyEmojis(icon) ? icon : `:${icon}:`}
+                        />
+                      }
                       large
                       size={64}
-                      intent="success"
+                      intent={Intent.SUCCESS}
                     />
                     <Tag intent="primary" round>
-                      {container.Labels[process.env.REACT_APP_CONTAINER_TAG]}
+                      {container.Labels[REACT_APP_CONTAINER_TAG]}
                     </Tag>
                   </Box>
-                  <Name>
-                    {container.Labels[process.env.REACT_APP_CONTAINER_DESC]}
-                  </Name>
-                  <Box ml={2}>{container.Status}</Box>
+                  <Box p={2}>
+                    <Name>{container.Labels[REACT_APP_CONTAINER_DESC]}</Name>
+                  </Box>
+                  <Box p={2} className="bp3-text-disabled">
+                    {container.Status}
+                  </Box>
                 </Flex>
-                <Flex align="center">
+                <Flex alignContent="center">
                   <ButtonGroup fill large>
                     {container.State === "exited" && (
-                      <Tooltip
-                        content="Start container"
-                        position={Position.BOTTOM}
-                      >
+                      <Tooltip content="Start app" position={Position.BOTTOM}>
                         <AnchorButton
-                          disabled={disabled}
                           minimal
                           loading={this.state.startIsLoading}
                           icon="play"
-                          intent="primary"
+                          intent={Intent.SUCCESS}
                           onClick={(e) => this.startContainer(e, container)}
                         />
                       </Tooltip>
                     )}
                     {container.State === "paused" && (
-                      <Tooltip
-                        content="Unpause container"
-                        position={Position.BOTTOM}
-                      >
+                      <Tooltip content="Unpause app" position={Position.BOTTOM}>
                         <AnchorButton
-                          disabled={disabled}
                           minimal
                           loading={this.state.unpauseIsLoading}
                           icon="play"
-                          intent="primary"
+                          intent={Intent.SUCCESS}
                           onClick={(e) => this.unpauseContainer(e, container)}
                         />
                       </Tooltip>
                     )}
                     {container.State === "running" && (
-                      <Tooltip
-                        content="Pause container"
-                        position={Position.BOTTOM}
-                      >
+                      <Tooltip content="Pause app" position={Position.BOTTOM}>
                         <AnchorButton
-                          disabled={disabled}
                           minimal
                           loading={this.state.pauseIsLoading}
                           icon="pause"
-                          intent="primary"
+                          intent={Intent.WARNING}
                           onClick={(e) => this.pauseContainer(e, container)}
                         />
                       </Tooltip>
                     )}
                     <Tooltip
-                      content="Restart container"
+                      content="Restart app"
                       position={Position.BOTTOM}
                       isDisabled
                     >
                       <AnchorButton
-                        disabled={disabled}
                         minimal
                         loading={this.state.restartIsLoading}
                         icon="refresh"
-                        intent="warning"
+                        intent={Intent.WARNING}
                         onClick={(e) => this.restartContainer(e, container)}
                       />
                     </Tooltip>
                     {container.State !== "exited" && (
-                      <Tooltip
-                        content="Stop container"
-                        position={Position.BOTTOM}
-                      >
+                      <Tooltip content="Stop app" position={Position.BOTTOM}>
                         <AnchorButton
-                          disabled={disabled}
                           minimal
                           loading={this.state.stopIsLoading}
                           icon="stop"
-                          intent="danger"
+                          intent={Intent.WARNING}
                           onClick={(e) => this.stopContainer(e, container)}
                         />
                       </Tooltip>
                     )}
-                    <Tooltip
-                      content="Remove container"
-                      position={Position.BOTTOM}
-                    >
+                    {container.State === "exited" && (
+                      <Tooltip content="Remove app" position={Position.BOTTOM}>
+                        <AnchorButton
+                          minimal
+                          loading={this.state.removeIsLoading}
+                          icon="trash"
+                          intent={Intent.DANGER}
+                          onClick={(e) => this.removeContainer(e, container)}
+                        />
+                      </Tooltip>
+                    )}
+                    <Tooltip content="Open site" position={Position.BOTTOM}>
                       <AnchorButton
-                        disabled={disabled}
                         minimal
-                        loading={this.state.removeIsLoading}
-                        icon="trash"
-                        intent="danger"
-                        onClick={(e) => this.removeContainer(e, container)}
+                        large
+                        icon="share"
+                        intent={Intent.PRIMARY}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(
+                            `http://${window.location.hostname}:${
+                              launchPublicPort ? launchPublicPort : 80
+                            }`,
+                            "_blank"
+                          );
+                        }}
                       />
                     </Tooltip>
                   </ButtonGroup>
-                  <Tooltip content="Open site" position={Position.BOTTOM}>
-                    <AnchorButton
-                      disabled={disabled}
-                      minimal
-                      large
-                      icon="share"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        window.open(
-                          `http://${window.location.hostname}:${
-                            launchPublicPort ? launchPublicPort : 80
-                          }`,
-                          "_blank"
-                        );
-                      }}
-                    />
-                  </Tooltip>
                 </Flex>
               </Flex>
             );
           })}
           <Collapse isOpen={this.state.isOpen}>
             <Flex pt={1}>
-              <Flex w={1 / 8} column>
+              <Flex w={1 / 8} flexDirection="column">
                 <p>ID</p>
                 <p>Name</p>
                 <p>Created</p>
@@ -567,9 +569,12 @@ class Container extends Component {
                   <p>Status</p>
                 </Box>
               </Flex>
-              <Flex w={7 / 8} column>
+              <Flex w={7 / 8} flexDirection="column">
                 <Flex>
-                  <CopyToClipboard text={container.Id}>
+                  <CopyToClipboard
+                    text={container.Id}
+                    onCopy={this.copyToClipboard}
+                  >
                     <P
                       onMouseOver={() =>
                         this.setState({ containerIdHovered: true })
@@ -595,7 +600,10 @@ class Container extends Component {
                 </P>
                 <P>{container.Command}</P>
                 <Flex>
-                  <CopyToClipboard text={container.ImageID}>
+                  <CopyToClipboard
+                    text={container.ImageID}
+                    onCopy={this.copyToClipboard}
+                  >
                     <P
                       onMouseOver={() =>
                         this.setState({ imageIdHovered: true })

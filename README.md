@@ -4,24 +4,24 @@
 
 This repository contains a review front-end for Docker containers.
 
-![](https://git.spnet.local/harlaw/lilypad/uploads/3ecfbe5452b7d9e98c43e1543f11459d/image.png)
-
+![app](https://git.spnet.local/harlaw/lilypad/uploads/3ecfbe5452b7d9e98c43e1543f11459d/image.png)
 
 ## Building
 
-```
+```bash
 docker build \
   --build-arg REACT_APP_CONTAINER_TAG=uk.pnn.police.scotland.review.name \
   --build-arg REACT_APP_CONTAINER_DESC=uk.pnn.police.scotland.review.desc \
+  --build-arg REACT_APP_CONTAINER_ICON=uk.pnn.police.scotland.review.icon \
   --build-arg REACT_APP_LAUNCH_PORT=uk.pnn.police.scotland.review.port \
   -t lilypad:latest .
 ```
 
 ## Running
 
-### Lilypad
+### App
 
-```
+```bash
 docker run -it -P -v /var/run/docker.sock:/var/run/docker.sock lilypad:latest
 ```
 
@@ -29,20 +29,21 @@ docker run -it -P -v /var/run/docker.sock:/var/run/docker.sock lilypad:latest
 
 ```bash
 docker run -P \
-  -l uk.pnn.police.scotland.review.desc="green branch feature" \
   -l uk.pnn.police.scotland.review.name=greenbg \
+  -l uk.pnn.police.scotland.review.desc="green branch feature" \
   -l uk.pnn.police.scotland.review.port=3000 \
+  -l uk.pnn.police.scotland.review.icon=smile \
     containous/whoami
 ```
 
 ```bash
 docker run -P \
-  -l uk.pnn.police.scotland.review.desc="yellow branch feature" \
   -l uk.pnn.police.scotland.review.name=yellowbg \
+  -l uk.pnn.police.scotland.review.desc="yellow branch feature" \
   -l uk.pnn.police.scotland.review.port=81 \
+  -l uk.pnn.police.scotland.review.icon=tongue \
     containous/whoami
 ```
-
 
 ## Copyright
 

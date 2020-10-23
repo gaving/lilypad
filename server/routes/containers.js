@@ -4,18 +4,18 @@ const got = require("got");
 const DOCKER_SOCK = process.env.DOCKER_SOCK;
 
 const CONTAINERS = `${DOCKER_SOCK}/containers/json?all=true&size=true`;
-const CONTAINER_STOP = id => `${DOCKER_SOCK}/containers/${id}/stop`;
+const CONTAINER_STOP = (id) => `${DOCKER_SOCK}/containers/${id}/stop`;
 const CONTAINER_PRUNE = `${DOCKER_SOCK}/containers/prune`;
-const CONTAINER = id =>
+const CONTAINER = (id) =>
   `${DOCKER_SOCK}/containers/json?all=true&filters={"id":["${id}"]}`;
-const CONTAINER_REMOVE = id => `${DOCKER_SOCK}/containers/${id}`;
-const CONTAINER_START = id => `${DOCKER_SOCK}/containers/${id}/start`;
-const CONTAINER_RESTART = id => `${DOCKER_SOCK}/containers/${id}/restart`;
+const CONTAINER_REMOVE = (id) => `${DOCKER_SOCK}/containers/${id}?v=1`;
+const CONTAINER_START = (id) => `${DOCKER_SOCK}/containers/${id}/start`;
+const CONTAINER_RESTART = (id) => `${DOCKER_SOCK}/containers/${id}/restart`;
 const CONTAINER_RENAME = (id, name) =>
   `${DOCKER_SOCK}/containers/${id}/rename?name=${name}`;
-const CONTAINER_PAUSE = id => `${DOCKER_SOCK}/containers/${id}/pause`;
-const CONTAINER_UNPAUSE = id => `${DOCKER_SOCK}/containers/${id}/unpause`;
-const CONTAINER_LOGS = id =>
+const CONTAINER_PAUSE = (id) => `${DOCKER_SOCK}/containers/${id}/pause`;
+const CONTAINER_UNPAUSE = (id) => `${DOCKER_SOCK}/containers/${id}/unpause`;
+const CONTAINER_LOGS = (id) =>
   `${DOCKER_SOCK}/containers/${id}/logs?stdout=true&stderr=true`;
 
 router.get("/", async (req, res) => {
@@ -99,7 +99,7 @@ router.get("/:containerId/logs", async (req, res) => {
     let logs = data.body.split("\n");
     let text = [];
 
-    logs.map(log => {
+    logs.map((log) => {
       // header parsing can go here
       text.push(`${log.substring(8)}`);
     });

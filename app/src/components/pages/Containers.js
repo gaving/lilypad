@@ -1,7 +1,15 @@
 import React, { Component } from "react";
 
 import styled from "styled-components";
-import { Collapse as C, Position, Tag, Toaster } from "@blueprintjs/core";
+import {
+  Collapse as C,
+  Position,
+  Classes,
+  InputGroup,
+  NonIdealState,
+  Tag,
+  Toaster,
+} from "@blueprintjs/core";
 import { Route } from "react-router-dom";
 import { Flex, Box } from "reflexbox";
 import _ from "lodash";
@@ -29,7 +37,7 @@ class Containers extends Component {
 
   async componentDidMount() {
     this.updateAllContainers();
-    this.update = setInterval(() => this.updateAllContainers(), 30 * 1000);
+    this.update = setInterval(() => this.updateAllContainers(), 5 * 1000);
   }
 
   componentWillUnmount() {
@@ -43,7 +51,7 @@ class Containers extends Component {
   showToast = (message, intent) => {
     const AppToaster = Toaster.create({
       className: "recipe-toaster",
-      position: Position.BOTTOM,
+      position: Position.TOP,
     });
 
     AppToaster.show({ message, intent });
@@ -117,25 +125,51 @@ class Containers extends Component {
     let { containers } = this.state;
     containers = containers.filter((i) =>
       i.Labels.hasOwnProperty(process.env.REACT_APP_CONTAINER_TAG)
-    )
+    );
+
+    const action = (
+      <InputGroup
+        className={Classes.ROUND}
+        leftIcon="search"
+        placeholder="Search..."
+      />
+    );
+
+    const description = (
+      <>
+        Your search didn't match any apps.
+        <br />
+        Try searching for something else.
+      </>
+    );
 
     return (
       <Route
         path="/containers"
         render={({ match }) => (
           <Collapse isOpen={match}>
-            <Box p={2}>
-              <Flex justify="space-between" align="center">
-                <Flex align="center">
-                  <Title>Available</Title>
-                  <Box ml={1}>
-                    <Tag large minimal round>
-                      {containers.length}
-                    </Tag>
-                  </Box>
+            <Box p={2} style={{ height: "80vh" }}>
+              {!containers.length && (
+                <NonIdealState
+                  icon="heatmap"
+                  title="No apps found"
+                  description={description}
+                  action={action}
+                />
+              )}
+              {!!containers.length && (
+                <Flex justify="space-between" align="center" p={15}>
+                  <Flex align="center">
+                    <Title>Available</Title>
+                    <Box ml={1}>
+                      <Tag large minimal round>
+                        {containers.length}
+                      </Tag>
+                    </Box>
+                  </Flex>
                 </Flex>
-              </Flex>
-              {containers && (
+              )}
+              {!!containers.length && (
                 <>
                   {containers.map((container, i) => (
                     <Container

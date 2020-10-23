@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import { Route, Redirect } from "react-router-dom";
 import styled from "styled-components";
-import { Card, Hotkey, HotkeysTarget, Hotkeys } from "@blueprintjs/core";
+import { Card } from "@blueprintjs/core";
 
 import Navbar from "./components/Navbar";
 import Containers from "./components/pages/Containers";
@@ -25,12 +25,12 @@ const Container = styled(Card)`
 
 class App extends Component {
   state = {
-    dark: false
+    dark: false,
   };
 
   setDarkInStorage = () => localStorage.setItem("dark", this.state.dark);
 
-  toggleDarkTheme = dark => {
+  toggleDarkTheme = (dark) => {
     if (dark === undefined)
       this.setState({ dark: !this.state.dark }, () => this.setDarkInStorage());
     else this.setState({ dark }, () => this.setDarkInStorage());
@@ -40,18 +40,6 @@ class App extends Component {
     const dark = localStorage.getItem("dark");
 
     if (dark === "true") this.toggleDarkTheme(true);
-  }
-
-  renderHotkeys() {
-    return (
-      <Hotkeys>
-        <Hotkey
-          global={true}
-          combo="shift + d"
-          onKeyDown={() => this.toggleDarkTheme()}
-        />
-      </Hotkeys>
-    );
   }
 
   render() {
@@ -70,4 +58,4 @@ class App extends Component {
   }
 }
 
-export default HotkeysTarget(App);
+export default App;

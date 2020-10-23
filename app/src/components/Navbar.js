@@ -6,6 +6,7 @@ import {
   Alignment,
   NavbarHeading,
   Button,
+  Tag,
 } from "@blueprintjs/core";
 import { Icon, Intent } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
@@ -25,18 +26,26 @@ const Navbar = ({ darkTheme, toggleDarkTheme }) => {
         <NavbarGroup>
           <NavbarHeading>
             <Icon
-              icon={IconNames.FLAME}
+              icon={IconNames.UNRESOLVE}
               iconSize={Icon.SIZE_LARGE}
-              intent={Intent.DANGER}
+              intent={Intent.SUCCESS}
               style={{ paddingRight: "0.5em" }}
             />
             Lilypad
+            <Tag
+              intent={Intent.SUCCESS}
+              minimal
+              round
+              style={{ marginLeft: "0.5em" }}
+            >
+              v2
+            </Tag>
           </NavbarHeading>
         </NavbarGroup>
         <NavbarGroup align={Alignment.RIGHT}>
           <Flex align="center">
             <Button minimal onClick={() => toggleDarkTheme()}>
-              <b>shift + d</b>
+              <Icon icon={darkTheme ? "flash" : "moon"} />
             </Button>
           </Flex>
         </NavbarGroup>
