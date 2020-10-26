@@ -23,7 +23,7 @@ const {
   REACT_APP_LAUNCH_PORT = 80,
   REACT_APP_CONTAINER_TAG,
   REACT_APP_CONTAINER_DESC,
-  REACT_APP_CONTAINER_ICON = "flashlight",
+  REACT_APP_CONTAINER_ICON,
 } = process.env;
 
 const containsOnlyEmojis = (text) => {
@@ -413,7 +413,7 @@ class Container extends Component {
       networks.push({ name: network, data: containerNetworks[network] });
     }
 
-    const icon = container.Labels[REACT_APP_CONTAINER_ICON];
+    const icon = container.Labels[REACT_APP_CONTAINER_ICON] ?? "dizzy";
 
     return (
       <Box mt={1}>
