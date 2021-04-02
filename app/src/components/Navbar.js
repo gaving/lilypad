@@ -38,7 +38,7 @@ const Navbar = ({ darkTheme, toggleDarkTheme }) => {
               round
               style={{ marginLeft: "0.5em" }}
             >
-              v2
+              v3
             </Tag>
           </NavbarHeading>
         </NavbarGroup>
