@@ -3,19 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@blueprintjs/core": "^3.35.0",
-    "@blueprintjs/select": "^3.14.3",
-    "lodash": "^4.17.20",
+    "@blueprintjs/core": "^3.42.0",
+    "@blueprintjs/select": "^3.15.9",
+    "lodash": "^4.17.21",
     "moment": "^2.29.1",
-    "react": "^17.0.1",
-    "react-copy-to-clipboard": "^5.0.2",
-    "react-dom": "^17.0.1",
+    "react": "^17.0.2",
+    "react-copy-to-clipboard": "^5.0.3",
+    "react-dom": "^17.0.2",
     "react-emoji-render": "^1.2.4",
-    "react-redux": "^7.2.1",
+    "react-redux": "^7.2.3",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "^4.0.0",
+    "react-scripts": "^4.0.3",
     "reflexbox": "^4.0.6",
-    "styled-components": "^5.2.0"
+    "styled-components": "^5.2.3"
   },
   "scripts": {
     "start": "concurrently 'react-scripts start' 'npm start --prefix ../server'",
@@ -34,7 +34,7 @@
   ],
   "proxy": "http://localhost:4000",
   "devDependencies": {
-    "concurrently": "^5.3.0",
-    "nodemon": "^2.0.6"
+    "concurrently": "^6.0.0",
+    "nodemon": "^2.0.7"
   }
 }
