@@ -564,7 +564,6 @@ class Container extends Component {
                 <p>Command</p>
                 <p>Image ID</p>
                 <Box mt={2}>
-                  <p>Size</p>
                   <p>State</p>
                   <p>Status</p>
                 </Box>
@@ -622,7 +621,6 @@ class Container extends Component {
                   )}
                 </Flex>
                 <Box mt={2}>
-                  <P>{(container.SizeRootFs / 1000000).toFixed(1)} mb</P>
                   <P>{container.State}</P>
                   <P>{container.Status}</P>
                 </Box>

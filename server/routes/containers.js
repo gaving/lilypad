@@ -3,7 +3,7 @@ const got = require("got");
 
 const DOCKER_SOCK = process.env.DOCKER_SOCK;
 
-const CONTAINERS = `${DOCKER_SOCK}/containers/json?all=true&size=true`;
+const CONTAINERS = `${DOCKER_SOCK}/containers/json?all=true`;
 const CONTAINER_STOP = (id) => `${DOCKER_SOCK}/containers/${id}/stop`;
 const CONTAINER_PRUNE = `${DOCKER_SOCK}/containers/prune`;
 const CONTAINER = (id) =>
