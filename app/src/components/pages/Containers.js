@@ -11,7 +11,7 @@ import {
   Toaster,
 } from "@blueprintjs/core";
 import { Route } from "react-router-dom";
-import { Flex, Box } from "reflexbox";
+import { Flex, Box } from "rebass";
 import _ from "lodash";
 
 import Container from "../Container";
@@ -59,6 +59,7 @@ class Containers extends Component {
 
   updateAllContainers = async () => {
     const containers = await fetch("/api/containers");
+    console.log(containers);
     this.setState({
       containers: await containers.json(),
     });

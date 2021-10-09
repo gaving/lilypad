@@ -10,7 +10,7 @@ import {
 } from "@blueprintjs/core";
 import { Icon, Intent } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
-import { Flex } from "reflexbox";
+import { Flex } from "rebass";
 import styled from "styled-components";
 
 const Container = styled.div`

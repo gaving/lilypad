@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { Route, Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { Card } from "@blueprintjs/core";
+import { AnimatePresence } from "framer-motion";
 
 import Navbar from "./components/Navbar";
 import Containers from "./components/pages/Containers";
@@ -44,16 +45,18 @@ class App extends Component {
 
   render() {
     return (
-      <Main className={this.state.dark && "bp3-dark"}>
-        <Navbar
-          darkTheme={this.state.dark}
-          toggleDarkTheme={this.toggleDarkTheme}
-        />
-        <Container column="true">
-          <Route exact path="/" render={() => <Redirect to="/containers" />} />
-          <Containers />
-        </Container>
-      </Main>
+      <AnimatePresence exitBeforeEnter>
+        <Main className={this.state.dark && "bp3-dark"}>
+          <Navbar
+            darkTheme={this.state.dark}
+            toggleDarkTheme={this.toggleDarkTheme}
+          />
+          <Container column="true">
+            <Route exact path="/" render={() => <Redirect to="/containers" />} />
+            <Containers />
+          </Container>
+        </Main>
+      </AnimatePresence>
     );
   }
 }

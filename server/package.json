@@ -10,11 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/got": "^9.6.11",
+    "@types/got": "^9.6.12",
     "express": "^4.17.1",
     "got": "^11.8.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.13"
   }
 }

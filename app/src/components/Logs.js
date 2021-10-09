@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import styled from "styled-components";
-import { Flex } from "reflexbox";
+import { Flex } from "rebass";
 
 const Shell = styled(Flex)`
   border-radius: 3px;

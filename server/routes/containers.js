@@ -19,7 +19,7 @@ const CONTAINER_LOGS = (id) =>
   `${DOCKER_SOCK}/containers/${id}/logs?stdout=true&stderr=true`;
 
 router.get("/", async (req, res) => {
-  console.log(CONTAINERS);
+  // console.log(CONTAINERS);
 
   try {
     let data = await got(CONTAINERS);

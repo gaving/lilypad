@@ -12,7 +12,7 @@ import {
   Tag,
   Icon,
 } from "@blueprintjs/core";
-import { Flex, Box } from "reflexbox";
+import { Flex, Box } from "rebass";
 import _ from "lodash";
 import moment from "moment";
 import { CopyToClipboard } from "react-copy-to-clipboard";
