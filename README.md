@@ -10,10 +10,10 @@ This repository contains a review front-end for Docker containers.
 
 ```bash
 docker build \
-  --build-arg REACT_APP_CONTAINER_TAG=uk.pnn.police.scotland.review.name \
-  --build-arg REACT_APP_CONTAINER_DESC=uk.pnn.police.scotland.review.desc \
-  --build-arg REACT_APP_CONTAINER_ICON=uk.pnn.police.scotland.review.icon \
-  --build-arg REACT_APP_LAUNCH_URL=uk.pnn.police.scotland.review.url \
+  --build-arg REACT_APP_CONTAINER_TAG=org.domain.review.name \
+  --build-arg REACT_APP_CONTAINER_DESC=org.domain.review.desc \
+  --build-arg REACT_APP_CONTAINER_ICON=org.domain.review.icon \
+  --build-arg REACT_APP_LAUNCH_URL=org.domain.review.url \
   -t lilypad:latest .
 ```
 
@@ -29,25 +29,25 @@ docker run -it -P -v /var/run/docker.sock:/var/run/docker.sock lilypad:latest
 
 ```bash
 docker run -P \
-  -l uk.pnn.police.scotland.review.name=greenbg \
-  -l uk.pnn.police.scotland.review.desc="green branch feature" \
-  -l uk.pnn.police.scotland.review.url=3000 \
-  -l uk.pnn.police.scotland.review.icon=smile \
+  -l org.domain.review.name=greenbg \
+  -l org.domain.review.desc="green branch feature" \
+  -l org.domain.review.url=3000 \
+  -l org.domain.review.icon=smile \
     containous/whoami
 ```
 
 ```bash
 docker run -P \
-  -l uk.pnn.police.scotland.review.name=yellowbg \
-  -l uk.pnn.police.scotland.review.desc="yellow branch feature" \
-  -l uk.pnn.police.scotland.review.url=81 \
-  -l uk.pnn.police.scotland.review.icon=tongue \
+  -l org.domain.review.name=yellowbg \
+  -l org.domain.review.desc="yellow branch feature" \
+  -l org.domain.review.url=81 \
+  -l org.domain.review.icon=tongue \
     containous/whoami
 ```
 
 ## Copyright
 
-Copyright (c) 2020 Police Scotland.
+Copyright (c) 2021 Gavin Gilmour.
 
 [release-image]: https://img.shields.io/badge/release-master-orange.svg?style=flat
 [releases]: /../container_registry
