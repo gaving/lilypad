@@ -20,7 +20,7 @@ import Emoji from "react-emoji-render";
 import Logs from "./Logs";
 
 const {
-  REACT_APP_LAUNCH_PORT = 80,
+  REACT_APP_LAUNCH_URL,
   REACT_APP_CONTAINER_TAG,
   REACT_APP_CONTAINER_DESC,
   REACT_APP_CONTAINER_ICON,
@@ -419,18 +419,6 @@ class Container extends Component {
       <Box mt={1}>
         <Card interactive style={{ opacity: this.state.isOpen ? "1" : "0.8" }}>
           {container.Names.map(() => {
-            const launchPrivatePort = container.Labels[REACT_APP_LAUNCH_PORT];
-
-            let launchPublicPort = 0;
-            if (container) {
-              const launchPorts = container.Ports.filter(
-                (c) => c.PrivatePort === parseInt(launchPrivatePort)
-              ).pop();
-              if (launchPorts) {
-                launchPublicPort = launchPorts.PublicPort;
-              }
-            }
-
             return (
               <Flex
                 py={1}
@@ -541,12 +529,7 @@ class Container extends Component {
                         intent={Intent.PRIMARY}
                         onClick={(e) => {
                           e.stopPropagation();
-                          window.open(
-                            `http://${window.location.hostname}:${
-                              launchPublicPort ? launchPublicPort : 80
-                            }`,
-                            "_blank"
-                          );
+                          window.open(container.Labels[REACT_APP_LAUNCH_URL], "_blank");
                         }}
                       />
                     </Tooltip>

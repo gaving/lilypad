@@ -13,7 +13,7 @@ docker build \
   --build-arg REACT_APP_CONTAINER_TAG=uk.pnn.police.scotland.review.name \
   --build-arg REACT_APP_CONTAINER_DESC=uk.pnn.police.scotland.review.desc \
   --build-arg REACT_APP_CONTAINER_ICON=uk.pnn.police.scotland.review.icon \
-  --build-arg REACT_APP_LAUNCH_PORT=uk.pnn.police.scotland.review.port \
+  --build-arg REACT_APP_LAUNCH_URL=uk.pnn.police.scotland.review.url \
   -t lilypad:latest .
 ```
 
@@ -31,7 +31,7 @@ docker run -it -P -v /var/run/docker.sock:/var/run/docker.sock lilypad:latest
 docker run -P \
   -l uk.pnn.police.scotland.review.name=greenbg \
   -l uk.pnn.police.scotland.review.desc="green branch feature" \
-  -l uk.pnn.police.scotland.review.port=3000 \
+  -l uk.pnn.police.scotland.review.url=3000 \
   -l uk.pnn.police.scotland.review.icon=smile \
     containous/whoami
 ```
@@ -40,7 +40,7 @@ docker run -P \
 docker run -P \
   -l uk.pnn.police.scotland.review.name=yellowbg \
   -l uk.pnn.police.scotland.review.desc="yellow branch feature" \
-  -l uk.pnn.police.scotland.review.port=81 \
+  -l uk.pnn.police.scotland.review.url=81 \
   -l uk.pnn.police.scotland.review.icon=tongue \
     containous/whoami
 ```
