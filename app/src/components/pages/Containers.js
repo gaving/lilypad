@@ -59,7 +59,6 @@ class Containers extends Component {
 
   updateAllContainers = async () => {
     const containers = await fetch("/api/containers");
-    console.log(containers);
     this.setState({
       containers: await containers.json(),
     });
