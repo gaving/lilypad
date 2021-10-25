@@ -521,6 +521,19 @@ class Container extends Component {
                         />
                       </Tooltip>
                     )}
+                    <Tooltip content="Copy site" position={Position.BOTTOM}>
+                      <CopyToClipboard text={container.Labels[REACT_APP_LAUNCH_URL]} onCopy={this.copyToClipboard}>
+                        <AnchorButton
+                          minimal
+                          large
+                          icon="clipboard"
+                          intent={Intent.SUCCESS}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        />
+                      </CopyToClipboard>
+                    </Tooltip>
                     <Tooltip content="Open site" position={Position.BOTTOM}>
                       <AnchorButton
                         minimal
