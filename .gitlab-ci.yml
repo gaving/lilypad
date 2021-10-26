@@ -20,7 +20,7 @@ build:
       --build-arg REACT_APP_CONTAINER_TAG=uk.pnn.police.scotland.review.name
       --build-arg REACT_APP_CONTAINER_DESC=uk.pnn.police.scotland.review.desc
       --build-arg REACT_APP_CONTAINER_ICON=uk.pnn.police.scotland.review.icon
-      --build-arg REACT_APP_LAUNCH_PORT=uk.pnn.police.scotland.review.port
+      --build-arg REACT_APP_LAUNCH_URL=uk.pnn.police.scotland.review.url
       --build-arg http_proxy=$http_proxy
       --build-arg https_proxy=$https_proxy .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
