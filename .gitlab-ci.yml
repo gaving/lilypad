@@ -1,9 +1,12 @@
 include:
   - project: "harlaw/gitlab/templates"
+    ref: "feature/nexus"
     file: "/docker/build.yml"
   - project: "harlaw/gitlab/templates"
+    ref: "feature/nexus"
     file: "/docker/lint.yml"
   - project: "harlaw/gitlab/templates"
+    ref: "feature/nexus"
     file: "/docker/test.yml"
 
 stages:
