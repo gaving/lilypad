@@ -17,7 +17,8 @@ RUN npm run build --prefix ./app
 RUN npm install --prefix ./server
 
 FROM nexus.spnet.local:8087/policescotland/tyrell/node:14-alpine3.12 AS release
-COPY --from=deps /lilypad/server ./lilypad
+WORKDIR /lilypad
+COPY --from=deps /lilypad/server .
 
 EXPOSE 4000
-CMD ["node", "lilypad/server.js"]
+CMD ["node", "server.js"]
