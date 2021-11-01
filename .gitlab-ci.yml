@@ -1,3 +1,10 @@
+variables:
+  CUSTOM_BUILD_IMAGE_EXTRA_ARGS: >
+    --build-arg REACT_APP_CONTAINER_TAG=uk.pnn.police.scotland.review.name
+    --build-arg REACT_APP_CONTAINER_DESC=uk.pnn.police.scotland.review.desc
+    --build-arg REACT_APP_CONTAINER_ICON=uk.pnn.police.scotland.review.icon
+    --build-arg REACT_APP_LAUNCH_URL=uk.pnn.police.scotland.review.url
+
 include:
   - project: "harlaw/gitlab/templates"
     ref: "feature/nexus"
@@ -25,24 +32,3 @@ stages:
   - lint
   - build
   - test
-
-build:
-  image: docker:stable
-  stage: build
-  variables:
-    IMAGE_URL: $NEXUS_REGISTRY/$NEXUS_GROUP/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME
-  before_script:
-    - echo "$NEXUS_PASSWORD" | docker login -u $NEXUS_USER --password-stdin $NEXUS_REGISTRY
-  after_script:
-    - docker logout
-  script:
-    - env | sort
-    - docker build -t $IMAGE_URL:$CI_COMMIT_REF_SLUG
-      --build-arg REACT_APP_CONTAINER_TAG=uk.pnn.police.scotland.review.name
-      --build-arg REACT_APP_CONTAINER_DESC=uk.pnn.police.scotland.review.desc
-      --build-arg REACT_APP_CONTAINER_ICON=uk.pnn.police.scotland.review.icon
-      --build-arg REACT_APP_LAUNCH_URL=uk.pnn.police.scotland.review.url .
-    - docker push $IMAGE_URL:$CI_COMMIT_REF_SLUG
-  tags:
-    - docker
-    - west
