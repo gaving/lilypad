@@ -8,6 +8,18 @@ include:
   - project: "harlaw/gitlab/templates"
     ref: "feature/nexus"
     file: "/docker/test.yml"
+  - project: "harlaw/gitlab/templates"
+    ref: "feature/nexus"
+    file: "/file/lint.yml"
+  - project: "harlaw/gitlab/templates"
+    ref: "feature/nexus"
+    file: "/yaml/lint.yml"
+  - project: "harlaw/gitlab/templates"
+    ref: "feature/nexus"
+    file: "/json/lint.yml"
+  - project: "harlaw/gitlab/templates"
+    ref: "feature/nexus"
+    file: "/repo/lint.yml"
 
 stages:
   - lint
