@@ -1,4 +1,7 @@
-FROM nexus.spnet.local:8087/policescotland/tyrell/node:14-alpine3.12 AS deps
+ARG IMAGE_REGISTRY
+ARG IMAGE_GROUP
+
+FROM ${IMAGE_REGISTRY}/${IMAGE_GROUP}/tyrell/node:14-alpine3.12 AS deps
 
 ARG REACT_APP_CONTAINER_TAG
 ARG REACT_APP_CONTAINER_DESC
@@ -16,7 +19,7 @@ RUN npm install --prefix ./app --force
 RUN npm run build --prefix ./app
 RUN npm install --prefix ./server
 
-FROM nexus.spnet.local:8087/policescotland/tyrell/node:14-alpine3.12 AS release
+FROM ${IMAGE_REGISTRY}/${IMAGE_GROUP}/tyrell/node:14-alpine3.12 AS release
 WORKDIR /lilypad
 COPY --from=deps /lilypad/server .
 
