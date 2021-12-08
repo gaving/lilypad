@@ -8,10 +8,8 @@ variables:
 stages:
   - lint
   - build
-  - test
 
 include:
   - project: "harlaw/gitlab/templates"
     file:
       - "/_bundle/all.yml"
-      - "/docker/test.yml"
