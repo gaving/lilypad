@@ -22,11 +22,11 @@ code {
     monospace;
 }
 
-.bp3-navbar {
+.bp4-navbar {
   -webkit-user-select: none;
   -webkit-app-region: drag;
 }
 
-.bp3-popover-target {
+.bp4-popover-target {
   display: flex !important;
 }

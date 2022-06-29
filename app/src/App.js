@@ -46,7 +46,7 @@ class App extends Component {
   render() {
     return (
       <AnimatePresence exitBeforeEnter>
-        <Main className={this.state.dark && "bp3-dark"}>
+        <Main className={this.state.dark && "bp4-dark"}>
           <Navbar
             darkTheme={this.state.dark}
             toggleDarkTheme={this.toggleDarkTheme}

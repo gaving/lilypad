@@ -447,7 +447,7 @@ class Container extends Component {
                   <Box p={2}>
                     <Name>{container.Labels[REACT_APP_CONTAINER_DESC]}</Name>
                   </Box>
-                  <Box p={2} className="bp3-text-disabled">
+                  <Box p={2} className="bp4-text-disabled">
                     {container.Status}
                   </Box>
                 </Flex>
