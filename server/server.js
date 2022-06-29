@@ -1,6 +1,10 @@
-const express = require("express");
-const path = require("path");
-const bodyParser = require("body-parser");
+import express from "express"
+import path from "path"
+import bodyParser from "body-parser";
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(bodyParser.json());
@@ -8,11 +12,11 @@ app.use(bodyParser.json());
 
 process.env.DOCKER_SOCK = "unix:/var/run/docker.sock:";
 
-const info = require("./routes/info");
-const containers = require("./routes/containers");
-const images = require("./routes/images");
-const networks = require("./routes/networks");
-const volumes = require("./routes/volumes");
+import info from "./routes/info.js"
+import containers from "./routes/containers.js"
+import images from "./routes/images.js"
+import networks from "./routes/networks.js"
+import volumes from "./routes/volumes.js"
 
 app.use("/api/info", info);
 app.use("/api/containers", containers);

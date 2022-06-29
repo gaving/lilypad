@@ -1,5 +1,7 @@
-const router = require("express").Router();
-const got = require("got");
+import express from "express";
+import got from "got";
+
+const router = express.Router();
 
 const DOCKER_SOCK = process.env.DOCKER_SOCK;
 
@@ -31,4 +33,4 @@ router.delete("/:imageId", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
