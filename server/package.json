@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "nodemon server.js"
   },
@@ -11,10 +12,10 @@
   "license": "ISC",
   "dependencies": {
     "@types/got": "^9.6.12",
-    "express": "^4.17.1",
-    "got": "^11.8.2"
+    "express": "^4.18.1",
+    "got": "^12.1.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.13"
+    "nodemon": "^2.0.18"
   }
 }
