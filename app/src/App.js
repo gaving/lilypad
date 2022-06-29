@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { Route, Redirect } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import styled from "styled-components";
 import { Card } from "@blueprintjs/core";
 import { AnimatePresence } from "framer-motion";
@@ -51,10 +51,10 @@ class App extends Component {
             darkTheme={this.state.dark}
             toggleDarkTheme={this.toggleDarkTheme}
           />
-          <Container column="true">
-            <Route exact path="/" render={() => <Redirect to="/containers" />} />
-            <Containers />
-          </Container>
+            <Routes>
+              <Route exact path="/" element={<Navigate to="/containers"/>} />
+              <Route path="/containers" element={<Containers />} />
+            </Routes>
         </Main>
       </AnimatePresence>
     );

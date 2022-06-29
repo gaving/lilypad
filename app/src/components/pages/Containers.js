@@ -10,7 +10,7 @@ import {
   Tag,
   Toaster,
 } from "@blueprintjs/core";
-import { Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Flex, Box } from "rebass";
 import _ from "lodash";
 
@@ -144,48 +144,42 @@ class Containers extends Component {
     );
 
     return (
-      <Route
-        path="/containers"
-        render={({ match }) => (
-          <Collapse isOpen={match}>
-            <Box p={2} style={{ height: "80vh" }}>
-              {!containers.length && (
-                <NonIdealState
-                  icon="heatmap"
-                  title="No apps found"
-                  description={description}
-                  action={action}
-                />
-              )}
-              {!!containers.length && (
-                <Flex justify="space-between" align="center" p={15}>
-                  <Flex align="center">
-                    <Title>Available</Title>
-                    <Box ml={1}>
-                      <Tag large minimal round>
-                        {containers.length}
-                      </Tag>
-                    </Box>
-                  </Flex>
-                </Flex>
-              )}
-              {!!containers.length && (
-                <>
-                  {containers.map((container, i) => (
-                    <Container
-                      container={container}
-                      match={match}
-                      key={`container-${i}`}
-                      updateContainer={this.updateContainer}
-                      showToast={this.showToast}
-                    />
-                  ))}
-                </>
-              )}
-            </Box>
-          </Collapse>
-        )}
-      />
+      <Collapse isOpen={true}>
+        <Box p={2} style={{ height: "80vh" }}>
+          {!containers.length && (
+            <NonIdealState
+              icon="heatmap"
+              title="No apps found"
+              description={description}
+              action={action}
+              />
+          )}
+          {!!containers.length && (
+            <Flex justify="space-between" align="center" p={15}>
+              <Flex align="center">
+                <Title>Available</Title>
+                <Box ml={1}>
+                  <Tag large minimal round>
+                    {containers.length}
+                  </Tag>
+                </Box>
+              </Flex>
+            </Flex>
+          )}
+          {!!containers.length && (
+            <>
+              {containers.map((container, i) => (
+                <Container
+                  container={container}
+                  key={`container-${i}`}
+                  updateContainer={this.updateContainer}
+                  showToast={this.showToast}
+                  />
+              ))}
+              </>
+          )}
+        </Box>
+      </Collapse>
     );
   }
 }
