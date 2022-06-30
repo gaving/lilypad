@@ -127,6 +127,10 @@ class Containers extends Component {
       i.Labels.hasOwnProperty(process.env.REACT_APP_CONTAINER_TAG)
     );
 
+    if (containers.length === 0) {
+      console.log("No containers found, is REACT_APP_CONTAINER_TAG set properly?", process.env);
+    }
+
     const action = (
       <InputGroup
         className={Classes.ROUND}
