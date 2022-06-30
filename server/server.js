@@ -13,8 +13,6 @@ const app = express();
 app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: false }));
 
-process.env.DOCKER_SOCK = "unix:/var/run/docker.sock:";
-
 import info from "./routes/info.js"
 import containers from "./routes/containers.js"
 import images from "./routes/images.js"
