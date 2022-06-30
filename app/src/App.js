@@ -51,10 +51,12 @@ class App extends Component {
             darkTheme={this.state.dark}
             toggleDarkTheme={this.toggleDarkTheme}
           />
+          <Container column="true">
             <Routes>
               <Route exact path="/" element={<Navigate to="/containers"/>} />
               <Route path="/containers" element={<Containers />} />
             </Routes>
+          </Container>
         </Main>
       </AnimatePresence>
     );
