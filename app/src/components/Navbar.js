@@ -1,15 +1,15 @@
-import React from "react";
-
 import {
+  Alignment,
+  Button,
+  Icon,
+  Intent,
   Navbar as Nav,
   NavbarGroup,
-  Alignment,
   NavbarHeading,
-  Button,
   Tag,
 } from "@blueprintjs/core";
-import { Icon, Intent } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
+import PropTypes from "prop-types";
 import { Flex } from "rebass";
 import styled from "styled-components";
 
@@ -52,6 +52,11 @@ const Navbar = ({ darkTheme, toggleDarkTheme }) => {
       </Container>
     </Nav>
   );
+};
+
+Navbar.propTypes = {
+  darkTheme: PropTypes.func.isRequired,
+  toggleDarkTheme: PropTypes.func.isRequired,
 };
 
 export default Navbar;

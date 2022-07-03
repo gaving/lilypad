@@ -30,7 +30,7 @@
     }
   },
   "rules": {
-    "no-console": "warn",
+    "no-console": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "simple-import-sort/imports": "error",

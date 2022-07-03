@@ -1,9 +1,8 @@
-import React, { Component } from "react";
-
-import { Routes, Route, Navigate } from "react-router-dom";
-import styled from "styled-components";
 import { Card } from "@blueprintjs/core";
 import { AnimatePresence } from "framer-motion";
+import { Component } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
+import styled from "styled-components";
 
 import Navbar from "./components/Navbar";
 import Containers from "./components/pages/Containers";
@@ -53,8 +52,8 @@ class App extends Component {
           />
           <Container column="true">
             <Routes>
-              <Route exact path="/" element={<Navigate to="/containers"/>} />
-              <Route path="/containers" element={<Containers />} />
+              <Route element={<Navigate to="/containers" />} exact path="/" />
+              <Route element={<Containers />} path="/containers" />
             </Routes>
           </Container>
         </Main>

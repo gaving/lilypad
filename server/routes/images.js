@@ -6,7 +6,7 @@ const router = express.Router();
 const DOCKER_SOCK = process.env.DOCKER_SOCK;
 
 const IMAGES = `${DOCKER_SOCK}/images/json`;
-const IMAGE_REMOVE = id => `${DOCKER_SOCK}/images/${id}`;
+const IMAGE_REMOVE = (id) => `${DOCKER_SOCK}/images/${id}`;
 
 router.get("/", async (req, res) => {
   console.log(IMAGES);

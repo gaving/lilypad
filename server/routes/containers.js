@@ -1,7 +1,8 @@
+import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 import express from "express";
 import got from "got";
-import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
-dotenv.config()
+
+dotenv.config();
 
 const router = express.Router();
 
@@ -105,7 +106,7 @@ router.get("/:containerId/logs", async (req, res) => {
 
     logs.map((log) => {
       // header parsing can go here
-      text.push(`${log.substring(8)}`);
+      text.push(`${log.slice(8)}`);
     });
 
     res.send(JSON.stringify(text));

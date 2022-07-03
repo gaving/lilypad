@@ -1,22 +1,23 @@
-import React, { Component } from "react";
-
-import styled from "styled-components";
 import {
-  Collapse,
-  Card as C,
   AnchorButton,
   ButtonGroup,
-  Position,
-  Tooltip,
-  Intent,
-  Tag,
+  Card as C,
+  Collapse,
   Icon,
+  Intent,
+  Position,
+  Tag,
+  Tooltip,
 } from "@blueprintjs/core";
-import { Flex, Box } from "rebass";
 import _ from "lodash";
 import moment from "moment";
+import PropTypes from "prop-types";
+import { Component } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Emoji from "react-emoji-render";
+import { Box, Flex } from "rebass";
+import styled from "styled-components";
+
 import Logs from "./Logs";
 
 const {
@@ -28,7 +29,7 @@ const {
 
 const containsOnlyEmojis = (text) => {
   /* eslint-disable no-control-regex */
-  const onlyEmojis = text.replace(new RegExp("[\u0000-\u1eeff]", "g"), "");
+  const onlyEmojis = text.replace(new RegExp("[\u0000-\u1EEFf]", "g"), "");
   /* eslint-disable no-control-regex */
   const visibleChars = text.replace(new RegExp("[\n\rs]+|( )+", "g"), "");
   return onlyEmojis.length === visibleChars.length;
@@ -421,24 +422,24 @@ class Container extends Component {
           {container.Names.map(() => {
             return (
               <Flex
-                py={1}
                 justifyContent="space-between"
                 key={container.Id}
                 onClick={() => this.setOpen()}
+                py={1}
               >
-                <Flex py={1} alignContent="center">
+                <Flex alignContent="center" py={1}>
                   <Box mr={10}>
                     <AnchorButton
-                      minimal
+                      intent={Intent.SUCCESS}
+                      large
                       loading={this.state.startIsLoading}
+                      minimal
+                      size={64}
                       text={
                         <Emoji
                           text={containsOnlyEmojis(icon) ? icon : `:${icon}:`}
                         />
                       }
-                      large
-                      size={64}
-                      intent={Intent.SUCCESS}
                     />
                     <Tag intent="primary" round>
                       {container.Labels[REACT_APP_CONTAINER_TAG]}
@@ -447,7 +448,7 @@ class Container extends Component {
                   <Box p={2}>
                     <Name>{container.Labels[REACT_APP_CONTAINER_DESC]}</Name>
                   </Box>
-                  <Box p={2} className="bp4-text-disabled">
+                  <Box className="bp4-text-disabled" p={2}>
                     {container.Status}
                   </Box>
                 </Flex>
@@ -456,10 +457,10 @@ class Container extends Component {
                     {container.State === "exited" && (
                       <Tooltip content="Start app" position={Position.BOTTOM}>
                         <AnchorButton
-                          minimal
-                          loading={this.state.startIsLoading}
                           icon="play"
                           intent={Intent.SUCCESS}
+                          loading={this.state.startIsLoading}
+                          minimal
                           onClick={(e) => this.startContainer(e, container)}
                         />
                       </Tooltip>
@@ -467,10 +468,10 @@ class Container extends Component {
                     {container.State === "paused" && (
                       <Tooltip content="Unpause app" position={Position.BOTTOM}>
                         <AnchorButton
-                          minimal
-                          loading={this.state.unpauseIsLoading}
                           icon="play"
                           intent={Intent.SUCCESS}
+                          loading={this.state.unpauseIsLoading}
+                          minimal
                           onClick={(e) => this.unpauseContainer(e, container)}
                         />
                       </Tooltip>
@@ -478,34 +479,34 @@ class Container extends Component {
                     {container.State === "running" && (
                       <Tooltip content="Pause app" position={Position.BOTTOM}>
                         <AnchorButton
-                          minimal
-                          loading={this.state.pauseIsLoading}
                           icon="pause"
                           intent={Intent.WARNING}
+                          loading={this.state.pauseIsLoading}
+                          minimal
                           onClick={(e) => this.pauseContainer(e, container)}
                         />
                       </Tooltip>
                     )}
                     <Tooltip
                       content="Restart app"
-                      position={Position.BOTTOM}
                       isDisabled
+                      position={Position.BOTTOM}
                     >
                       <AnchorButton
-                        minimal
-                        loading={this.state.restartIsLoading}
                         icon="refresh"
                         intent={Intent.WARNING}
+                        loading={this.state.restartIsLoading}
+                        minimal
                         onClick={(e) => this.restartContainer(e, container)}
                       />
                     </Tooltip>
                     {container.State !== "exited" && (
                       <Tooltip content="Stop app" position={Position.BOTTOM}>
                         <AnchorButton
-                          minimal
-                          loading={this.state.stopIsLoading}
                           icon="stop"
                           intent={Intent.WARNING}
+                          loading={this.state.stopIsLoading}
+                          minimal
                           onClick={(e) => this.stopContainer(e, container)}
                         />
                       </Tooltip>
@@ -513,21 +514,24 @@ class Container extends Component {
                     {container.State === "exited" && (
                       <Tooltip content="Remove app" position={Position.BOTTOM}>
                         <AnchorButton
-                          minimal
-                          loading={this.state.removeIsLoading}
                           icon="trash"
                           intent={Intent.DANGER}
+                          loading={this.state.removeIsLoading}
+                          minimal
                           onClick={(e) => this.removeContainer(e, container)}
                         />
                       </Tooltip>
                     )}
                     <Tooltip content="Copy site" position={Position.BOTTOM}>
-                      <CopyToClipboard text={container.Labels[REACT_APP_LAUNCH_URL]} onCopy={this.copyToClipboard}>
+                      <CopyToClipboard
+                        onCopy={this.copyToClipboard}
+                        text={container.Labels[REACT_APP_LAUNCH_URL]}
+                      >
                         <AnchorButton
-                          minimal
-                          large
                           icon="clipboard"
                           intent={Intent.SUCCESS}
+                          large
+                          minimal
                           onClick={(e) => {
                             e.stopPropagation();
                           }}
@@ -536,13 +540,16 @@ class Container extends Component {
                     </Tooltip>
                     <Tooltip content="Open site" position={Position.BOTTOM}>
                       <AnchorButton
-                        minimal
-                        large
                         icon="share"
                         intent={Intent.PRIMARY}
+                        large
+                        minimal
                         onClick={(e) => {
                           e.stopPropagation();
-                          window.open(container.Labels[REACT_APP_LAUNCH_URL], "_blank");
+                          window.open(
+                            container.Labels[REACT_APP_LAUNCH_URL],
+                            "_blank"
+                          );
                         }}
                       />
                     </Tooltip>
@@ -553,7 +560,7 @@ class Container extends Component {
           })}
           <Collapse isOpen={this.state.isOpen}>
             <Flex pt={1}>
-              <Flex w={1 / 8} flexDirection="column">
+              <Flex flexDirection="column" w={1 / 8}>
                 <p>ID</p>
                 <p>Name</p>
                 <p>Created</p>
@@ -564,18 +571,18 @@ class Container extends Component {
                   <p>Status</p>
                 </Box>
               </Flex>
-              <Flex w={7 / 8} flexDirection="column">
+              <Flex flexDirection="column" w={7 / 8}>
                 <Flex>
                   <CopyToClipboard
-                    text={container.Id}
                     onCopy={this.copyToClipboard}
+                    text={container.Id}
                   >
                     <P
-                      onMouseOver={() =>
-                        this.setState({ containerIdHovered: true })
-                      }
                       onMouseLeave={() =>
                         this.setState({ containerIdHovered: false })
+                      }
+                      onMouseOver={() =>
+                        this.setState({ containerIdHovered: true })
                       }
                     >
                       {container.Id}
@@ -596,15 +603,15 @@ class Container extends Component {
                 <P>{container.Command}</P>
                 <Flex>
                   <CopyToClipboard
-                    text={container.ImageID}
                     onCopy={this.copyToClipboard}
+                    text={container.ImageID}
                   >
                     <P
-                      onMouseOver={() =>
-                        this.setState({ imageIdHovered: true })
-                      }
                       onMouseLeave={() =>
                         this.setState({ imageIdHovered: false })
+                      }
+                      onMouseOver={() =>
+                        this.setState({ imageIdHovered: true })
                       }
                     >
                       {container.ImageID}
@@ -661,5 +668,11 @@ class Container extends Component {
     );
   }
 }
+
+Container.propTypes = {
+  container: PropTypes.object.isRequired,
+  showToast: PropTypes.func.isRequired,
+  updateContainer: PropTypes.func.isRequired,
+};
 
 export default Container;

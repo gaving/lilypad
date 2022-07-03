@@ -1,11 +1,11 @@
-import React from "react";
-import ReactDOM from "react-dom";
 import "./index.css";
+
+import { FocusStyleManager } from "@blueprintjs/core";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router } from "react-router-dom";
+
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-
-import { BrowserRouter as Router } from "react-router-dom";
-import { FocusStyleManager } from "@blueprintjs/core";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -13,7 +13,7 @@ ReactDOM.render(
   <Router>
     <App />
   </Router>,
-  document.getElementById("root")
+  document.querySelector("#root")
 );
 
 // If you want your app to work offline and load faster, you can change

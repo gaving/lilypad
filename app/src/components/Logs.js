@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-
-import styled from "styled-components";
+import PropTypes from "prop-types";
+import { Component } from "react";
 import { Flex } from "rebass";
+import styled from "styled-components";
 
 const Shell = styled(Flex)`
   border-radius: 3px;
@@ -37,15 +37,15 @@ class Logs extends Component {
 
   render() {
     return (
-      <Flex w={1} pb={2}>
+      <Flex pb={2} w={1}>
         <Shell
           flexDirection="column"
-          justifyContent="space-between"
           flexGrow={1}
-          w={1}
+          justifyContent="space-between"
           p={10}
+          w={1}
         >
-          <Log color={"limegreen"}>Update logs with shift + u</Log>
+          <Log color="limegreen">Update logs with shift + u</Log>
           {this.state.logs.map((log, i) => {
             if (this.state.logs.length <= 1)
               return <Log key={`log-${i}`}>No logs for this container</Log>;
@@ -56,5 +56,9 @@ class Logs extends Component {
     );
   }
 }
+
+Logs.propTypes = {
+  container: PropTypes.object.isRequired,
+};
 
 export default Logs;

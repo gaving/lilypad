@@ -1,18 +1,16 @@
-import React, { Component } from "react";
-
-import styled from "styled-components";
 import {
-  Collapse as C,
-  Position,
   Classes,
+  Collapse as C,
   InputGroup,
   NonIdealState,
+  Position,
   Tag,
   Toaster,
 } from "@blueprintjs/core";
-import { Routes, Route } from "react-router-dom";
-import { Flex, Box } from "rebass";
 import _ from "lodash";
+import { Component } from "react";
+import { Box, Flex } from "rebass";
+import styled from "styled-components";
 
 import Container from "../Container";
 
@@ -100,13 +98,12 @@ class Containers extends Component {
 
     switch (await response.status) {
       case 200:
+        // eslint-disable-next-line no-case-declarations
         const body = await response.json();
 
-        if (body.ContainersDeleted) {
-          status = `${body.ContainersDeleted.length} containers deleted`;
-        } else {
-          status = "No containers were deleted";
-        }
+        status = body.ContainersDeleted
+          ? `${body.ContainersDeleted.length} containers deleted`
+          : "No containers were deleted";
         intent = "success";
         break;
       case 500:
@@ -124,11 +121,15 @@ class Containers extends Component {
   render() {
     let { containers } = this.state;
     containers = containers.filter((i) =>
+      // eslint-disable-next-line no-prototype-builtins
       i.Labels.hasOwnProperty(process.env.REACT_APP_CONTAINER_TAG)
     );
 
     if (containers.length === 0) {
-      console.log("No containers found, is REACT_APP_CONTAINER_TAG set properly?", process.env);
+      console.log(
+        "No containers found, is REACT_APP_CONTAINER_TAG set properly?",
+        process.env
+      );
     }
 
     const action = (
@@ -141,6 +142,7 @@ class Containers extends Component {
 
     const description = (
       <>
+        {/* eslint-disable-next-line react/no-unescaped-entities */}
         Your search didn't match any apps.
         <br />
         Try searching for something else.
@@ -150,16 +152,16 @@ class Containers extends Component {
     return (
       <Collapse isOpen={true}>
         <Box p={2} style={{ height: "80vh" }}>
-          {!containers.length && (
+          {containers.length === 0 && (
             <NonIdealState
+              action={action}
+              description={description}
               icon="heatmap"
               title="No apps found"
-              description={description}
-              action={action}
-              />
+            />
           )}
-          {!!containers.length && (
-            <Flex justify="space-between" align="center" p={15}>
+          {containers.length > 0 && (
+            <Flex align="center" justify="space-between" p={15}>
               <Flex align="center">
                 <Title>Available</Title>
                 <Box ml={1}>
@@ -170,17 +172,17 @@ class Containers extends Component {
               </Flex>
             </Flex>
           )}
-          {!!containers.length && (
+          {containers.length > 0 && (
             <>
               {containers.map((container, i) => (
                 <Container
                   container={container}
                   key={`container-${i}`}
-                  updateContainer={this.updateContainer}
                   showToast={this.showToast}
-                  />
+                  updateContainer={this.updateContainer}
+                />
               ))}
-              </>
+            </>
           )}
         </Box>
       </Collapse>
