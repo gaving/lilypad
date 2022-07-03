@@ -21,6 +21,7 @@
   "scripts": {
     "start": "concurrently 'react-scripts start' 'npm start --prefix ../server'",
     "build": "react-scripts build && cp -r build ../server",
+    "lint": "DEBUG=eslint:cli-engine eslint --ignore-pattern 'build/*' --ignore-pattern 'public/*' --ext js --ext json --color .",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -34,7 +35,20 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "@babel/eslint-parser": "^7.18.2",
     "concurrently": "^7.2.2",
-    "nodemon": "^2.0.18"
+    "eslint": "^8.19.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-json-files": "^1.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "eslint-plugin-unicorn": "^39.0.0",
+    "lint-staged": "^12.1.3",
+    "nodemon": "^2.0.18",
+    "prettier": "^2.7.1",
+    "prop-types": "^15.6.2"
   }
 }
