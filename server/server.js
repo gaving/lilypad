@@ -1,8 +1,9 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
 import bodyParser from "body-parser";
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 import express from "express";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 
 // app.use(bodyParser.urlencoded({ extended: false }));
 import containers from "./routes/containers.js";
