@@ -140,24 +140,29 @@ class Container extends Component {
     }
 
     switch (response.status) {
-      case 204:
+      case 204: {
         status = "Container stopped";
         intent = "success";
         break;
-      case 304:
+      }
+      case 304: {
         status = "Container already stopped";
         intent = "warning";
         break;
-      case 404:
+      }
+      case 404: {
         status = "No such container";
         intent = "danger";
         break;
-      case 500:
+      }
+      case 500: {
         status = "Server error";
         intent = "danger";
         break;
-      default:
+      }
+      default: {
         status = response.status;
+      }
     }
 
     this.props.showToast(status, intent);
@@ -180,28 +185,34 @@ class Container extends Component {
     }
 
     switch (response.status) {
-      case 204:
+      case 204: {
         status = "App removed";
         intent = "success";
         break;
-      case 400:
+      }
+      case 400: {
         status = "Something went wrong, bad parameter";
         intent = "danger";
         break;
-      case 404:
+      }
+      case 404: {
         status = "No such app";
         intent = "danger";
         break;
-      case 409:
+      }
+      case 409: {
         status = "You cannot remove a running app";
         intent = "warning";
         break;
-      case 500:
+      }
+      case 500: {
         status = "Server error";
         intent = "danger";
         break;
-      default:
+      }
+      default: {
         status = response.status;
+      }
     }
 
     this.props.showToast(status, intent);
@@ -224,24 +235,29 @@ class Container extends Component {
     }
 
     switch (response.status) {
-      case 204:
+      case 204: {
         status = "App started";
         intent = "success";
         break;
-      case 304:
+      }
+      case 304: {
         status = "App already started";
         intent = "warning";
         break;
-      case 404:
+      }
+      case 404: {
         status = "No such app";
         intent = "danger";
         break;
-      case 500:
+      }
+      case 500: {
         status = "Server error";
         intent = "danger";
         break;
-      default:
+      }
+      default: {
         status = response.status;
+      }
     }
 
     this.props.showToast(status, intent);
@@ -263,20 +279,24 @@ class Container extends Component {
     }
 
     switch (response.status) {
-      case 204:
+      case 204: {
         status = "App restarted";
         intent = "success";
         break;
-      case 404:
+      }
+      case 404: {
         status = "No such app";
         intent = "danger";
         break;
-      case 500:
+      }
+      case 500: {
         status = "Server error";
         intent = "danger";
         break;
-      default:
+      }
+      default: {
         status = response.status;
+      }
     }
 
     this.props.showToast(status, intent);
@@ -303,28 +323,34 @@ class Container extends Component {
     }
 
     switch (response.status) {
-      case 204:
+      case 204: {
         status = `App renamed to '${updatedName}'`;
         intent = "success";
         break;
-      case 400:
+      }
+      case 400: {
         status = `Error renaming to '${updatedName}'`;
         intent = "danger";
         break;
-      case 404:
+      }
+      case 404: {
         status = "No such app";
         intent = "danger";
         break;
-      case 409:
+      }
+      case 409: {
         status = `The name ${updatedName} is already in use`;
         intent = "danger";
         break;
-      case 500:
+      }
+      case 500: {
         status = "Server error";
         intent = "danger";
         break;
-      default:
+      }
+      default: {
         status = response.status;
+      }
     }
 
     this.props.showToast(status, intent);
@@ -345,20 +371,24 @@ class Container extends Component {
     }
 
     switch (response.status) {
-      case 204:
+      case 204: {
         status = `App paused`;
         intent = "success";
         break;
-      case 404:
+      }
+      case 404: {
         status = "No such app";
         intent = "danger";
         break;
-      case 500:
+      }
+      case 500: {
         status = "Server error";
         intent = "danger";
         break;
-      default:
+      }
+      default: {
         status = response.status;
+      }
     }
 
     this.props.showToast(status, intent);
@@ -380,20 +410,24 @@ class Container extends Component {
     }
 
     switch (response.status) {
-      case 204:
+      case 204: {
         status = `App unpaused`;
         intent = "success";
         break;
-      case 404:
+      }
+      case 404: {
         status = "No such app";
         intent = "danger";
         break;
-      case 500:
+      }
+      case 500: {
         status = "Server error";
         intent = "danger";
         break;
-      default:
+      }
+      default: {
         status = response.status;
+      }
     }
 
     this.props.showToast(status, intent);

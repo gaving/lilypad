@@ -97,7 +97,7 @@ class Containers extends Component {
     }
 
     switch (await response.status) {
-      case 200:
+      case 200: {
         // eslint-disable-next-line no-case-declarations
         const body = await response.json();
 
@@ -106,12 +106,15 @@ class Containers extends Component {
           : "No containers were deleted";
         intent = "success";
         break;
-      case 500:
+      }
+      case 500: {
         status = "Server error";
         intent = "danger";
         break;
-      default:
+      }
+      default: {
         status = response.status;
+      }
     }
 
     this.showToast(status, intent);
