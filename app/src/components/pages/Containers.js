@@ -47,7 +47,7 @@ class Containers extends Component {
   showToast = (message, intent) => {
     const AppToaster = Toaster.create({
       className: "recipe-toaster",
-      position: Position.TOP,
+      position: Position.BOTTOM,
     });
 
     AppToaster.show({ message, intent });
