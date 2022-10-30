@@ -1,7 +1,5 @@
 import {
-  Classes,
   Collapse as C,
-  InputGroup,
   NonIdealState,
   Position,
   Tag,
@@ -135,20 +133,10 @@ class Containers extends Component {
       );
     }
 
-    const action = (
-      <InputGroup
-        className={Classes.ROUND}
-        leftIcon="search"
-        placeholder="Search..."
-      />
-    );
-
     const description = (
       <>
         {/* eslint-disable-next-line react/no-unescaped-entities */}
-        Your search didn't match any apps.
-        <br />
-        Try searching for something else.
+        Deploy apps to see them appear here.
       </>
     );
 
@@ -157,7 +145,6 @@ class Containers extends Component {
         <Box p={2} style={{ height: "80vh" }}>
           {containers.length === 0 && (
             <NonIdealState
-              action={action}
               description={description}
               icon="heatmap"
               title="No apps found"
