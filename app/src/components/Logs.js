@@ -45,7 +45,7 @@ class Logs extends Component {
           p={10}
           w={1}
         >
-          <Log color="limegreen">Update logs with shift + u</Log>
+          <Log color="limegreen">Last 200 lines</Log>
           {this.state.logs.map((log, i) => {
             if (this.state.logs.length <= 1)
               return <Log key={`log-${i}`}>No logs for this container</Log>;

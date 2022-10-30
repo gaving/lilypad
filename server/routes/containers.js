@@ -21,7 +21,7 @@ const CONTAINER_RENAME = (id, name) =>
 const CONTAINER_PAUSE = (id) => `${DOCKER_SOCK}/containers/${id}/pause`;
 const CONTAINER_UNPAUSE = (id) => `${DOCKER_SOCK}/containers/${id}/unpause`;
 const CONTAINER_LOGS = (id) =>
-  `${DOCKER_SOCK}/containers/${id}/logs?stdout=true&stderr=true`;
+  `${DOCKER_SOCK}/containers/${id}/logs?stdout=true&stderr=true&tail=200`;
 
 router.get("/", async (req, res) => {
   // console.log(CONTAINERS);
