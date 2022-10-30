@@ -486,76 +486,8 @@ class Container extends Component {
                     {container.Status}
                   </Box>
                 </Flex>
-                <Flex alignContent="center">
-                  <ButtonGroup fill large>
-                    {container.State === "exited" && (
-                      <Tooltip content="Start app" position={Position.BOTTOM}>
-                        <AnchorButton
-                          icon="play"
-                          intent={Intent.SUCCESS}
-                          loading={this.state.startIsLoading}
-                          minimal
-                          onClick={(e) => this.startContainer(e, container)}
-                        />
-                      </Tooltip>
-                    )}
-                    {container.State === "paused" && (
-                      <Tooltip content="Unpause app" position={Position.BOTTOM}>
-                        <AnchorButton
-                          icon="play"
-                          intent={Intent.SUCCESS}
-                          loading={this.state.unpauseIsLoading}
-                          minimal
-                          onClick={(e) => this.unpauseContainer(e, container)}
-                        />
-                      </Tooltip>
-                    )}
-                    {container.State === "running" && (
-                      <Tooltip content="Pause app" position={Position.BOTTOM}>
-                        <AnchorButton
-                          icon="pause"
-                          intent={Intent.WARNING}
-                          loading={this.state.pauseIsLoading}
-                          minimal
-                          onClick={(e) => this.pauseContainer(e, container)}
-                        />
-                      </Tooltip>
-                    )}
-                    <Tooltip
-                      content="Restart app"
-                      isDisabled
-                      position={Position.BOTTOM}
-                    >
-                      <AnchorButton
-                        icon="refresh"
-                        intent={Intent.WARNING}
-                        loading={this.state.restartIsLoading}
-                        minimal
-                        onClick={(e) => this.restartContainer(e, container)}
-                      />
-                    </Tooltip>
-                    {container.State !== "exited" && (
-                      <Tooltip content="Stop app" position={Position.BOTTOM}>
-                        <AnchorButton
-                          icon="stop"
-                          intent={Intent.WARNING}
-                          loading={this.state.stopIsLoading}
-                          minimal
-                          onClick={(e) => this.stopContainer(e, container)}
-                        />
-                      </Tooltip>
-                    )}
-                    {container.State === "exited" && (
-                      <Tooltip content="Remove app" position={Position.BOTTOM}>
-                        <AnchorButton
-                          icon="trash"
-                          intent={Intent.DANGER}
-                          loading={this.state.removeIsLoading}
-                          minimal
-                          onClick={(e) => this.removeContainer(e, container)}
-                        />
-                      </Tooltip>
-                    )}
+                <Flex>
+                  <ButtonGroup large>
                     <Tooltip content="Copy site" position={Position.BOTTOM}>
                       <CopyToClipboard
                         onCopy={this.copyToClipboard}
@@ -593,6 +525,78 @@ class Container extends Component {
             );
           })}
           <Collapse isOpen={this.state.isOpen}>
+            <Flex alignContent="center">
+              <ButtonGroup fill large>
+                {container.State === "exited" && (
+                  <Tooltip content="Start app" position={Position.BOTTOM}>
+                    <AnchorButton
+                      icon="play"
+                      intent={Intent.SUCCESS}
+                      loading={this.state.startIsLoading}
+                      minimal
+                      onClick={(e) => this.startContainer(e, container)}
+                    />
+                  </Tooltip>
+                )}
+                {container.State === "paused" && (
+                  <Tooltip content="Unpause app" position={Position.BOTTOM}>
+                    <AnchorButton
+                      icon="play"
+                      intent={Intent.SUCCESS}
+                      loading={this.state.unpauseIsLoading}
+                      minimal
+                      onClick={(e) => this.unpauseContainer(e, container)}
+                    />
+                  </Tooltip>
+                )}
+                {container.State === "running" && (
+                  <Tooltip content="Pause app" position={Position.BOTTOM}>
+                    <AnchorButton
+                      icon="pause"
+                      intent={Intent.WARNING}
+                      loading={this.state.pauseIsLoading}
+                      minimal
+                      onClick={(e) => this.pauseContainer(e, container)}
+                    />
+                  </Tooltip>
+                )}
+                <Tooltip
+                  content="Restart app"
+                  isDisabled
+                  position={Position.BOTTOM}
+                >
+                  <AnchorButton
+                    icon="refresh"
+                    intent={Intent.WARNING}
+                    loading={this.state.restartIsLoading}
+                    minimal
+                    onClick={(e) => this.restartContainer(e, container)}
+                  />
+                </Tooltip>
+                {container.State !== "exited" && (
+                  <Tooltip content="Stop app" position={Position.BOTTOM}>
+                    <AnchorButton
+                      icon="stop"
+                      intent={Intent.WARNING}
+                      loading={this.state.stopIsLoading}
+                      minimal
+                      onClick={(e) => this.stopContainer(e, container)}
+                    />
+                  </Tooltip>
+                )}
+                {container.State === "exited" && (
+                  <Tooltip content="Remove app" position={Position.BOTTOM}>
+                    <AnchorButton
+                      icon="trash"
+                      intent={Intent.DANGER}
+                      loading={this.state.removeIsLoading}
+                      minimal
+                      onClick={(e) => this.removeContainer(e, container)}
+                    />
+                  </Tooltip>
+                )}
+              </ButtonGroup>
+            </Flex>
             <Flex pt={1}>
               <Flex flexDirection="column" w={1 / 8}>
                 <p>ID</p>
