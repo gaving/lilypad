@@ -4,7 +4,7 @@
 
 This repository contains a review front-end for Docker containers.
 
-![app](https://git.spnet.local/harlaw/lilypad/uploads/3ecfbe5452b7d9e98c43e1543f11459d/image.png)
+![app](https://git.spnet.local/harlaw/lilypad/uploads/f2a983d270f16f3fd247ceedd1c707cb/45UCHdz.png)
 
 ## Building
 
