@@ -16,17 +16,17 @@
     "@types/got": "^9.6.12",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "got": "^12.5.2"
+    "got": "^12.5.3"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",
-    "eslint": "^8.26.0",
+    "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-json-files": "^1.3.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-simple-import-sort": "^8.0.0",
-    "eslint-plugin-unicorn": "^44.0.2",
+    "eslint-plugin-unicorn": "^45.0.0",
     "nodemon": "^2.0.20",
     "prettier": "^2.7.1"
   }
