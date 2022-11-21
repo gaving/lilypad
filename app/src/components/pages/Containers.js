@@ -1,12 +1,13 @@
 import {
   Collapse as C,
+  Intent,
   NonIdealState,
   Position,
   Tag,
   Toaster,
 } from "@blueprintjs/core";
 import _ from "lodash";
-import { Component } from "react";
+import { Component, Fragment } from "react";
 import { Box, Flex } from "rebass";
 import styled from "styled-components";
 
@@ -150,30 +151,46 @@ class Containers extends Component {
               title="No apps found"
             />
           )}
-          {containers.length > 0 && (
-            <Flex align="center" justify="space-between" p={15}>
-              <Flex align="center">
-                <Title>Available</Title>
-                <Box ml={1}>
-                  <Tag large minimal round>
-                    {containers.length}
-                  </Tag>
-                </Box>
-              </Flex>
-            </Flex>
-          )}
-          {containers.length > 0 && (
-            <>
-              {containers.map((container, i) => (
-                <Container
-                  container={container}
-                  key={`container-${i}`}
-                  showToast={this.showToast}
-                  updateContainer={this.updateContainer}
-                />
-              ))}
-            </>
-          )}
+          {["running", "paused", "exited"].map((s) => {
+            return (
+              <Fragment key={s}>
+                {containers.some(({ State }) => State === s) && (
+                  <>
+                    <Flex align="center" justify="space-between" key={s} p={15}>
+                      <Flex align="center">
+                        <Title>{_.startCase(s)}</Title>
+                        <Box ml={1}>
+                          <Tag
+                            intent={
+                              s === "running" ? Intent.SUCCESS : Intent.DANGER
+                            }
+                            large
+                            minimal
+                            round
+                          >
+                            {
+                              containers.filter(({ State }) => State === s)
+                                .length
+                            }
+                          </Tag>
+                        </Box>
+                      </Flex>
+                    </Flex>
+                    {containers
+                      .filter(({ State }) => State === s)
+                      .map((container, i) => (
+                        <Container
+                          container={container}
+                          key={`container-${i}`}
+                          showToast={this.showToast}
+                          updateContainer={this.updateContainer}
+                        />
+                      ))}
+                  </>
+                )}
+              </Fragment>
+            );
+          })}
         </Box>
       </Collapse>
     );
