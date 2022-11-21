@@ -50,6 +50,13 @@ const P = styled.p`
   text-overflow: ellipsis;
 `;
 
+const Shell = styled(Flex)`
+  border-radius: 3px;
+  background-color: #182026;
+  max-height: 500px;
+  overflow-y: auto;
+`;
+
 class Container extends Component {
   state = {
     isOpen: false,
@@ -608,6 +615,7 @@ class Container extends Component {
                   <p>State</p>
                   <p>Status</p>
                 </Box>
+                <p>Labels</p>
               </Flex>
               <Flex flexDirection="column" w={7 / 8}>
                 <Flex>
@@ -667,6 +675,28 @@ class Container extends Component {
                 </Box>
               </Flex>
             </Flex>
+            <Flex pb={2} w={1}>
+              <Shell
+                flexDirection="column"
+                flexGrow={1}
+                justifyContent="space-between"
+                p={10}
+                w={1}
+              >
+                {Object.entries(container.Labels).map(([key, value]) => (
+                  <P key={key}>
+                    <Icon icon="tag" />
+                    <Tag intent={Intent.SUCCESS} large minimal round>
+                      {key}
+                    </Tag>
+                    <Tag intent={Intent.WARNING} large minimal round>
+                      {value}
+                    </Tag>
+                  </P>
+                ))}
+              </Shell>
+            </Flex>
+            <p>Logs</p>
             <Logs container={container} />
             {/* <Flex mt={2} column>
               <h3>Networks</h3>
