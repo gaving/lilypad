@@ -1,9 +1,9 @@
 variables:
   CUSTOM_BUILD_IMAGE_EXTRA_ARGS: >
-    --build-arg REACT_APP_CONTAINER_TAG=uk.pnn.police.scotland.review.name
-    --build-arg REACT_APP_CONTAINER_DESC=uk.pnn.police.scotland.review.desc
-    --build-arg REACT_APP_CONTAINER_ICON=uk.pnn.police.scotland.review.icon
-    --build-arg REACT_APP_LAUNCH_URL=uk.pnn.police.scotland.review.url
+    --build-arg REACT_APP_CONTAINER_TAG=${LILYPAD_NAMESPACE}.name
+    --build-arg REACT_APP_CONTAINER_DESC=${LILYPAD_NAMESPACE}.desc
+    --build-arg REACT_APP_CONTAINER_ICON=${LILYPAD_NAMESPACE}.icon
+    --build-arg REACT_APP_LAUNCH_URL=${LILYPAD_NAMESPACE}.url
 
 stages:
   - lint
