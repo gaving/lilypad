@@ -2,6 +2,8 @@
 
 Web front-end for Docker containers
 
+<img width="917" alt="Screenshot 2022-10-31 at 09 19 13" src="https://user-images.githubusercontent.com/43741/210862049-571e0199-94c8-4837-9148-3ef6f6a9b0ba.png">
+
 ## Build
 
 ```bash
