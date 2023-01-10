@@ -9,11 +9,12 @@ ARG REACT_APP_CONTAINER_ICON
 ARG REACT_APP_LAUNCH_URL
 
 ENV NODE_ENV production
+ARG NEXUS_REPOSITORY_NPM
 
 WORKDIR /lilypad
 COPY . .
 
-RUN npm config set strict-ssl false && npm config set registry https://nexus.spnet.local/repository/npm-group
+RUN npm config set strict-ssl false && npm config set registry ${NEXUS_REPOSITORY_NPM}
 
 RUN npm install --prefix ./app --force
 RUN npm run build --prefix ./app
