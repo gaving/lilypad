@@ -1,0 +1,27 @@
+{
+  "extends": [
+    "config:base",
+    "docker:pinDigests"
+  ],
+  "commitMessagePrefix": ":arrow_up:",
+  "commitMessageAction": "Upgrade",
+  "major": {
+    "automerge": false
+  },
+  "packageRules": [
+    {
+      "updateTypes": [
+        "pin"
+      ],
+      "commitMessagePrefix": ":pin:",
+      "commitMessageAction": "Pin"
+    },
+    {
+      "updateTypes": [
+        "rollback"
+      ],
+      "commitMessagePrefix": ":arrow_down:",
+      "commitMessageAction": "Downgrade"
+    }
+  ]
+}
