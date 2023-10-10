@@ -151,7 +151,7 @@ class Containers extends Component {
               title="No apps found"
             />
           )}
-          {["running", "paused", "exited"].map((s) => {
+          {["pinned", "running", "paused", "exited"].map((s) => {
             return (
               <Fragment key={s}>
                 {containers.some(({ State }) => State === s) && (

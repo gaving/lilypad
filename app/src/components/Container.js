@@ -131,6 +131,52 @@ class Container extends Component {
     });
   };
 
+  pinContainer = async (e, container) => {
+    this.setState({ pinIsLoading: true });
+    e.stopPropagation();
+    let response, status, intent;
+
+    try {
+      response = await fetch("/api/containers/pin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ containerId: container.Id }),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+
+    switch (response.status) {
+      case 204: {
+        status = "Container pinned";
+        intent = "success";
+        break;
+      }
+      case 304: {
+        status = "Container already pinned";
+        intent = "warning";
+        break;
+      }
+      case 404: {
+        status = "No such container";
+        intent = "danger";
+        break;
+      }
+      case 500: {
+        status = "Server error";
+        intent = "danger";
+        break;
+      }
+      default: {
+        status = response.status;
+      }
+    }
+
+    this.props.showToast(status, intent);
+    this.props.updateContainer(container);
+    this.setState({ pinIsLoading: false });
+  };
+
   stopContainer = async (e, container) => {
     this.setState({ stopIsLoading: true });
     e.stopPropagation();
@@ -534,6 +580,18 @@ class Container extends Component {
           <Collapse isOpen={this.state.isOpen}>
             <Flex alignContent="center">
               <ButtonGroup fill large>
+                <Tooltip
+                  content={container.State === "pinned" ? "Unpin" : "Pin"}
+                  position={Position.BOTTOM}
+                >
+                  <AnchorButton
+                    icon={container.State === "pinned" ? "unpin" : "pin"}
+                    intent={Intent.SUCCESS}
+                    loading={this.state.pinIsLoading}
+                    minimal
+                    onClick={(e) => this.pinContainer(e, container)}
+                  />
+                </Tooltip>
                 {container.State === "exited" && (
                   <Tooltip content="Start app" position={Position.BOTTOM}>
                     <AnchorButton

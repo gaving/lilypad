@@ -2,6 +2,8 @@ import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-
 import express from "express";
 import got from "got";
 
+const _got = got.extend({ enableUnixSockets: true });
+
 dotenv.config();
 
 const router = express.Router();
@@ -23,12 +25,21 @@ const CONTAINER_UNPAUSE = (id) => `${DOCKER_SOCK}/containers/${id}/unpause`;
 const CONTAINER_LOGS = (id) =>
   `${DOCKER_SOCK}/containers/${id}/logs?stdout=true&stderr=true&tail=200`;
 
+const PINNED = new Set();
+
 router.get("/", async (req, res) => {
   // console.log(CONTAINERS);
 
   try {
-    let data = await got(CONTAINERS);
+    let data = await _got(CONTAINERS);
     data = JSON.parse(data.body);
+    // const k = data.filter((c) => PINNED.has(c.Id)).pop();
+
+    data.map((c) => {
+      if (PINNED.has(c.Id)) {
+        c.State = "pinned";
+      }
+    });
 
     res.send(data);
   } catch (error) {
@@ -36,11 +47,25 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.post("/pin", async (req, res) => {
+  try {
+    if (PINNED.has(req.body.containerId)) {
+      PINNED.delete(req.body.containerId);
+    } else {
+      PINNED.add(req.body.containerId);
+    }
+    res.sendStatus(200);
+  } catch (error) {
+    res.sendStatus(error.statusCode);
+    console.error("Error", error);
+  }
+});
+
 router.post("/stop", async (req, res) => {
   console.log(CONTAINER_STOP(req.body.containerId));
 
   try {
-    const data = await got.post(CONTAINER_STOP(req.body.containerId));
+    const data = await _got.post(CONTAINER_STOP(req.body.containerId));
     res.sendStatus(await data.statusCode);
   } catch (error) {
     res.sendStatus(error.statusCode);
@@ -52,7 +77,7 @@ router.post("/prune", async (req, res) => {
   console.log(CONTAINER_PRUNE);
 
   try {
-    const data = await got.post(CONTAINER_PRUNE);
+    const data = await _got.post(CONTAINER_PRUNE);
     res.send(await data.body);
   } catch (error) {
     res.sendStatus(error.statusCode);
@@ -64,7 +89,7 @@ router.get("/:containerId", async (req, res) => {
   console.log(CONTAINER(req.params.containerId));
 
   try {
-    const data = await got(CONTAINER(req.params.containerId));
+    const data = await _got(CONTAINER(req.params.containerId));
     res.send(data.body);
   } catch (error) {
     console.error(error);
@@ -75,7 +100,7 @@ router.delete("/:containerId", async (req, res) => {
   console.log(CONTAINER_REMOVE(req.params.containerId));
 
   try {
-    const data = await got.delete(CONTAINER_REMOVE(req.params.containerId));
+    const data = await _got.delete(CONTAINER_REMOVE(req.params.containerId));
     res.sendStatus(await data.statusCode);
   } catch (error) {
     res.sendStatus(error.statusCode);
@@ -87,7 +112,7 @@ router.post("/:containerId", async (req, res) => {
   console.log(CONTAINER_START(req.params.containerId));
 
   try {
-    const data = await got.post(CONTAINER_START(req.params.containerId));
+    const data = await _got.post(CONTAINER_START(req.params.containerId));
     res.sendStatus(await data.statusCode);
   } catch (error) {
     res.sendStatus(error.statusCode);
@@ -99,7 +124,7 @@ router.get("/:containerId/logs", async (req, res) => {
   console.log(CONTAINER_LOGS(req.params.containerId));
 
   try {
-    const data = await got(CONTAINER_LOGS(req.params.containerId));
+    const data = await _got(CONTAINER_LOGS(req.params.containerId));
 
     let logs = data.body.split("\n");
     let text = [];
@@ -119,7 +144,7 @@ router.post("/:containerId/restart", async (req, res) => {
   console.log(CONTAINER_RESTART(req.params.containerId));
 
   try {
-    const data = await got.post(CONTAINER_RESTART(req.params.containerId));
+    const data = await _got.post(CONTAINER_RESTART(req.params.containerId));
     res.sendStatus(await data.statusCode);
   } catch (error) {
     res.sendStatus(error.statusCode);
@@ -131,7 +156,7 @@ router.post("/:containerId/rename", async (req, res) => {
   console.log(CONTAINER_RENAME(req.params.containerId, req.query.name));
 
   try {
-    const data = await got.post(
+    const data = await _got.post(
       CONTAINER_RENAME(req.params.containerId, req.query.name)
     );
     res.sendStatus(await data.statusCode);
@@ -145,7 +170,7 @@ router.post("/:containerId/pause", async (req, res) => {
   console.log(CONTAINER_PAUSE(req.params.containerId));
 
   try {
-    const data = await got.post(CONTAINER_PAUSE(req.params.containerId));
+    const data = await _got.post(CONTAINER_PAUSE(req.params.containerId));
     res.sendStatus(await data.statusCode);
   } catch (error) {
     res.sendStatus(error.statusCode);
@@ -157,7 +182,7 @@ router.post("/:containerId/unpause", async (req, res) => {
   console.log(CONTAINER_UNPAUSE(req.params.containerId));
 
   try {
-    const data = await got.post(CONTAINER_UNPAUSE(req.params.containerId));
+    const data = await _got.post(CONTAINER_UNPAUSE(req.params.containerId));
     res.sendStatus(await data.statusCode);
   } catch (error) {
     res.sendStatus(error.statusCode);
