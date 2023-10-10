@@ -124,13 +124,13 @@ class Containers extends Component {
     let { containers } = this.state;
     containers = containers.filter((i) =>
       // eslint-disable-next-line no-prototype-builtins
-      i.Labels.hasOwnProperty(process.env.REACT_APP_CONTAINER_TAG)
+      i.Labels.hasOwnProperty(process.env.REACT_APP_CONTAINER_TAG),
     );
 
     if (containers.length === 0) {
       console.log(
         "No containers found, is REACT_APP_CONTAINER_TAG set properly?",
-        process.env
+        process.env,
       );
     }
 

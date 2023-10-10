@@ -100,7 +100,7 @@ class Container extends Component {
     if (openContainers && openContainers.includes(id)) {
       openContainers = _.remove(
         openContainers,
-        (container) => id !== container
+        (container) => id !== container,
       );
       localStorage.setItem("openContainers", JSON.stringify(openContainers));
     }
@@ -369,7 +369,7 @@ class Container extends Component {
         `/api/containers/${container.Id}/rename?name=${updatedName}`,
         {
           method: "POST",
-        }
+        },
       );
     } catch (error) {
       console.error(error);
@@ -567,7 +567,7 @@ class Container extends Component {
                           e.stopPropagation();
                           window.open(
                             container.Labels[REACT_APP_LAUNCH_URL],
-                            "_blank"
+                            "_blank",
                           );
                         }}
                       />
