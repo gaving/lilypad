@@ -55,7 +55,7 @@ const Navbar = ({ darkTheme, toggleDarkTheme }) => {
 };
 
 Navbar.propTypes = {
-  darkTheme: PropTypes.func.isRequired,
+  darkTheme: PropTypes.bool.isRequired,
   toggleDarkTheme: PropTypes.func.isRequired,
 };
 
