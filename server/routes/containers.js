@@ -157,7 +157,7 @@ router.post("/:containerId/rename", async (req, res) => {
 
   try {
     const data = await _got.post(
-      CONTAINER_RENAME(req.params.containerId, req.query.name)
+      CONTAINER_RENAME(req.params.containerId, req.query.name),
     );
     res.sendStatus(await data.statusCode);
   } catch (error) {
