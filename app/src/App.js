@@ -1,5 +1,4 @@
 import { Card } from "@blueprintjs/core";
-import { AnimatePresence } from "framer-motion";
 import { Component } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import styled from "styled-components";
@@ -44,20 +43,18 @@ class App extends Component {
 
   render() {
     return (
-      <AnimatePresence exitBeforeEnter>
-        <Main className={this.state.dark && "bp4-dark"}>
-          <Navbar
-            darkTheme={this.state.dark}
-            toggleDarkTheme={this.toggleDarkTheme}
-          />
-          <Container column="true">
-            <Routes>
-              <Route element={<Navigate to="/containers" />} exact path="/" />
-              <Route element={<Containers />} path="/containers" />
-            </Routes>
-          </Container>
-        </Main>
-      </AnimatePresence>
+      <Main className={this.state.dark && "bp4-dark"}>
+        <Navbar
+          darkTheme={this.state.dark}
+          toggleDarkTheme={this.toggleDarkTheme}
+        />
+        <Container column="true">
+          <Routes>
+            <Route element={<Navigate to="/containers" />} exact path="/" />
+            <Route element={<Containers />} path="/containers" />
+          </Routes>
+        </Container>
+      </Main>
     );
   }
 }

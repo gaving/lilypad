@@ -29,9 +29,9 @@ const {
 
 const containsOnlyEmojis = (text) => {
   /* eslint-disable no-control-regex */
-  const onlyEmojis = text.replace(new RegExp("[\u0000-\u1EEFf]", "g"), "");
+  const onlyEmojis = text.replaceAll(new RegExp("[\u0000-\u1EEFf]", "g"), "");
   /* eslint-disable no-control-regex */
-  const visibleChars = text.replace(new RegExp("[\n\rs]+|( )+", "g"), "");
+  const visibleChars = text.replaceAll(new RegExp("[\n\rs]+|( )+", "g"), "");
   return onlyEmojis.length === visibleChars.length;
 };
 
