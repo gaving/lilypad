@@ -2,21 +2,24 @@ import {
   AnchorButton,
   ButtonGroup,
   Card as C,
+  Card,
+  CardList,
   Collapse,
   Icon,
   Intent,
   Position,
+  Section,
+  SectionCard,
   Tag,
   Tooltip,
 } from "@blueprintjs/core";
+import { ChevronRight, IconNames } from "@blueprintjs/icons";
 import _ from "lodash";
 import moment from "moment";
 import PropTypes from "prop-types";
 import { Component } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Emoji from "react-emoji-render";
-import { Box, Flex } from "rebass";
-import styled from "styled-components";
 
 import Logs from "./Logs";
 
@@ -35,27 +38,10 @@ const containsOnlyEmojis = (text) => {
   return onlyEmojis.length === visibleChars.length;
 };
 
-const Card = styled(C)`
-  padding-top: 5;
-  padding-bottom: 5;
-`;
-
-const Name = styled.h3`
-  margin: 0;
-`;
-
-const P = styled.p`
-  font-weight: bold;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
-const Shell = styled(Flex)`
-  border-radius: 3px;
-  background-color: #182026;
-  max-height: 500px;
-  overflow-y: auto;
-`;
+// const Card = styled(C)`
+//   padding-top: 5;
+//   padding-bottom: 5;
+// `;
 
 class Container extends Component {
   state = {
@@ -494,303 +480,199 @@ class Container extends Component {
 
   render() {
     const { container } = this.props;
-    const containerNetworks = container.NetworkSettings.Networks;
-    let networks = [];
-
-    for (const network in containerNetworks) {
-      networks.push({ name: network, data: containerNetworks[network] });
-    }
-
     const icon = container.Labels[REACT_APP_CONTAINER_ICON] ?? "dizzy";
 
     return (
-      <Box mt={1}>
-        <Card interactive style={{ opacity: this.state.isOpen ? "1" : "0.8" }}>
-          {container.Names.map(() => {
-            return (
-              <Flex
-                justifyContent="space-between"
-                key={container.Id}
-                onClick={() => this.setOpen()}
-                py={1}
-              >
-                <Flex alignContent="center" py={1}>
-                  <Box mr={10}>
-                    <AnchorButton
-                      intent={Intent.SUCCESS}
-                      large
-                      loading={this.state.startIsLoading}
-                      minimal
-                      size={64}
-                      text={
-                        <Emoji
-                          text={containsOnlyEmojis(icon) ? icon : `:${icon}:`}
-                        />
-                      }
-                    />
-                    <Tag intent="primary" round>
-                      {container.Labels[REACT_APP_CONTAINER_TAG]}
-                    </Tag>
-                  </Box>
-                  <Box p={2}>
-                    <Name>{container.Labels[REACT_APP_CONTAINER_DESC]}</Name>
-                  </Box>
-                  <Box className="bp4-text-disabled" p={2}>
-                    {container.Status}
-                  </Box>
-                </Flex>
-                <Flex>
-                  <ButtonGroup large>
-                    <Tooltip content="Copy site" position={Position.BOTTOM}>
-                      <CopyToClipboard
-                        onCopy={this.copyToClipboard}
-                        text={container.Labels[REACT_APP_LAUNCH_URL]}
-                      >
-                        <AnchorButton
-                          icon="clipboard"
-                          intent={Intent.SUCCESS}
-                          large
-                          minimal
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                        />
-                      </CopyToClipboard>
-                    </Tooltip>
-                    <Tooltip content="Open site" position={Position.BOTTOM}>
+      <>
+        {container.Names.map((c) => {
+          return (
+            <Section
+              collapseProps={{defaultIsOpen: false}}
+              collapsible={true}
+              icon={
+                <Emoji text={containsOnlyEmojis(icon) ? icon : `:${icon}:`} />
+              }
+              key={c.id}
+              rightElement={
+                <ButtonGroup large>
+                  <Tooltip content="Copy site" position={Position.BOTTOM}>
+                    <CopyToClipboard
+                      onCopy={this.copyToClipboard}
+                      text={container.Labels[REACT_APP_LAUNCH_URL]}
+                    >
                       <AnchorButton
-                        icon="share"
-                        intent={Intent.PRIMARY}
+                        icon="clipboard"
+                        intent={Intent.SUCCESS}
                         large
                         minimal
                         onClick={(e) => {
                           e.stopPropagation();
-                          window.open(
-                            container.Labels[REACT_APP_LAUNCH_URL],
-                            "_blank",
-                          );
                         }}
                       />
+                    </CopyToClipboard>
+                  </Tooltip>
+                  <Tooltip content="Open site" position={Position.BOTTOM}>
+                    <AnchorButton
+                      icon="share"
+                      intent={Intent.PRIMARY}
+                      large
+                      minimal
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(
+                          container.Labels[REACT_APP_LAUNCH_URL],
+                          "_blank",
+                        );
+                      }}
+                    />
+                  </Tooltip>
+                </ButtonGroup>
+              }
+              title={
+                <Tag intent="primary" round>
+                  {container.Labels[REACT_APP_CONTAINER_TAG]}
+                </Tag>
+              }
+              subtitle={container.Labels[REACT_APP_CONTAINER_DESC]}
+              // subtitle={container.Status}
+            >
+              <SectionCard padding={true}>
+                <ButtonGroup fill large>
+                  <Tooltip
+                    content={container.State === "pinned" ? "Unpin" : "Pin"}
+                    position={Position.BOTTOM}
+                  >
+                    <AnchorButton
+                      icon={container.State === "pinned" ? "unpin" : "pin"}
+                      intent={Intent.SUCCESS}
+                      loading={this.state.pinIsLoading}
+                      minimal
+                      onClick={(e) => this.pinContainer(e, container)}
+                    />
+                  </Tooltip>
+                  {container.State === "exited" && (
+                    <Tooltip content="Start app" position={Position.BOTTOM}>
+                      <AnchorButton
+                        icon="play"
+                        intent={Intent.SUCCESS}
+                        loading={this.state.startIsLoading}
+                        minimal
+                        onClick={(e) => this.startContainer(e, container)}
+                      />
                     </Tooltip>
-                  </ButtonGroup>
-                </Flex>
-              </Flex>
-            );
-          })}
-          <Collapse isOpen={this.state.isOpen}>
-            <Flex alignContent="center">
-              <ButtonGroup fill large>
-                <Tooltip
-                  content={container.State === "pinned" ? "Unpin" : "Pin"}
-                  position={Position.BOTTOM}
-                >
-                  <AnchorButton
-                    icon={container.State === "pinned" ? "unpin" : "pin"}
-                    intent={Intent.SUCCESS}
-                    loading={this.state.pinIsLoading}
-                    minimal
-                    onClick={(e) => this.pinContainer(e, container)}
-                  />
-                </Tooltip>
-                {container.State === "exited" && (
-                  <Tooltip content="Start app" position={Position.BOTTOM}>
+                  )}
+                  {container.State === "paused" && (
+                    <Tooltip content="Unpause app" position={Position.BOTTOM}>
+                      <AnchorButton
+                        icon="play"
+                        intent={Intent.SUCCESS}
+                        loading={this.state.unpauseIsLoading}
+                        minimal
+                        onClick={(e) => this.unpauseContainer(e, container)}
+                      />
+                    </Tooltip>
+                  )}
+                  {container.State === "running" && (
+                    <Tooltip content="Pause app" position={Position.BOTTOM}>
+                      <AnchorButton
+                        icon="pause"
+                        intent={Intent.WARNING}
+                        loading={this.state.pauseIsLoading}
+                        minimal
+                        onClick={(e) => this.pauseContainer(e, container)}
+                      />
+                    </Tooltip>
+                  )}
+                  <Tooltip
+                    content="Restart app"
+                    isDisabled
+                    position={Position.BOTTOM}
+                  >
                     <AnchorButton
-                      icon="play"
-                      intent={Intent.SUCCESS}
-                      loading={this.state.startIsLoading}
-                      minimal
-                      onClick={(e) => this.startContainer(e, container)}
-                    />
-                  </Tooltip>
-                )}
-                {container.State === "paused" && (
-                  <Tooltip content="Unpause app" position={Position.BOTTOM}>
-                    <AnchorButton
-                      icon="play"
-                      intent={Intent.SUCCESS}
-                      loading={this.state.unpauseIsLoading}
-                      minimal
-                      onClick={(e) => this.unpauseContainer(e, container)}
-                    />
-                  </Tooltip>
-                )}
-                {container.State === "running" && (
-                  <Tooltip content="Pause app" position={Position.BOTTOM}>
-                    <AnchorButton
-                      icon="pause"
+                      icon="refresh"
                       intent={Intent.WARNING}
-                      loading={this.state.pauseIsLoading}
+                      loading={this.state.restartIsLoading}
                       minimal
-                      onClick={(e) => this.pauseContainer(e, container)}
+                      onClick={(e) => this.restartContainer(e, container)}
                     />
                   </Tooltip>
-                )}
-                <Tooltip
-                  content="Restart app"
-                  isDisabled
-                  position={Position.BOTTOM}
-                >
-                  <AnchorButton
-                    icon="refresh"
-                    intent={Intent.WARNING}
-                    loading={this.state.restartIsLoading}
-                    minimal
-                    onClick={(e) => this.restartContainer(e, container)}
-                  />
-                </Tooltip>
-                {container.State !== "exited" && (
-                  <Tooltip content="Stop app" position={Position.BOTTOM}>
-                    <AnchorButton
-                      icon="stop"
-                      intent={Intent.WARNING}
-                      loading={this.state.stopIsLoading}
-                      minimal
-                      onClick={(e) => this.stopContainer(e, container)}
-                    />
-                  </Tooltip>
-                )}
-                {container.State === "exited" && (
-                  <Tooltip content="Remove app" position={Position.BOTTOM}>
-                    <AnchorButton
-                      icon="trash"
-                      intent={Intent.DANGER}
-                      loading={this.state.removeIsLoading}
-                      minimal
-                      onClick={(e) => this.removeContainer(e, container)}
-                    />
-                  </Tooltip>
-                )}
-              </ButtonGroup>
-            </Flex>
-            <Flex pt={1}>
-              <Flex flexDirection="column" w={1 / 8}>
+                  {container.State !== "exited" && (
+                    <Tooltip content="Stop app" position={Position.BOTTOM}>
+                      <AnchorButton
+                        icon="stop"
+                        intent={Intent.WARNING}
+                        loading={this.state.stopIsLoading}
+                        minimal
+                        onClick={(e) => this.stopContainer(e, container)}
+                      />
+                    </Tooltip>
+                  )}
+                  {container.State === "exited" && (
+                    <Tooltip content="Remove app" position={Position.BOTTOM}>
+                      <AnchorButton
+                        icon="trash"
+                        intent={Intent.DANGER}
+                        loading={this.state.removeIsLoading}
+                        minimal
+                        onClick={(e) => this.removeContainer(e, container)}
+                      />
+                    </Tooltip>
+                  )}
+                </ButtonGroup>
                 <p>ID</p>
                 <p>Name</p>
                 <p>Created</p>
                 <p>Command</p>
                 <p>Image ID</p>
-                <Box mt={2}>
-                  <p>State</p>
-                  <p>Status</p>
-                </Box>
+                <p>State</p>
+                <p>Status</p>
                 <p>Labels</p>
-              </Flex>
-              <Flex flexDirection="column" w={7 / 8}>
-                <Flex>
-                  <CopyToClipboard
-                    onCopy={this.copyToClipboard}
-                    text={container.Id}
+                <CopyToClipboard
+                  onCopy={this.copyToClipboard}
+                  text={container.Id}
+                >
+                  <p
+                    onMouseLeave={() =>
+                      this.setState({ containerIdHovered: false })
+                    }
+                    onMouseOver={() =>
+                      this.setState({ containerIdHovered: true })
+                    }
                   >
-                    <P
-                      onMouseLeave={() =>
-                        this.setState({ containerIdHovered: false })
-                      }
-                      onMouseOver={() =>
-                        this.setState({ containerIdHovered: true })
-                      }
-                    >
-                      {container.Id}
-                    </P>
-                  </CopyToClipboard>
-                  {this.state.containerIdHovered && (
-                    <Box ml={1}>
-                      <Icon icon="duplicate" />
-                    </Box>
-                  )}
-                </Flex>
-                <P>{container.Names[0]}</P>
-                <P>
+                    {container.Id}
+                  </p>
+                </CopyToClipboard>
+                {this.state.containerIdHovered && <Icon icon="duplicate" />}
+                <p>{container.Names[0]}</p>
+                <p>
                   {moment
                     .unix(container.Created)
                     .format("h:mm:ss a on dddd, MMMM Do YYYY")}
-                </P>
-                <P>{container.Command}</P>
-                <Flex>
-                  <CopyToClipboard
-                    onCopy={this.copyToClipboard}
-                    text={container.ImageID}
+                </p>
+                <p>{container.Command}</p>
+                <CopyToClipboard
+                  onCopy={this.copyToClipboard}
+                  text={container.ImageID}
+                >
+                  <p
+                    onMouseLeave={() =>
+                      this.setState({ imageIdHovered: false })
+                    }
+                    onMouseOver={() => this.setState({ imageIdHovered: true })}
                   >
-                    <P
-                      onMouseLeave={() =>
-                        this.setState({ imageIdHovered: false })
-                      }
-                      onMouseOver={() =>
-                        this.setState({ imageIdHovered: true })
-                      }
-                    >
-                      {container.ImageID}
-                    </P>
-                  </CopyToClipboard>
-                  {this.state.imageIdHovered && (
-                    <Box ml={1}>
-                      <Icon icon="duplicate" />
-                    </Box>
-                  )}
-                </Flex>
-                <Box mt={2}>
-                  <P>{container.State}</P>
-                  <P>{container.Status}</P>
-                </Box>
-              </Flex>
-            </Flex>
-            <Flex pb={2} w={1}>
-              <Shell
-                flexDirection="column"
-                flexGrow={1}
-                justifyContent="space-between"
-                p={10}
-                w={1}
-              >
-                {Object.entries(container.Labels).map(([key, value]) => (
-                  <P key={key}>
-                    <Icon icon="tag" />
-                    <Tag intent={Intent.SUCCESS} large minimal round>
-                      {key}
-                    </Tag>
-                    <Tag intent={Intent.WARNING} large minimal round>
-                      {value}
-                    </Tag>
-                  </P>
-                ))}
-              </Shell>
-            </Flex>
-            <p>Logs</p>
-            <Logs container={container} />
-            {/* <Flex mt={2} column>
-              <h3>Networks</h3>
-              <Flex pb={1}>
-                {networks.map((network, i) => {
-                  return (
-                    <React.Fragment key={`network-${i}`}>
-                      <Flex w={1 / 8} column>
-                        <p>{network.name}</p>
-                      </Flex>
-                      <Flex w={7 / 8}>
-                        <Flex w={1 / 8} column>
-                          <p>Network ID</p>
-                          <p>MAC Address</p>
-                          <p>Endpoint ID</p>
-                          <p>Gateway</p>
-                          <p>Global IPv6</p>
-                          <p>IP Address</p>
-                        </Flex>
-                        <Flex w={7 / 8} column>
-                          {exists(network.data.NetworkID)}
-                          {exists(network.data.MacAddress)}
-                          {exists(network.data.EndpointID)}
-                          {exists(network.data.Gateway)}
-                          {exists(network.data.GlobalIPv6Address)}
-                          {exists(network.data.IPAddress)}
-                        </Flex>
-                      </Flex>
-                    </React.Fragment>
-                  );
-                })}
-              </Flex>
-            </Flex> */}
-          </Collapse>
-        </Card>
-      </Box>
+                    {container.ImageID}
+                  </p>
+                </CopyToClipboard>
+                {this.state.imageIdHovered && <Icon icon="duplicate" />}
+                <p>{container.State}</p>
+                <p>{container.Status}</p>
+                <p>Logs</p>
+                <Logs container={container} />
+              </SectionCard>
+            </Section>
+          );
+        })}
+      </>
     );
   }
 }
