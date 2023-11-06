@@ -162,7 +162,11 @@ class Containers extends Component {
                         <Box ml={1}>
                           <Tag
                             intent={
-                              s === "running" ? Intent.SUCCESS : Intent.DANGER
+                              s === "running"
+                                ? Intent.SUCCESS
+                                : s === "pinned"
+                                ? Intent.PRIMARY
+                                : Intent.DANGER
                             }
                             large
                             minimal
