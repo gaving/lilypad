@@ -140,7 +140,7 @@ class Container extends Component {
       response = await fetch("/api/containers/pin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ containerId: container.Id }),
+        body: JSON.stringify({ containerName: container.Names[0] }),
       });
     } catch (error) {
       console.error(error);

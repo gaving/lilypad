@@ -28,15 +28,12 @@ const CONTAINER_LOGS = (id) =>
 const PINNED = new Set();
 
 router.get("/", async (req, res) => {
-  // console.log(CONTAINERS);
-
   try {
     let data = await _got(CONTAINERS);
     data = JSON.parse(data.body);
-    // const k = data.filter((c) => PINNED.has(c.Id)).pop();
 
     data.map((c) => {
-      if (PINNED.has(c.Id)) {
+      if (PINNED.has(c.Names[0])) {
         c.State = "pinned";
       }
     });
@@ -49,10 +46,10 @@ router.get("/", async (req, res) => {
 
 router.post("/pin", async (req, res) => {
   try {
-    if (PINNED.has(req.body.containerId)) {
-      PINNED.delete(req.body.containerId);
+    if (PINNED.has(req.body.containerName)) {
+      PINNED.delete(req.body.containerName);
     } else {
-      PINNED.add(req.body.containerId);
+      PINNED.add(req.body.containerName);
     }
     res.sendStatus(200);
   } catch (error) {
