@@ -1,7 +1,7 @@
 ARG IMAGE_REGISTRY
 ARG IMAGE_GROUP
 
-FROM ${IMAGE_REGISTRY}/${IMAGE_GROUP}/tyrell/node:14-alpine3.12 AS deps
+FROM ${IMAGE_REGISTRY}/${IMAGE_GROUP}/tyrell/node:18-alpine3.14 AS deps
 
 ARG REACT_APP_CONTAINER_TAG
 ARG REACT_APP_CONTAINER_DESC
@@ -16,11 +16,11 @@ COPY . .
 
 RUN npm config set strict-ssl false && npm config set registry ${NEXUS_REPOSITORY_NPM}
 
-RUN npm install --prefix ./app --force
-RUN npm run build --prefix ./app
-RUN npm install --prefix ./server
+RUN npm install --prefix ./packages/app --force
+RUN npm run build --prefix ./packages/app
+RUN npm install --prefix ./packages/server
 
-FROM ${IMAGE_REGISTRY}/${IMAGE_GROUP}/tyrell/node:14-alpine3.12 AS release
+FROM ${IMAGE_REGISTRY}/${IMAGE_GROUP}/tyrell/node:18-alpine3.14 AS release
 WORKDIR /lilypad
 COPY --from=deps /lilypad/server .
 
