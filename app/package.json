@@ -34,8 +34,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.14",
-    "concurrently": "^8.2.1",
-    "http-proxy-middleware": "^2.0.6",
+    "concurrently": "^9.2.1",
+    "http-proxy-middleware": "^3.0.5",
     "prop-types": "^15.8.1"
   }
 }
