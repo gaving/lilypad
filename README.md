@@ -1,4 +1,6 @@
-# Lilypad
+# Lilypad X (Kermit) 🐸
+
+> *"It's not easy being green... but it is easy managing containers!"*
 
 Web front-end for Docker containers
 
