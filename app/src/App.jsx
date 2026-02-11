@@ -3,8 +3,8 @@ import { Component } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import styled from "styled-components";
 
-import Navbar from "./components/Navbar";
-import Containers from "./components/pages/Containers";
+import Navbar from "./components/Navbar.jsx";
+import Containers from "./components/pages/Containers.jsx";
 
 const Main = styled.div`
   display: inline-flex;

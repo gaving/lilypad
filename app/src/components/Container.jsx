@@ -18,14 +18,14 @@ import Emoji from "react-emoji-render";
 import { Box, Flex } from "rebass";
 import styled from "styled-components";
 
-import Logs from "./Logs";
+import Logs from "./Logs.jsx";
 
 const {
-  REACT_APP_LAUNCH_URL,
-  REACT_APP_CONTAINER_TAG,
-  REACT_APP_CONTAINER_DESC,
-  REACT_APP_CONTAINER_ICON,
-} = process.env;
+  VITE_LAUNCH_URL,
+  VITE_CONTAINER_TAG,
+  VITE_CONTAINER_DESC,
+  VITE_CONTAINER_ICON,
+} = import.meta.env;
 
 const containsOnlyEmojis = (text) => {
   /* eslint-disable no-control-regex */
@@ -501,7 +501,7 @@ class Container extends Component {
       networks.push({ name: network, data: containerNetworks[network] });
     }
 
-    const icon = container.Labels[REACT_APP_CONTAINER_ICON] ?? "dizzy";
+    const icon = container.Labels[VITE_CONTAINER_ICON] ?? "dizzy";
 
     return (
       <Box mt={1}>
@@ -529,11 +529,11 @@ class Container extends Component {
                       }
                     />
                     <Tag intent="primary" round>
-                      {container.Labels[REACT_APP_CONTAINER_TAG]}
+                      {container.Labels[VITE_CONTAINER_TAG]}
                     </Tag>
                   </Box>
                   <Box p={2}>
-                    <Name>{container.Labels[REACT_APP_CONTAINER_DESC]}</Name>
+                    <Name>{container.Labels[VITE_CONTAINER_DESC]}</Name>
                   </Box>
                   <Box className="bp6-text-disabled" p={2}>
                     {container.Status}
@@ -544,7 +544,7 @@ class Container extends Component {
                     <Tooltip content="Copy site" position={Position.BOTTOM}>
                       <CopyToClipboard
                         onCopy={this.copyToClipboard}
-                        text={container.Labels[REACT_APP_LAUNCH_URL]}
+                        text={container.Labels[VITE_LAUNCH_URL]}
                       >
                         <AnchorButton
                           icon="clipboard"
@@ -566,7 +566,7 @@ class Container extends Component {
                         onClick={(e) => {
                           e.stopPropagation();
                           window.open(
-                            container.Labels[REACT_APP_LAUNCH_URL],
+                            container.Labels[VITE_LAUNCH_URL],
                             "_blank",
                           );
                         }}
