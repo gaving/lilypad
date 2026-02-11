@@ -2,9 +2,9 @@ import {
   Collapse as C,
   Intent,
   NonIdealState,
+  OverlayToaster,
   Position,
   Tag,
-  Toaster,
 } from "@blueprintjs/core";
 import _ from "lodash";
 import { Component, Fragment } from "react";
@@ -46,7 +46,7 @@ class Containers extends Component {
   };
 
   showToast = (message, intent) => {
-    const AppToaster = Toaster.create({
+    const AppToaster = OverlayToaster.create({
       className: "recipe-toaster",
       position: Position.BOTTOM,
     });
