@@ -27,7 +27,7 @@ const Navbar = ({ darkTheme, toggleDarkTheme }) => {
           <NavbarHeading>
             <Icon
               icon={IconNames.UNRESOLVE}
-              iconSize={Icon.SIZE_LARGE}
+              size={Icon.SIZE_LARGE}
               intent={Intent.SUCCESS}
               style={{ paddingRight: "0.5em" }}
             />

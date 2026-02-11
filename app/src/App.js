@@ -43,7 +43,7 @@ class App extends Component {
 
   render() {
     return (
-      <Main className={this.state.dark && "bp5-dark"}>
+      <Main className={this.state.dark && "bp6-dark"}>
         <Navbar
           darkTheme={this.state.dark}
           toggleDarkTheme={this.toggleDarkTheme}
