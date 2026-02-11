@@ -3,20 +3,13 @@
   "version": "4.0.0",
   "private": true,
   "scripts": {
-    "build": "react-scripts build && cp -r build ../server",
-    "eject": "react-scripts eject",
+    "build": "vite build && cp -r build ../server",
     "lint": "biome check .",
     "lint:fix": "biome check . --apply",
     "format": "biome format . --write",
-    "start": "concurrently 'react-scripts start' 'npm start --prefix ../server'",
-    "test": "react-scripts test"
+    "start": "concurrently 'vite' 'npm start --prefix ../server'",
+    "preview": "vite preview"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
   "dependencies": {
     "@blueprintjs/core": "^6.7.0",
     "@blueprintjs/icons": "^6.5.1",
@@ -28,14 +21,14 @@
     "react-dom": "^18.2.0",
     "react-emoji-render": "^2.0.1",
     "react-router-dom": "^6.16.0",
-    "react-scripts": "^5.0.1",
     "rebass": "^4.0.7",
     "styled-components": "^6.0.8"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.14",
+    "@vitejs/plugin-react": "^5.1.4",
     "concurrently": "^9.2.1",
-    "http-proxy-middleware": "^3.0.5",
-    "prop-types": "^15.8.1"
+    "prop-types": "^15.8.1",
+    "vite": "^7.3.1"
   }
 }
