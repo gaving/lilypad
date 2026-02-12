@@ -94,15 +94,15 @@ const IconContainer = styled.div`
   justify-content: center;
   font-size: 24px;
   flex-shrink: 0;
-  background: ${props => props.state === 'running' ? 'rgba(15, 153, 96, 0.2)' :
-    props.state === 'exited' ? 'rgba(219, 55, 55, 0.2)' :
-    props.state === 'paused' ? 'rgba(217, 130, 43, 0.2)' :
-    props.state === 'pinned' ? 'rgba(255, 107, 138, 0.2)' :
+  background: ${props => props.$state === 'running' ? 'rgba(15, 153, 96, 0.2)' :
+    props.$state === 'exited' ? 'rgba(219, 55, 55, 0.2)' :
+    props.$state === 'paused' ? 'rgba(217, 130, 43, 0.2)' :
+    props.$state === 'pinned' ? 'rgba(255, 107, 138, 0.2)' :
     'rgba(41, 101, 204, 0.2)'};
-  color: ${props => props.state === 'running' ? '#0f9960' :
-    props.state === 'exited' ? '#db3737' :
-    props.state === 'paused' ? '#d9822b' :
-    props.state === 'pinned' ? '#ff6b8a' :
+  color: ${props => props.$state === 'running' ? '#0f9960' :
+    props.$state === 'exited' ? '#db3737' :
+    props.$state === 'paused' ? '#d9822b' :
+    props.$state === 'pinned' ? '#ff6b8a' :
     '#2965cc'};
   
   @media (max-width: 768px) {
@@ -184,14 +184,14 @@ const LoadIndicator = styled.div`
   
   .load-fill {
     height: 100%;
-    background: ${props => props.load > 80 ? '#db3737' : props.load > 50 ? '#d9822b' : '#0f9960'};
+    background: ${props => props.$load > 80 ? '#db3737' : props.$load > 50 ? '#d9822b' : '#0f9960'};
     transition: width 0.3s ease;
   }
   
   .load-text {
     font-size: 11px;
     font-weight: 600;
-    color: ${props => props.load > 80 ? '#db3737' : props.load > 50 ? '#d9822b' : '#0f9960'};
+    color: ${props => props.$load > 80 ? '#db3737' : props.$load > 50 ? '#d9822b' : '#0f9960'};
   }
 `;
 
@@ -199,9 +199,9 @@ const StatusDot = styled.span`
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: ${props => props.state === 'running' ? '#0f9960' :
-    props.state === 'exited' ? '#db3737' :
-    props.state === 'paused' ? '#d9822b' :
+  background: ${props => props.$state === 'running' ? '#0f9960' :
+    props.$state === 'exited' ? '#db3737' :
+    props.$state === 'paused' ? '#d9822b' :
     '#2965cc'};
   display: inline-block;
   margin-right: 6px;
@@ -550,15 +550,15 @@ class Container extends Component {
       <ContainerCard elevation={Elevation.TWO}>
         <Header onClick={editMode ? () => this.setOpen() : undefined} style={{ cursor: editMode ? 'pointer' : 'default' }}>
           <LeftSection>
-            <IconContainer state={container.State}>
+            <IconContainer $state={container.State}>
               <Emoji text={icon} />
             </IconContainer>
-            
+
             <Info>
               <AppName>{name}</AppName>
               <MetaRow>
                 <span>
-                  <StatusDot state={container.State} />
+                  <StatusDot $state={container.State} />
                   {container.State}
                 </span>
                 <span className="hide-mobile">•</span>
@@ -568,7 +568,7 @@ class Container extends Component {
                 {this.state.stats && (
                   <>
                     <span className="hide-mobile">•</span>
-                    <LoadIndicator load={this.state.stats.cpuPercent}>
+                    <LoadIndicator $load={this.state.stats.cpuPercent}>
                       <div className="load-bar">
                         <div 
                           className="load-fill" 

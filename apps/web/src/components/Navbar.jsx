@@ -42,13 +42,13 @@ const Container = styled.div`
 const Flex = styled.div`
   display: flex;
   align-items: center;
-  gap: ${props => props.gap || 0}px;
+  gap: ${props => props.$gap || 0}px;
 `;
 
 const LogoIcon = styled.span`
   font-size: 24px;
   margin-right: 0.5em;
-  filter: ${props => props.dark ? 'brightness(1.2)' : 'none'};
+  filter: ${props => props.$dark ? 'brightness(1.2)' : 'none'};
 `;
 
 const VersionBadge = styled.span`
@@ -79,13 +79,13 @@ const Navbar = ({ darkTheme, toggleDarkTheme, editMode, toggleEditMode }) => {
       <Container>
         <NavbarGroup>
           <NavbarHeading>
-            <LogoIcon dark={darkTheme}>🌸</LogoIcon>
+            <LogoIcon $dark={darkTheme}>🌸</LogoIcon>
             Lilypad
             <VersionBadge>X</VersionBadge>
           </NavbarHeading>
         </NavbarGroup>
         <NavbarGroup align={Alignment.RIGHT}>
-          <Flex align="center" gap={8}>
+          <Flex $gap={8}>
             <Tooltip content={editMode ? "Disable edit mode" : "Enable edit mode"}>
               <Button 
                 minimal 
