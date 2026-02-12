@@ -323,7 +323,6 @@ class Container extends Component {
     startIsLoading: false,
     unpauseIsLoading: false,
     pauseIsLoading: false,
-    restartIsLoading: false,
     stopIsLoading: false,
     removeIsLoading: false,
     pinIsLoading: false,
@@ -434,7 +433,7 @@ class Container extends Component {
 
   getActionButtons = () => {
     const { container } = this.props;
-    const { startIsLoading, stopIsLoading, restartIsLoading, removeIsLoading, pinIsLoading } = this.state;
+    const { startIsLoading, stopIsLoading, removeIsLoading, pinIsLoading } = this.state;
     
     const actions = [];
     
@@ -532,20 +531,6 @@ class Container extends Component {
         </Button>
       );
     }
-    
-    actions.push(
-      <Button
-        key="restart"
-        icon="refresh"
-        loading={restartIsLoading}
-        onClick={(e) => {
-          e.stopPropagation();
-          this.handleAction("restart", `/api/containers/${container.Id}/restart`);
-        }}
-      >
-        Restart
-      </Button>
-    );
     
     return actions;
   };
