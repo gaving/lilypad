@@ -35,11 +35,22 @@ const ContainerCard = styled(Card)`
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   border: 1px solid transparent;
+  background-color: var(--card-bg, #ffffff) !important;
   
   &:hover {
     transform: translateY(-1px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     border-color: rgba(0, 0, 0, 0.08);
+  }
+  
+  .bp5-dark & {
+    background-color: #252a31 !important;
+    border-color: rgba(255, 255, 255, 0.1);
+    
+    &:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
   }
 `;
 
@@ -121,6 +132,10 @@ const Actions = styled.div`
 const ExpandedContent = styled.div`
   padding: 0 20px 20px;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
+  
+  .bp5-dark & {
+    border-top-color: rgba(255, 255, 255, 0.1);
+  }
 `;
 
 const QuickActions = styled.div`

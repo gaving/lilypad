@@ -7,6 +7,7 @@
   --text-muted: #5c7080;
   --bg-color: #f6f8fa;
   --card-bg: #ffffff;
+  --code-bg: rgba(0, 0, 0, 0.05);
 }
 
 .bp5-dark {
@@ -14,6 +15,7 @@
   --text-muted: #a7b6c2;
   --bg-color: #1a1d21;
   --card-bg: #252a31;
+  --code-bg: rgba(255, 255, 255, 0.1);
 }
 
 html {

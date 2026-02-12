@@ -51,6 +51,11 @@ const StatCard = styled(Card)`
   display: flex;
   align-items: center;
   gap: 12px;
+  background-color: var(--card-bg, #ffffff) !important;
+  
+  .bp5-dark & {
+    background-color: #252a31 !important;
+  }
   
   .stat-icon {
     width: 40px;
@@ -70,11 +75,12 @@ const StatCard = styled(Card)`
       font-weight: 600;
       line-height: 1;
       margin-bottom: 4px;
+      color: var(--text-color, #182026);
     }
     
     .stat-label {
       font-size: 12px;
-      color: #5c7080;
+      color: var(--text-muted, #5c7080);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -114,20 +120,22 @@ const EmptyState = styled.div`
     font-size: 20px;
     font-weight: 600;
     margin: 0 0 12px 0;
+    color: var(--text-color, #182026);
   }
   
   p {
-    color: #5c7080;
+    color: var(--text-muted, #5c7080);
     margin: 0 0 8px 0;
     line-height: 1.6;
   }
   
   code {
-    background: rgba(0, 0, 0, 0.05);
+    background: var(--code-bg, rgba(0, 0, 0, 0.05));
     padding: 8px 12px;
     border-radius: 4px;
     font-family: 'SF Mono', Monaco, monospace;
     font-size: 13px;
+    color: var(--text-color, #182026);
   }
 `;
 
