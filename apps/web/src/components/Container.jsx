@@ -600,7 +600,7 @@ class Container extends Component {
             </Info>
           </LeftSection>
           
-          <DesktopActions>
+          <DesktopActions onClick={(e) => e.stopPropagation()}>
             <CopyToClipboard
               text={url}
               onCopy={this.copyToClipboard}
@@ -623,6 +623,10 @@ class Container extends Component {
               <Button
                 minimal
                 icon={isOpen ? "chevron-up" : "chevron-down"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  this.setOpen();
+                }}
               />
             )}
           </DesktopActions>
@@ -636,23 +640,21 @@ class Container extends Component {
           )}
         </Header>
         
-        {editMode && (
-          <MobileActions>
-            <CopyToClipboard
-              text={url}
-              onCopy={this.copyToClipboard}
-            >
-              <Button icon="clipboard" text="Copy" />
-            </CopyToClipboard>
-            
-            <AnchorButton
-              icon="share"
-              text="Open"
-              href={url}
-              target="_blank"
-            />
-          </MobileActions>
-        )}
+        <MobileActions onClick={(e) => e.stopPropagation()}>
+          <CopyToClipboard
+            text={url}
+            onCopy={this.copyToClipboard}
+          >
+            <Button icon="clipboard" text="Copy" />
+          </CopyToClipboard>
+          
+          <AnchorButton
+            icon="share"
+            text="Open"
+            href={url}
+            target="_blank"
+          />
+        </MobileActions>
         
         <Collapse isOpen={editMode && isOpen}>
           <ExpandedContent>
