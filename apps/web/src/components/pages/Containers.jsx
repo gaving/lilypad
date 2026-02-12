@@ -176,16 +176,44 @@ const EmptyState = styled.div`
 class Containers extends Component {
   state = {
     containers: [],
+    isVisible: true,
   };
 
   async componentDidMount() {
+    // Initial load
     this.updateAllContainers();
+    
+    // Set up polling
     this.update = setInterval(() => this.updateAllContainers(), 5000);
+    
+    // Set up visibility change listener
+    document.addEventListener("visibilitychange", this.handleVisibilityChange);
   }
 
   componentWillUnmount() {
     clearInterval(this.update);
+    document.removeEventListener("visibilitychange", this.handleVisibilityChange);
   }
+
+  handleVisibilityChange = () => {
+    const isVisible = document.visibilityState === "visible";
+    this.setState({ isVisible });
+    
+    if (isVisible) {
+      // Refresh immediately when tab becomes visible
+      this.updateAllContainers();
+      // Resume polling
+      if (!this.update) {
+        this.update = setInterval(() => this.updateAllContainers(), 5000);
+      }
+    } else {
+      // Pause polling when tab is hidden
+      if (this.update) {
+        clearInterval(this.update);
+        this.update = null;
+      }
+    }
+  };
 
   showToast = (message, intent) => {
     const AppToaster = OverlayToaster.create({
@@ -195,6 +223,11 @@ class Containers extends Component {
   };
 
   updateAllContainers = async () => {
+    // Skip update if tab is not visible (extra safety check)
+    if (document.visibilityState === "hidden") {
+      return;
+    }
+    
     try {
       const response = await fetch("/api/containers");
       const containers = await response.json();
