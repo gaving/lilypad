@@ -109,9 +109,11 @@ Then skip to Step 2 in Installation below.
    pnpm dev
    ```
 
-   This starts:
-   - Web app: http://localhost:3000
-   - API server: http://localhost:4000
+   This starts both servers concurrently:
+   - 🌐 **Web app**: http://localhost:3000 (Vite dev server with hot reload)
+   - 🔌 **API server**: http://localhost:4000 (Express backend)
+
+   **Access the app at http://localhost:3000** - Vite will proxy API requests to port 4000 automatically.
 
 ## 🐳 Docker
 
