@@ -63,7 +63,7 @@ generate_container() {
 	local random_id=$(openssl rand -hex 4)
 
 	local container_name="${app_name}-${env}-${random_id}"
-	local description="${app_name^} ${env} environment"
+	local description="$(echo "${app_name}" | awk '{print toupper(substr($0,1,1))substr($0,2)}') ${env} environment"
 	local url="http://${app_name}-${env}.local:${idx}"
 
 	echo -e "${BLUE}Creating:${NC} ${YELLOW}${container_name}${NC} with emoji :${emoji}:"
