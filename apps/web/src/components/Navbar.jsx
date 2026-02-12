@@ -20,6 +20,16 @@ const StyledNavbar = styled(Nav)`
     background-color: #252a31 !important;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
   }
+  
+  @media (max-width: 768px) {
+    .bp5-navbar-group {
+      height: 40px;
+    }
+    
+    .bp5-navbar-heading {
+      font-size: 16px;
+    }
+  }
 `;
 
 const Container = styled.div`
