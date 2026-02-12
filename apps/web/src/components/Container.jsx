@@ -245,6 +245,18 @@ const MobileActions = styled.div`
       flex: 1;
       justify-content: center;
     }
+    
+    /* Dark mode styling for mobile buttons */
+    .bp5-dark & {
+      .bp3-button {
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: #f5f8fa !important;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.12) !important;
+        }
+      }
+    }
   }
 `;
 
