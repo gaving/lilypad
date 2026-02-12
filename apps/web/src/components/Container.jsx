@@ -143,6 +143,20 @@ const MetaRow = styled.div`
     gap: 8px;
     font-size: 12px;
   }
+  
+  .container-tag {
+    background: rgba(128, 128, 128, 0.2);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted, #5c7080);
+    
+    .bp5-dark & {
+      background: rgba(255, 255, 255, 0.15);
+      color: #a7b6c2;
+    }
+  }
 `;
 
 const LoadIndicator = styled.div`
@@ -562,7 +576,7 @@ class Container extends Component {
                   {container.State}
                 </span>
                 <span className="hide-mobile">•</span>
-                <Tag minimal className="hide-mobile">{tag}</Tag>
+                <span className="container-tag hide-mobile">{tag}</span>
                 <span>•</span>
                 <span>{moment.unix(container.Created).fromNow()}</span>
                 {this.state.stats && (
