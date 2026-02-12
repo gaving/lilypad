@@ -17,7 +17,7 @@ import _ from "lodash";
 import moment from "moment";
 import PropTypes from "prop-types";
 import { Component } from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
+
 import Emoji from "react-emoji-render";
 import styled from "styled-components";
 
@@ -432,10 +432,6 @@ class Container extends Component {
     this.setState({ [loadingKey]: false });
   };
 
-  copyToClipboard = () => {
-    this.props.showToast("Copied to clipboard", Intent.SUCCESS);
-  };
-
   getActionButtons = () => {
     const { container } = this.props;
     const { startIsLoading, stopIsLoading, restartIsLoading, removeIsLoading, pinIsLoading } = this.state;
@@ -601,15 +597,6 @@ class Container extends Component {
           </LeftSection>
           
           <DesktopActions onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
-            <CopyToClipboard
-              text={url}
-              onCopy={this.copyToClipboard}
-            >
-              <Tooltip content="Copy URL">
-                <Button minimal icon="clipboard" />
-              </Tooltip>
-            </CopyToClipboard>
-            
             <Tooltip content="Open in browser">
               <AnchorButton
                 minimal
@@ -641,13 +628,6 @@ class Container extends Component {
         </Header>
         
         <MobileActions onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
-          <CopyToClipboard
-            text={url}
-            onCopy={this.copyToClipboard}
-          >
-            <Button icon="clipboard" text="Copy" />
-          </CopyToClipboard>
-          
           <AnchorButton
             icon="share"
             text="Open"
