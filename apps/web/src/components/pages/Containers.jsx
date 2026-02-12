@@ -3,8 +3,6 @@ import {
   Elevation,
   Intent,
   NonIdealState,
-  OverlayToaster,
-  Position,
   Tag,
 } from "@blueprintjs/core";
 import _ from "lodash";
@@ -216,10 +214,8 @@ class Containers extends Component {
   };
 
   showToast = (message, intent) => {
-    const AppToaster = OverlayToaster.create({
-      position: Position.BOTTOM,
-    });
-    AppToaster.show({ message, intent });
+    // Toast notifications disabled - console only
+    console.log(`[${intent === 'success' ? '✓' : intent === 'warning' ? '⚠' : '✗'}] ${message}`);
   };
 
   updateAllContainers = async () => {
