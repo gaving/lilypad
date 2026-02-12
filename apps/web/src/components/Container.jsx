@@ -596,13 +596,14 @@ class Container extends Component {
             </Info>
           </LeftSection>
           
-          <DesktopActions onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+          <DesktopActions onClick={(e) => e.stopPropagation()}>
             <Tooltip content="Open in browser">
               <AnchorButton
                 minimal
                 icon="share"
                 href={url}
                 target="_blank"
+                rel="noopener noreferrer"
               />
             </Tooltip>
             
@@ -627,12 +628,13 @@ class Container extends Component {
           )}
         </Header>
         
-        <MobileActions onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+        <MobileActions onClick={(e) => e.stopPropagation()}>
           <AnchorButton
             icon="share"
             text="Open"
             href={url}
             target="_blank"
+            rel="noopener noreferrer"
           />
         </MobileActions>
         
