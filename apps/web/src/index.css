@@ -8,6 +8,12 @@
   --bg-color: #f6f8fa;
   --card-bg: #ffffff;
   --code-bg: rgba(0, 0, 0, 0.05);
+  
+  /* Pink accent colors */
+  --pink-primary: #ff6b8a;
+  --pink-light: #ff8fa3;
+  --pink-pale: rgba(255, 107, 138, 0.15);
+  --pink-dark: #ff85a1;
 }
 
 .bp5-dark {
@@ -16,6 +22,12 @@
   --bg-color: #1a1d21;
   --card-bg: #252a31;
   --code-bg: rgba(255, 255, 255, 0.1);
+  
+  /* Pink accent colors - vibrant in dark mode */
+  --pink-primary: #ff85a1;
+  --pink-light: #ff9eb3;
+  --pink-pale: rgba(255, 133, 161, 0.25);
+  --pink-dark: #ff6b8a;
 }
 
 html {

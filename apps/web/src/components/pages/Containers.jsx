@@ -344,8 +344,8 @@ class Containers extends Component {
             </StatCard>
             
             <StatCard elevation={Elevation.ONE}>
-              <div className="stat-icon" style={{ background: "rgba(92, 112, 128, 0.15)", color: "#5c7080" }}>
-                🐳
+              <div className="stat-icon" style={{ background: "rgba(255, 107, 138, 0.15)", color: "#ff6b8a" }}>
+                🌸
               </div>
               <div className="stat-info">
                 <div className="stat-value">{stats.total}</div>
@@ -358,7 +358,7 @@ class Containers extends Component {
         {filteredContainers.length === 0 ? (
           <Card elevation={Elevation.TWO}>
             <EmptyState>
-              <div className="icon">🐸</div>
+              <div className="icon">🌸</div>
               <h3>No containers found</h3>
               <p>
                 Deploy Docker containers with the label<br />

@@ -9,7 +9,7 @@ import {
   Tag,
   Tooltip,
 } from "@blueprintjs/core";
-import { IconNames } from "@blueprintjs/icons";
+
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
@@ -46,18 +46,19 @@ const Flex = styled.div`
   gap: ${props => props.gap || 0}px;
 `;
 
+const LogoIcon = styled.span`
+  font-size: 24px;
+  margin-right: 0.5em;
+  filter: ${props => props.dark ? 'brightness(1.2)' : 'none'};
+`;
+
 const Navbar = ({ darkTheme, toggleDarkTheme, editMode, toggleEditMode }) => {
   return (
     <StyledNavbar>
       <Container>
         <NavbarGroup>
           <NavbarHeading>
-            <Icon
-              icon={IconNames.UNRESOLVE}
-              size={Icon.SIZE_LARGE}
-              intent={Intent.SUCCESS}
-              style={{ paddingRight: "0.5em" }}
-            />
+            <LogoIcon dark={darkTheme}>🌸</LogoIcon>
             Lilypad
             <Tag
               intent={Intent.SUCCESS}

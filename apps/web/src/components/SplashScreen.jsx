@@ -83,7 +83,7 @@ const LoadingBar = styled.div`
     left: 0;
     height: 100%;
     width: 40%;
-    background: ${props => props.dark ? '#0f9960' : '#0f9960'};
+    background: ${props => props.dark ? '#ff85a1' : '#ff6b8a'};
     border-radius: 3px;
     animation: ${pulse} 1.5s ease-in-out infinite;
   }
@@ -114,7 +114,7 @@ const SplashScreen = ({ dark }) => {
 
   return (
     <SplashContainer dark={dark} hide={hide}>
-      <Logo>🐸</Logo>
+      <Logo>🌸</Logo>
       <Title dark={dark}>Lilypad X</Title>
       <Subtitle dark={dark}>Docker Container Management</Subtitle>
       <LoadingBar dark={dark} />

@@ -97,10 +97,12 @@ const IconContainer = styled.div`
   background: ${props => props.state === 'running' ? 'rgba(15, 153, 96, 0.2)' :
     props.state === 'exited' ? 'rgba(219, 55, 55, 0.2)' :
     props.state === 'paused' ? 'rgba(217, 130, 43, 0.2)' :
+    props.state === 'pinned' ? 'rgba(255, 107, 138, 0.2)' :
     'rgba(41, 101, 204, 0.2)'};
   color: ${props => props.state === 'running' ? '#0f9960' :
     props.state === 'exited' ? '#db3737' :
     props.state === 'paused' ? '#d9822b' :
+    props.state === 'pinned' ? '#ff6b8a' :
     '#2965cc'};
   
   @media (max-width: 768px) {
@@ -145,16 +147,16 @@ const MetaRow = styled.div`
   }
   
   .container-tag {
-    background: rgba(128, 128, 128, 0.2);
+    background: rgba(255, 107, 138, 0.12);
     padding: 2px 8px;
     border-radius: 12px;
     font-size: 11px;
     font-weight: 500;
-    color: var(--text-muted, #5c7080);
+    color: #ff6b8a;
     
     .bp5-dark & {
-      background: rgba(255, 255, 255, 0.15);
-      color: #a7b6c2;
+      background: rgba(255, 133, 161, 0.25);
+      color: #ff85a1;
     }
   }
 `;
