@@ -278,7 +278,7 @@ class Containers extends Component {
             
             <StatCard elevation={Elevation.ONE}>
               <div className="stat-icon" style={{ background: "#f5f8fa", color: "#5c7080" }}>
-                ∑
+                🐳
               </div>
               <div className="stat-info">
                 <div className="stat-value">{stats.total}</div>

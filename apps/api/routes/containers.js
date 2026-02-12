@@ -24,6 +24,8 @@ const CONTAINER_PAUSE = (id) => `${DOCKER_SOCK}/containers/${id}/pause`;
 const CONTAINER_UNPAUSE = (id) => `${DOCKER_SOCK}/containers/${id}/unpause`;
 const CONTAINER_LOGS = (id) =>
   `${DOCKER_SOCK}/containers/${id}/logs?stdout=true&stderr=true&tail=200`;
+const CONTAINER_STATS = (id) =>
+  `${DOCKER_SOCK}/containers/${id}/stats?stream=false`;
 
 const PINNED = new Set();
 
@@ -184,6 +186,35 @@ router.post("/:containerId/unpause", async (req, res) => {
   } catch (error) {
     res.sendStatus(error.statusCode);
     console.error("Error", error);
+  }
+});
+
+router.get("/:containerId/stats", async (req, res) => {
+  console.log(CONTAINER_STATS(req.params.containerId));
+
+  try {
+    const data = await _got(CONTAINER_STATS(req.params.containerId));
+    const stats = JSON.parse(data.body);
+    
+    // Calculate CPU percentage
+    const cpuDelta = stats.cpu_stats.cpu_usage.total_usage - stats.precpu_stats.cpu_usage.total_usage;
+    const systemDelta = stats.cpu_stats.system_cpu_usage - stats.precpu_stats.system_cpu_usage;
+    const cpuPercent = (cpuDelta / systemDelta) * stats.cpu_stats.online_cpus * 100;
+    
+    // Calculate memory usage
+    const memoryUsage = stats.memory_stats.usage || 0;
+    const memoryLimit = stats.memory_stats.limit || 1;
+    const memoryPercent = (memoryUsage / memoryLimit) * 100;
+    
+    res.send({
+      cpuPercent: Math.round(cpuPercent * 100) / 100,
+      memoryPercent: Math.round(memoryPercent * 100) / 100,
+      memoryUsage: Math.round(memoryUsage / 1024 / 1024 * 100) / 100, // MB
+      memoryLimit: Math.round(memoryLimit / 1024 / 1024 * 100) / 100, // MB
+    });
+  } catch (error) {
+    res.status(500).send({ error: "Failed to get stats" });
+    console.error("Error getting stats:", error);
   }
 });
 

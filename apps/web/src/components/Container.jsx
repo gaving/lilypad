@@ -105,6 +105,36 @@ const MetaRow = styled.div`
   color: var(--text-muted, #5c7080);
 `;
 
+const LoadIndicator = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  
+  .load-bar {
+    width: 60px;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    
+    .bp5-dark & {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+  
+  .load-fill {
+    height: 100%;
+    background: ${props => props.load > 80 ? '#db3737' : props.load > 50 ? '#d9822b' : '#0f9960'};
+    transition: width 0.3s ease;
+  }
+  
+  .load-text {
+    font-size: 11px;
+    font-weight: 600;
+    color: ${props => props.load > 80 ? '#db3737' : props.load > 50 ? '#d9822b' : '#0f9960'};
+  }
+`;
+
 const StatusDot = styled.span`
   width: 8px;
   height: 8px;
@@ -185,6 +215,7 @@ class Container extends Component {
     stopIsLoading: false,
     removeIsLoading: false,
     pinIsLoading: false,
+    stats: null,
   };
 
   componentDidMount() {
@@ -192,7 +223,34 @@ class Container extends Component {
     if (openContainers?.includes(this.props.container.Id)) {
       this.setOpen(true);
     }
+    this.fetchStats();
+    // Refresh stats every 5 seconds
+    this.statsInterval = setInterval(() => this.fetchStats(), 5000);
   }
+
+  componentWillUnmount() {
+    if (this.statsInterval) {
+      clearInterval(this.statsInterval);
+    }
+  }
+
+  fetchStats = async () => {
+    const { container } = this.props;
+    if (container.State !== "running") {
+      this.setState({ stats: null });
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/containers/${container.Id}/stats`);
+      if (response.ok) {
+        const stats = await response.json();
+        this.setState({ stats });
+      }
+    } catch (error) {
+      console.error("Failed to fetch stats:", error);
+    }
+  };
 
   setOpen = (open) => {
     const { container } = this.props;
@@ -409,6 +467,20 @@ class Container extends Component {
                 <Tag minimal>{tag}</Tag>
                 <span>•</span>
                 <span>{moment.unix(container.Created).fromNow()}</span>
+                {this.state.stats && (
+                  <>
+                    <span>•</span>
+                    <LoadIndicator load={this.state.stats.cpuPercent}>
+                      <div className="load-bar">
+                        <div 
+                          className="load-fill" 
+                          style={{ width: `${Math.min(this.state.stats.cpuPercent, 100)}%` }}
+                        />
+                      </div>
+                      <span className="load-text">{this.state.stats.cpuPercent}%</span>
+                    </LoadIndicator>
+                  </>
+                )}
               </MetaRow>
             </Info>
           </LeftSection>
