@@ -5,6 +5,7 @@ import styled from "styled-components";
 
 import Navbar from "./components/Navbar.jsx";
 import Containers from "./components/pages/Containers.jsx";
+import SplashScreen from "./components/SplashScreen.jsx";
 
 const Main = styled.div`
   display: inline-flex;
@@ -49,6 +50,7 @@ class App extends Component {
   render() {
     return (
       <Main className={this.state.dark ? "bp5-dark" : ""} style={{ background: this.state.dark ? "#1a1d21" : "#f6f8fa" }}>
+        <SplashScreen dark={this.state.dark} />
         <Navbar
           darkTheme={this.state.dark}
           toggleDarkTheme={this.toggleDarkTheme}
