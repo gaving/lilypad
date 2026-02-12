@@ -578,6 +578,8 @@ class Container extends Component {
                 </span>
                 <span className="hide-mobile">•</span>
                 <Tag minimal className="hide-mobile">{tag}</Tag>
+                <span>•</span>
+                <span>{moment.unix(container.Created).fromNow()}</span>
                 {this.state.stats && (
                   <>
                     <span className="hide-mobile">•</span>
