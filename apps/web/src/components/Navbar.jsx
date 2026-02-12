@@ -6,7 +6,6 @@ import {
   Navbar as Nav,
   NavbarGroup,
   NavbarHeading,
-  Tag,
   Tooltip,
 } from "@blueprintjs/core";
 
@@ -52,6 +51,28 @@ const LogoIcon = styled.span`
   filter: ${props => props.dark ? 'brightness(1.2)' : 'none'};
 `;
 
+const VersionBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.5em;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #ff6b8a;
+  background: rgba(255, 107, 138, 0.15);
+  border: 1px solid rgba(255, 107, 138, 0.3);
+  border-radius: 12px;
+  text-transform: uppercase;
+  
+  .bp5-dark & {
+    color: #ff85a1;
+    background: rgba(255, 133, 161, 0.25);
+    border-color: rgba(255, 133, 161, 0.4);
+  }
+`;
+
 const Navbar = ({ darkTheme, toggleDarkTheme, editMode, toggleEditMode }) => {
   return (
     <StyledNavbar>
@@ -60,14 +81,7 @@ const Navbar = ({ darkTheme, toggleDarkTheme, editMode, toggleEditMode }) => {
           <NavbarHeading>
             <LogoIcon dark={darkTheme}>🌸</LogoIcon>
             Lilypad
-            <Tag
-              intent={Intent.SUCCESS}
-              minimal
-              round
-              style={{ marginLeft: "0.5em" }}
-            >
-              X
-            </Tag>
+            <VersionBadge>X</VersionBadge>
           </NavbarHeading>
         </NavbarGroup>
         <NavbarGroup align={Alignment.RIGHT}>
