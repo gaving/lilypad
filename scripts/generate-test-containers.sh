@@ -47,6 +47,18 @@ APP_NAMES=(
 	"docs" "wiki" "help" "faq" "sitemap"
 )
 
+# Long app names for testing text truncation
+LONG_APP_NAMES=(
+	"user-authentication-service-v2"
+	"payment-processing-gateway-integration"
+	"real-time-notification-delivery-system"
+	"machine-learning-model-training-pipeline"
+	"content-delivery-network-edge-cache"
+	"microservice-communication-message-bus"
+	"distributed-database-cluster-manager"
+	"kubernetes-container-orchestration-controller"
+)
+
 # Array of environments
 ENVS=("dev" "staging" "prod" "test" "demo")
 
@@ -63,6 +75,36 @@ generate_container() {
 	local url="http://${app_name}-${env}.local:${idx}"
 
 	echo -e "${BLUE}Creating:${NC} ${YELLOW}${container_name}${NC} with emoji :${emoji}:"
+
+	docker run -d \
+		--name "${container_name}" \
+		--label "org.domain.review.name=${container_name}" \
+		--label "org.domain.review.desc=${description}" \
+		--label "org.domain.review.icon=${emoji}" \
+		--label "org.domain.review.url=${url}" \
+		-p ${idx} \
+		nginx:alpine >/dev/null 2>&1
+
+	if [ $? -eq 0 ]; then
+		echo -e "${GREEN}✓ Created successfully${NC}"
+	else
+		echo -e "\033[0;31m✗ Failed to create${NC}"
+	fi
+}
+
+# Function to generate container with long name for testing truncation
+generate_long_name_container() {
+	local idx=$1
+	local app_name=${LONG_APP_NAMES[$RANDOM % ${#LONG_APP_NAMES[@]}]}
+	local env=${ENVS[$RANDOM % ${#ENVS[@]}]}
+	local emoji=${EMOJIS[$RANDOM % ${#EMOJIS[@]}]}
+	local random_id=$(openssl rand -hex 4)
+
+	local container_name="${app_name}-${env}-${random_id}"
+	local description="$(echo "${app_name}" | awk '{print toupper(substr($0,1,1))substr($0,2)}') ${env} environment - This is a very long description to test text truncation in the UI"
+	local url="http://${app_name}-${env}.local:${idx}"
+
+	echo -e "${BLUE}Creating long name:${NC} ${YELLOW}${container_name}${NC}"
 
 	docker run -d \
 		--name "${container_name}" \
@@ -115,6 +157,7 @@ main() {
 	local count=5
 	local cleanup=false
 	local status=false
+	local long_names=false
 
 	while [[ $# -gt 0 ]]; do
 		case $1 in
@@ -130,11 +173,16 @@ main() {
 			status=true
 			shift
 			;;
+		--long-names)
+			long_names=true
+			shift
+			;;
 		-h | --help)
 			echo "Usage: $0 [OPTIONS]"
 			echo ""
 			echo "Options:"
 			echo "  -c, --count N     Generate N containers (default: 5)"
+			echo "  --long-names      Include containers with long names (for testing UI truncation)"
 			echo "  --cleanup         Remove all test containers"
 			echo "  --status          Show status of test containers"
 			echo "  -h, --help        Show this help message"
@@ -142,6 +190,7 @@ main() {
 			echo "Examples:"
 			echo "  $0                    # Generate 5 test containers"
 			echo "  $0 -c 10              # Generate 10 test containers"
+			echo "  $0 --long-names       # Generate containers with long names"
 			echo "  $0 --cleanup          # Remove all test containers"
 			echo "  $0 --status           # Show container status"
 			exit 0
@@ -167,14 +216,24 @@ main() {
 	fi
 
 	# Generate containers
-	echo -e "Generating ${YELLOW}${count}${NC} test containers...\n"
+	if [ "$long_names" = true ]; then
+		echo -e "Generating ${YELLOW}${count}${NC} test containers with long names...\n"
+	else
+		echo -e "Generating ${YELLOW}${count}${NC} test containers...\n"
+	fi
 
 	# Use port range starting from 8080
 	local base_port=8080
 
 	for i in $(seq 1 $count); do
 		local port=$((base_port + i))
-		generate_container $port
+
+		# If --long-names flag is set, create every 3rd container with a long name
+		if [ "$long_names" = true ] && [ $((i % 3)) -eq 0 ]; then
+			generate_long_name_container $port
+		else
+			generate_container $port
+		fi
 		sleep 0.1
 	done
 
