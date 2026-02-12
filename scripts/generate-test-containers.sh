@@ -11,30 +11,26 @@ BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Array of emojis
+# Array of emojis - using GitHub/Slack compatible shortcodes
 EMOJIS=(
-	"rocket" "fire" "star" "heart" "zap" "bulb" "hammer" "gear"
-	"bug" "tada" "sparkles" "100" "trophy" "medal" "crown"
-	"coffee" "pizza" "beer" "wine" "cookie"
-	"computer" "keyboard" "mouse" "printer" "battery"
-	"book" "memo" "calendar" "clock" "alarm"
-	"phone" "email" "mailbox" "package" "gift"
+	"rocket" "fire" "star" "heart" "zap" "bulb" "hammer"
+	"bug" "tada" "sparkles" "trophy" "medal"
+	"coffee" "pizza"
+	"computer" "keyboard" "desktop_computer" "floppy_disk"
+	"book" "memo" "calendar" "date"
+	"phone" "email" "package" "gift"
 	"car" "taxi" "bus" "train" "airplane"
-	"house" "building" "hotel" "bank" "hospital"
-	"tree" "flower" "herb" "mushroom" "cactus"
-	"dog" "cat" "mouse2" "rabbit" "fox"
-	"sun" "moon" "cloud" "rain" "snow"
-	"anchor" "ship" "boat" "swimmer" "surfer"
-	"basketball" "football" "tennis" "golf" "medal"
-	"guitar" "musical" "microphone" "headphones" "radio"
-	"camera" "video" "movie" "tv" "projector"
-	"art" "performing" "circus" "ticket" "clapper"
-	"world" "earth" "globe" "map" "compass"
-	"flag" "flags" "triangular" "checkered" "crossed"
-	"lock" "unlock" "key" "mag" "mag_right"
-	"wrench" "nut" "bolt" "gear" "tools"
-	"shield" "check" "x" "warning" "no_entry"
-	"smile" "sunglasses" "laughing" "wink" "blush"
+	"house" "building" "bank" "hospital"
+	"tree" "herb" "cactus"
+	"dog" "cat" "rabbit" "fox"
+	"sun" "moon" "cloud" "sunny" "partly_sunny"
+	"anchor" "ship"
+	"basketball" "football" "tennis"
+	"guitar" "microphone" "headphones"
+	"camera" "video_camera" "movie_camera"
+	"lock" "unlock" "key"
+	"wrench" "gear"
+	"smile" "sunglasses" "wink"
 )
 
 # Array of app names
