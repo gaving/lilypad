@@ -235,11 +235,6 @@ class Containers extends Component {
 
     return (
       <Page>
-        <Header>
-          <h1>Containers</h1>
-          <p>Manage and monitor your Docker containers</p>
-        </Header>
-
         {filteredContainers.length > 0 && (
           <StatsRow>
             <StatCard elevation={Elevation.ONE}>
