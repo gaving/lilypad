@@ -211,17 +211,24 @@ class Container extends Component {
     localStorage.setItem("openContainers", JSON.stringify(openContainers));
   };
 
-  handleAction = async (action, endpoint, method = "POST") => {
+  handleAction = async (action, endpoint, method = "POST", body = null) => {
     const { container, showToast, updateContainer } = this.props;
     const loadingKey = `${action}IsLoading`;
     
     this.setState({ [loadingKey]: true });
     
     try {
-      const response = await fetch(endpoint, { method });
+      const options = { method };
+      if (body) {
+        options.headers = { "Content-Type": "application/json" };
+        options.body = JSON.stringify(body);
+      }
+      
+      const response = await fetch(endpoint, options);
       
       let status, intent;
       switch (response.status) {
+        case 200:
         case 204:
           status = action === 'pin' ? 'Container pinned' : 
                    action === 'unpin' ? 'Container unpinned' :
@@ -269,7 +276,12 @@ class Container extends Component {
         loading={pinIsLoading}
         onClick={(e) => {
           e.stopPropagation();
-          this.handleAction("pin", "/api/containers/pin", "POST");
+          this.handleAction(
+            "pin",
+            "/api/containers/pin",
+            "POST",
+            { containerName: container.Names[0] }
+          );
         }}
       >
         {container.State === "pinned" ? "Unpin" : "Pin"}
