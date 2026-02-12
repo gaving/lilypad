@@ -37,6 +37,11 @@ const ContainerCard = styled(Card)`
   border: 1px solid transparent;
   background-color: var(--card-bg, #ffffff) !important;
   
+  @media (max-width: 768px) {
+    margin-bottom: 8px;
+    border-radius: 8px;
+  }
+  
   &:hover {
     transform: translateY(-1px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
@@ -59,6 +64,12 @@ const Header = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
+  
+  @media (max-width: 768px) {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 `;
 
 const LeftSection = styled.div`
@@ -66,6 +77,12 @@ const LeftSection = styled.div`
   align-items: center;
   gap: 16px;
   flex: 1;
+  min-width: 0;
+  
+  @media (max-width: 768px) {
+    gap: 12px;
+    width: 100%;
+  }
 `;
 
 const IconContainer = styled.div`
@@ -76,6 +93,7 @@ const IconContainer = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 24px;
+  flex-shrink: 0;
   background: ${props => props.state === 'running' ? 'rgba(15, 153, 96, 0.1)' :
     props.state === 'exited' ? 'rgba(219, 55, 55, 0.1)' :
     props.state === 'paused' ? 'rgba(217, 130, 43, 0.1)' :
@@ -84,10 +102,19 @@ const IconContainer = styled.div`
     props.state === 'exited' ? '#db3737' :
     props.state === 'paused' ? '#d9822b' :
     '#2965cc'};
+  
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    border-radius: 10px;
+  }
 `;
 
 const Info = styled.div`
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
 `;
 
 const AppName = styled.div`
@@ -95,6 +122,13 @@ const AppName = styled.div`
   font-weight: 600;
   color: var(--text-color, #182026);
   margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
+  @media (max-width: 768px) {
+    font-size: 15px;
+  }
 `;
 
 const MetaRow = styled.div`
@@ -103,12 +137,22 @@ const MetaRow = styled.div`
   gap: 12px;
   font-size: 13px;
   color: var(--text-muted, #5c7080);
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    gap: 8px;
+    font-size: 12px;
+  }
 `;
 
 const LoadIndicator = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
   
   .load-bar {
     width: 60px;
@@ -154,8 +198,46 @@ const Actions = styled.div`
   opacity: 0.6;
   transition: opacity 0.2s;
   
+  @media (max-width: 768px) {
+    opacity: 1;
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 4px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    
+    .bp5-dark & {
+      border-top-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+  
   ${ContainerCard}:hover & {
     opacity: 1;
+  }
+`;
+
+const MobileActions = styled.div`
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    margin-top: 8px;
+    
+    .bp3-button {
+      flex: 1;
+      justify-content: center;
+    }
+  }
+`;
+
+const DesktopActions = styled.div`
+  display: flex;
+  gap: 8px;
+  
+  @media (max-width: 768px) {
+    display: none;
   }
 `;
 
@@ -166,6 +248,10 @@ const ExpandedContent = styled.div`
   .bp5-dark & {
     border-top-color: rgba(255, 255, 255, 0.1);
   }
+  
+  @media (max-width: 768px) {
+    padding: 0 16px 16px;
+  }
 `;
 
 const QuickActions = styled.div`
@@ -173,6 +259,12 @@ const QuickActions = styled.div`
   gap: 8px;
   padding: 16px 0;
   margin-bottom: 16px;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    padding: 12px 0;
+    margin-bottom: 12px;
+  }
 `;
 
 const DetailsGrid = styled.div`
@@ -180,6 +272,12 @@ const DetailsGrid = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
   margin-bottom: 16px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
 `;
 
 const DetailItem = styled.div`
@@ -199,10 +297,24 @@ const DetailItem = styled.div`
     color: var(--text-color, #182026);
     word-break: break-all;
   }
+  
+  @media (max-width: 768px) {
+    label {
+      font-size: 10px;
+    }
+    
+    value {
+      font-size: 12px;
+    }
+  }
 `;
 
 const LogsSection = styled.div`
   margin-top: 16px;
+  
+  @media (max-width: 768px) {
+    margin-top: 12px;
+  }
 `;
 
 class Container extends Component {
@@ -463,13 +575,11 @@ class Container extends Component {
                   <StatusDot state={container.State} />
                   {container.State}
                 </span>
-                <span>•</span>
-                <Tag minimal>{tag}</Tag>
-                <span>•</span>
-                <span>{moment.unix(container.Created).fromNow()}</span>
+                <span className="hide-mobile">•</span>
+                <Tag minimal className="hide-mobile">{tag}</Tag>
                 {this.state.stats && (
                   <>
-                    <span>•</span>
+                    <span className="hide-mobile">•</span>
                     <LoadIndicator load={this.state.stats.cpuPercent}>
                       <div className="load-bar">
                         <div 
@@ -485,7 +595,7 @@ class Container extends Component {
             </Info>
           </LeftSection>
           
-          <Actions onClick={(e) => e.stopPropagation()}>
+          <DesktopActions>
             <CopyToClipboard
               text={url}
               onCopy={this.copyToClipboard}
@@ -508,8 +618,30 @@ class Container extends Component {
               minimal
               icon={isOpen ? "chevron-up" : "chevron-down"}
             />
-          </Actions>
+          </DesktopActions>
+          
+          <Button
+            minimal
+            icon={isOpen ? "chevron-up" : "chevron-down"}
+            className="mobile-only"
+          />
         </Header>
+        
+        <MobileActions>
+          <CopyToClipboard
+            text={url}
+            onCopy={this.copyToClipboard}
+          >
+            <Button icon="clipboard" text="Copy" />
+          </CopyToClipboard>
+          
+          <AnchorButton
+            icon="share"
+            text="Open"
+            href={url}
+            target="_blank"
+          />
+        </MobileActions>
         
         <Collapse isOpen={isOpen}>
           <ExpandedContent>
@@ -526,7 +658,7 @@ class Container extends Component {
                 <label>Image</label>
                 <value>{container.Image}</value>
               </DetailItem>
-              <DetailItem>
+              <DetailItem className="hide-mobile">
                 <label>Created</label>
                 <value>{moment.unix(container.Created).format("MMM Do YYYY, h:mm:ss a")}</value>
               </DetailItem>

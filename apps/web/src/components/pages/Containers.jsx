@@ -19,6 +19,10 @@ const Page = styled.div`
   padding: 32px 24px;
   min-height: 100vh;
   background: inherit;
+  
+  @media (max-width: 768px) {
+    padding: 16px 12px;
+  }
 `;
 
 const Header = styled.div`
@@ -43,6 +47,16 @@ const StatsRow = styled.div`
   gap: 16px;
   margin-bottom: 32px;
   flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    gap: 8px;
+    margin-bottom: 20px;
+    
+    > * {
+      flex: 1 1 calc(50% - 8px);
+      min-width: calc(50% - 8px);
+    }
+  }
 `;
 
 const StatCard = styled(Card)`
@@ -57,6 +71,12 @@ const StatCard = styled(Card)`
     background-color: #252a31 !important;
   }
   
+  @media (max-width: 768px) {
+    min-width: unset;
+    padding: 12px;
+    gap: 8px;
+  }
+  
   .stat-icon {
     width: 40px;
     height: 40px;
@@ -65,6 +85,12 @@ const StatCard = styled(Card)`
     align-items: center;
     justify-content: center;
     font-size: 18px;
+    
+    @media (max-width: 768px) {
+      width: 32px;
+      height: 32px;
+      font-size: 14px;
+    }
   }
   
   .stat-info {
@@ -76,6 +102,10 @@ const StatCard = styled(Card)`
       line-height: 1;
       margin-bottom: 4px;
       color: var(--text-color, #182026);
+      
+      @media (max-width: 768px) {
+        font-size: 18px;
+      }
     }
     
     .stat-label {
@@ -83,6 +113,10 @@ const StatCard = styled(Card)`
       color: var(--text-muted, #5c7080);
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      
+      @media (max-width: 768px) {
+        font-size: 10px;
+      }
     }
   }
 `;
