@@ -26,6 +26,7 @@ const Container = styled.div`
   max-width: 1750px;
   width: 100%;
   margin: auto;
+  color: var(--text-color, #182026);
 `;
 
 const Flex = styled.div`
