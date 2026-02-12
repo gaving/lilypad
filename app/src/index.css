@@ -2,6 +2,20 @@
 @import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 @import "@blueprintjs/select/lib/css/blueprint-select.css";
 
+:root {
+  --text-color: #182026;
+  --text-muted: #5c7080;
+  --bg-color: #f6f8fa;
+  --card-bg: #ffffff;
+}
+
+.bp5-dark {
+  --text-color: #f5f8fa;
+  --text-muted: #a7b6c2;
+  --bg-color: #1a1d21;
+  --card-bg: #252a31;
+}
+
 html {
   height: 100%;
 }
