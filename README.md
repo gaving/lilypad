@@ -51,6 +51,27 @@ lilypad/
 - [pnpm](https://pnpm.io/) 9.x or higher
 - [Docker](https://www.docker.com/) (for running the app)
 
+**OR** use [Nix](https://nixos.org/) (recommended) - provides everything automatically
+
+### 🧰 Using Nix (Recommended)
+
+If you have Nix installed with flakes enabled:
+
+```bash
+# Enter development shell
+nix develop
+
+# Or with direnv (automatic when entering directory)
+direnv allow
+```
+
+This provides:
+- Node.js 24 LTS
+- pnpm 9.x
+- All required tools
+
+Then skip to Step 2 in Installation below.
+
 ### Installation
 
 1. **Clone the repository**
