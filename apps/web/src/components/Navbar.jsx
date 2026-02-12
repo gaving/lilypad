@@ -12,6 +12,16 @@ import { IconNames } from "@blueprintjs/icons";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
+const StyledNavbar = styled(Nav)`
+  background-color: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  
+  .bp5-dark & {
+    background-color: #252a31 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+  }
+`;
+
 const Container = styled.div`
   max-width: 1750px;
   width: 100%;
@@ -25,7 +35,7 @@ const Flex = styled.div`
 
 const Navbar = ({ darkTheme, toggleDarkTheme }) => {
   return (
-    <Nav>
+    <StyledNavbar>
       <Container>
         <NavbarGroup>
           <NavbarHeading>
@@ -54,7 +64,7 @@ const Navbar = ({ darkTheme, toggleDarkTheme }) => {
           </Flex>
         </NavbarGroup>
       </Container>
-    </Nav>
+    </StyledNavbar>
   );
 };
 
