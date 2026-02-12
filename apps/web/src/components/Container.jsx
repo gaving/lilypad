@@ -232,43 +232,12 @@ const Actions = styled.div`
   }
 `;
 
-const MobileActions = styled.div`
-  display: none;
-  
-  @media (max-width: 768px) {
-    display: flex;
-    gap: 8px;
-    width: 100%;
-    margin-top: 8px;
-    padding: 0 4px;
-    
-    .bp5-button {
-      flex: 1;
-      justify-content: center;
-      min-height: 40px;
-    }
-    
-    /* Dark mode styling for mobile buttons */
-    .bp5-dark & {
-      .bp5-button {
-        background-color: #3a3f47 !important;
-        color: #f5f8fa !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        
-        &:hover {
-          background-color: #4a5059 !important;
-        }
-      }
-    }
-  }
-`;
-
 const DesktopActions = styled.div`
   display: flex;
   gap: 8px;
   
   @media (max-width: 768px) {
-    display: none;
+    gap: 4px;
   }
 `;
 
@@ -642,19 +611,13 @@ class Container extends Component {
               minimal
               icon={isOpen ? "chevron-up" : "chevron-down"}
               className="mobile-only"
+              onClick={(e) => {
+                e.stopPropagation();
+                this.setOpen();
+              }}
             />
           )}
         </Header>
-        
-        <MobileActions onClick={(e) => e.stopPropagation()}>
-          <AnchorButton
-            icon="share"
-            text="Open"
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-          />
-        </MobileActions>
         
         <Collapse isOpen={editMode && isOpen}>
           <ExpandedContent>
