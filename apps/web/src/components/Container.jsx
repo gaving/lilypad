@@ -600,13 +600,13 @@ class Container extends Component {
             </Info>
           </LeftSection>
           
-          <DesktopActions>
+          <DesktopActions onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
             <CopyToClipboard
               text={url}
               onCopy={this.copyToClipboard}
             >
               <Tooltip content="Copy URL">
-                <Button minimal icon="clipboard" onClick={(e) => e.stopPropagation()} />
+                <Button minimal icon="clipboard" />
               </Tooltip>
             </CopyToClipboard>
             
@@ -616,7 +616,6 @@ class Container extends Component {
                 icon="share"
                 href={url}
                 target="_blank"
-                onClick={(e) => e.stopPropagation()}
               />
             </Tooltip>
             
@@ -641,12 +640,12 @@ class Container extends Component {
           )}
         </Header>
         
-        <MobileActions>
+        <MobileActions onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
           <CopyToClipboard
             text={url}
             onCopy={this.copyToClipboard}
           >
-            <Button icon="clipboard" text="Copy" onClick={(e) => e.stopPropagation()} />
+            <Button icon="clipboard" text="Copy" />
           </CopyToClipboard>
           
           <AnchorButton
@@ -654,7 +653,6 @@ class Container extends Component {
             text="Open"
             href={url}
             target="_blank"
-            onClick={(e) => e.stopPropagation()}
           />
         </MobileActions>
         
