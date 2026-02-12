@@ -601,27 +601,24 @@ class Container extends Component {
           </LeftSection>
           
           <DesktopActions>
-            <div onClick={(e) => e.stopPropagation()}>
-              <CopyToClipboard
-                text={url}
-                onCopy={this.copyToClipboard}
-              >
-                <Tooltip content="Copy URL">
-                  <Button minimal icon="clipboard" />
-                </Tooltip>
-              </CopyToClipboard>
-            </div>
-            
-            <div onClick={(e) => e.stopPropagation()}>
-              <Tooltip content="Open in browser">
-                <AnchorButton
-                  minimal
-                  icon="share"
-                  href={url}
-                  target="_blank"
-                />
+            <CopyToClipboard
+              text={url}
+              onCopy={this.copyToClipboard}
+            >
+              <Tooltip content="Copy URL">
+                <Button minimal icon="clipboard" onClick={(e) => e.stopPropagation()} />
               </Tooltip>
-            </div>
+            </CopyToClipboard>
+            
+            <Tooltip content="Open in browser">
+              <AnchorButton
+                minimal
+                icon="share"
+                href={url}
+                target="_blank"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </Tooltip>
             
             {editMode && (
               <Button
@@ -645,23 +642,20 @@ class Container extends Component {
         </Header>
         
         <MobileActions>
-          <span onClick={(e) => e.stopPropagation()}>
-            <CopyToClipboard
-              text={url}
-              onCopy={this.copyToClipboard}
-            >
-              <Button icon="clipboard" text="Copy" />
-            </CopyToClipboard>
-          </span>
+          <CopyToClipboard
+            text={url}
+            onCopy={this.copyToClipboard}
+          >
+            <Button icon="clipboard" text="Copy" onClick={(e) => e.stopPropagation()} />
+          </CopyToClipboard>
           
-          <span onClick={(e) => e.stopPropagation()}>
-            <AnchorButton
-              icon="share"
-              text="Open"
-              href={url}
-              target="_blank"
-            />
-          </span>
+          <AnchorButton
+            icon="share"
+            text="Open"
+            href={url}
+            target="_blank"
+            onClick={(e) => e.stopPropagation()}
+          />
         </MobileActions>
         
         <Collapse isOpen={editMode && isOpen}>
