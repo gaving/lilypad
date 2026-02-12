@@ -94,10 +94,10 @@ const IconContainer = styled.div`
   justify-content: center;
   font-size: 24px;
   flex-shrink: 0;
-  background: ${props => props.state === 'running' ? 'rgba(15, 153, 96, 0.1)' :
-    props.state === 'exited' ? 'rgba(219, 55, 55, 0.1)' :
-    props.state === 'paused' ? 'rgba(217, 130, 43, 0.1)' :
-    'rgba(41, 101, 204, 0.1)'};
+  background: ${props => props.state === 'running' ? 'rgba(15, 153, 96, 0.2)' :
+    props.state === 'exited' ? 'rgba(219, 55, 55, 0.2)' :
+    props.state === 'paused' ? 'rgba(217, 130, 43, 0.2)' :
+    'rgba(41, 101, 204, 0.2)'};
   color: ${props => props.state === 'running' ? '#0f9960' :
     props.state === 'exited' ? '#db3737' :
     props.state === 'paused' ? '#d9822b' :
