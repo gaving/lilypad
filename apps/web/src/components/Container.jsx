@@ -555,7 +555,7 @@ class Container extends Component {
   };
 
   render() {
-    const { container } = this.props;
+    const { container, editMode } = this.props;
     const { isOpen } = this.state;
     
     const rawIcon = container.Labels[VITE_CONTAINER_ICON] ?? "package";
@@ -567,7 +567,7 @@ class Container extends Component {
     
     return (
       <ContainerCard elevation={Elevation.TWO}>
-        <Header onClick={() => this.setOpen()}>
+        <Header onClick={editMode ? () => this.setOpen() : undefined} style={{ cursor: editMode ? 'pointer' : 'default' }}>
           <LeftSection>
             <IconContainer state={container.State}>
               <Emoji text={icon} />
@@ -619,40 +619,48 @@ class Container extends Component {
               />
             </Tooltip>
             
+            {editMode && (
+              <Button
+                minimal
+                icon={isOpen ? "chevron-up" : "chevron-down"}
+              />
+            )}
+          </DesktopActions>
+          
+          {editMode && (
             <Button
               minimal
               icon={isOpen ? "chevron-up" : "chevron-down"}
+              className="mobile-only"
             />
-          </DesktopActions>
-          
-          <Button
-            minimal
-            icon={isOpen ? "chevron-up" : "chevron-down"}
-            className="mobile-only"
-          />
+          )}
         </Header>
         
-        <MobileActions>
-          <CopyToClipboard
-            text={url}
-            onCopy={this.copyToClipboard}
-          >
-            <Button icon="clipboard" text="Copy" />
-          </CopyToClipboard>
-          
-          <AnchorButton
-            icon="share"
-            text="Open"
-            href={url}
-            target="_blank"
-          />
-        </MobileActions>
+        {editMode && (
+          <MobileActions>
+            <CopyToClipboard
+              text={url}
+              onCopy={this.copyToClipboard}
+            >
+              <Button icon="clipboard" text="Copy" />
+            </CopyToClipboard>
+            
+            <AnchorButton
+              icon="share"
+              text="Open"
+              href={url}
+              target="_blank"
+            />
+          </MobileActions>
+        )}
         
-        <Collapse isOpen={isOpen}>
+        <Collapse isOpen={editMode && isOpen}>
           <ExpandedContent>
-            <QuickActions>
-              {this.getActionButtons()}
-            </QuickActions>
+            {editMode && (
+              <QuickActions>
+                {this.getActionButtons()}
+              </QuickActions>
+            )}
             
             <DetailsGrid>
               <DetailItem>
@@ -687,6 +695,11 @@ Container.propTypes = {
   container: PropTypes.object.isRequired,
   showToast: PropTypes.func.isRequired,
   updateContainer: PropTypes.func.isRequired,
+  editMode: PropTypes.bool,
+};
+
+Container.defaultProps = {
+  editMode: false,
 };
 
 export default Container;

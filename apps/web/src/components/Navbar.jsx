@@ -7,6 +7,7 @@ import {
   NavbarGroup,
   NavbarHeading,
   Tag,
+  Tooltip,
 } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import PropTypes from "prop-types";
@@ -42,9 +43,10 @@ const Container = styled.div`
 const Flex = styled.div`
   display: flex;
   align-items: center;
+  gap: ${props => props.gap || 0}px;
 `;
 
-const Navbar = ({ darkTheme, toggleDarkTheme }) => {
+const Navbar = ({ darkTheme, toggleDarkTheme, editMode, toggleEditMode }) => {
   return (
     <StyledNavbar>
       <Container>
@@ -68,7 +70,16 @@ const Navbar = ({ darkTheme, toggleDarkTheme }) => {
           </NavbarHeading>
         </NavbarGroup>
         <NavbarGroup align={Alignment.RIGHT}>
-          <Flex align="center">
+          <Flex align="center" gap={8}>
+            <Tooltip content={editMode ? "Disable edit mode" : "Enable edit mode"}>
+              <Button 
+                minimal 
+                intent={editMode ? Intent.WARNING : Intent.NONE}
+                onClick={() => toggleEditMode()}
+              >
+                <Icon icon={editMode ? "unlock" : "lock"} />
+              </Button>
+            </Tooltip>
             <Button minimal onClick={() => toggleDarkTheme()}>
               <Icon icon={darkTheme ? "flash" : "moon"} />
             </Button>
@@ -82,6 +93,8 @@ const Navbar = ({ darkTheme, toggleDarkTheme }) => {
 Navbar.propTypes = {
   darkTheme: PropTypes.bool.isRequired,
   toggleDarkTheme: PropTypes.func.isRequired,
+  editMode: PropTypes.bool.isRequired,
+  toggleEditMode: PropTypes.func.isRequired,
 };
 
 export default Navbar;

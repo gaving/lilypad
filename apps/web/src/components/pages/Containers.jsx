@@ -392,6 +392,7 @@ class Containers extends Component {
                     container={container}
                     showToast={this.showToast}
                     updateContainer={this.updateContainer}
+                    editMode={this.props.editMode}
                   />
                 ))}
             </Section>

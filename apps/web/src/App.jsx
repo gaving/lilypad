@@ -25,6 +25,7 @@ const Container = styled(Card)`
 class App extends Component {
   state = {
     dark: false,
+    editMode: false,
   };
 
   setDarkInStorage = () => localStorage.setItem("dark", this.state.dark);
@@ -33,6 +34,10 @@ class App extends Component {
     if (dark === undefined)
       this.setState({ dark: !this.state.dark }, () => this.setDarkInStorage());
     else this.setState({ dark }, () => this.setDarkInStorage());
+  };
+
+  toggleEditMode = () => {
+    this.setState({ editMode: !this.state.editMode });
   };
 
   componentDidMount() {
@@ -47,11 +52,13 @@ class App extends Component {
         <Navbar
           darkTheme={this.state.dark}
           toggleDarkTheme={this.toggleDarkTheme}
+          editMode={this.state.editMode}
+          toggleEditMode={this.toggleEditMode}
         />
         <Container column="true" style={{ background: this.state.dark ? "#1a1d21" : "#f6f8fa" }}>
           <Routes>
             <Route element={<Navigate to="/containers" />} exact path="/" />
-            <Route element={<Containers />} path="/containers" />
+            <Route element={<Containers editMode={this.state.editMode} />} path="/containers" />
           </Routes>
         </Container>
       </Main>
