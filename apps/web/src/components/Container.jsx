@@ -347,6 +347,11 @@ class Container extends Component {
   }
 
   fetchStats = async () => {
+    // Skip if tab is not visible
+    if (document.visibilityState === "hidden") {
+      return;
+    }
+    
     const { container } = this.props;
     if (container.State !== "running") {
       this.setState({ stats: null });
