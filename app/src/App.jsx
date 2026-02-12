@@ -43,12 +43,12 @@ class App extends Component {
 
   render() {
     return (
-      <Main className={this.state.dark && "bp6-dark"}>
+      <Main className={this.state.dark ? "bp5-dark" : ""} style={{ background: this.state.dark ? "#1a1d21" : "#f6f8fa" }}>
         <Navbar
           darkTheme={this.state.dark}
           toggleDarkTheme={this.toggleDarkTheme}
         />
-        <Container column="true">
+        <Container column="true" style={{ background: this.state.dark ? "#1a1d21" : "#f6f8fa" }}>
           <Routes>
             <Route element={<Navigate to="/containers" />} exact path="/" />
             <Route element={<Containers />} path="/containers" />
