@@ -240,20 +240,23 @@ const MobileActions = styled.div`
     gap: 8px;
     width: 100%;
     margin-top: 8px;
+    padding: 0 4px;
     
-    .bp3-button {
+    .bp5-button {
       flex: 1;
       justify-content: center;
+      min-height: 40px;
     }
     
     /* Dark mode styling for mobile buttons */
     .bp5-dark & {
-      .bp3-button {
-        background: rgba(255, 255, 255, 0.08) !important;
+      .bp5-button {
+        background-color: #3a3f47 !important;
         color: #f5f8fa !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
         
         &:hover {
-          background: rgba(255, 255, 255, 0.12) !important;
+          background-color: #4a5059 !important;
         }
       }
     }
