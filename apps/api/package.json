@@ -1,17 +1,17 @@
 {
-  "name": "server",
+  "name": "@lilypad/api",
   "version": "4.0.0",
-  "description": "",
-  "keywords": [],
-  "license": "ISC",
-  "author": "",
+  "description": "Lilypad API - Express server for Docker container management",
   "type": "module",
   "main": "server.js",
   "scripts": {
+    "build": "echo 'No build step needed for API'",
+    "dev": "nodemon server.js",
     "lint": "biome check .",
     "lint:fix": "biome check . --apply",
     "format": "biome format . --write",
-    "start": "nodemon server.js"
+    "start": "node server.js",
+    "clean": "rm -rf node_modules"
   },
   "dependencies": {
     "@types/got": "^9.6.12",
@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.14",
+    "@lilypad/config": "workspace:*",
     "nodemon": "^3.0.1"
   }
 }

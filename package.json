@@ -1,0 +1,24 @@
+{
+  "name": "lilypad",
+  "version": "4.0.0",
+  "private": true,
+  "description": "Lilypad X - Modern Docker container management",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "format": "turbo run format",
+    "docker:build": "docker build -t lilypad .",
+    "docker:run": "docker run -p 4000:4000 -v /var/run/docker.sock:/var/run/docker.sock lilypad",
+    "clean": "turbo run clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.0"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

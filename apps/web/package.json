@@ -1,14 +1,15 @@
 {
-  "name": "lilypad",
+  "name": "@lilypad/web",
   "version": "4.0.0",
   "private": true,
   "scripts": {
-    "build": "vite build && cp -r build ../server",
+    "build": "vite build",
+    "dev": "vite",
     "lint": "biome check .",
     "lint:fix": "biome check . --apply",
     "format": "biome format . --write",
-    "start": "concurrently 'vite' 'npm start --prefix ../server'",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "clean": "rm -rf build dist node_modules"
   },
   "dependencies": {
     "@blueprintjs/core": "^6.7.0",
@@ -26,8 +27,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.14",
+    "@lilypad/config": "workspace:*",
     "@vitejs/plugin-react": "^5.1.4",
-    "concurrently": "^9.2.1",
     "prop-types": "^15.8.1",
     "vite": "^7.3.1"
   }
