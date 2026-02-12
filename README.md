@@ -160,7 +160,25 @@ Lilypad discovers containers using Docker labels. Add these labels to your conta
 | `org.domain.review.icon` | Emoji icon | `:heart:` or `rocket` |
 | `org.domain.review.url` | URL to open when clicked | `https://myapp.local` |
 
-### Example
+### Quick Test with Script
+
+We provide a handy script to generate test containers:
+
+```bash
+# Generate 5 test containers with random names and emojis
+./scripts/generate-test-containers.sh
+
+# Generate 10 containers
+./scripts/generate-test-containers.sh -c 10
+
+# Check status of test containers
+./scripts/generate-test-containers.sh --status
+
+# Clean up all test containers
+./scripts/generate-test-containers.sh --cleanup
+```
+
+### Example (Manual)
 
 ```bash
 docker run -d \
