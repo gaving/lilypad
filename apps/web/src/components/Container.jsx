@@ -412,7 +412,7 @@ class Container extends Component {
           loading={stopIsLoading}
           onClick={(e) => {
             e.stopPropagation();
-            this.handleAction("stop", `/api/containers/${container.Id}/stop`, "POST");
+            this.handleAction("stop", `/api/containers/stop`, "POST", { containerId: container.Id });
           }}
         >
           Stop
