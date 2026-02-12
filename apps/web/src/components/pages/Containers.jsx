@@ -344,7 +344,7 @@ class Containers extends Component {
             </StatCard>
             
             <StatCard elevation={Elevation.ONE}>
-              <div className="stat-icon" style={{ background: "#f5f8fa", color: "#5c7080" }}>
+              <div className="stat-icon" style={{ background: "rgba(92, 112, 128, 0.15)", color: "#5c7080" }}>
                 🐳
               </div>
               <div className="stat-info">
