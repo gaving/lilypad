@@ -158,7 +158,7 @@ const DetailItem = styled.div`
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #5c7080;
+    color: var(--text-muted, #5c7080);
     margin-bottom: 4px;
   }
   
@@ -166,7 +166,7 @@ const DetailItem = styled.div`
     display: block;
     font-family: 'SF Mono', Monaco, monospace;
     font-size: 13px;
-    color: #182026;
+    color: var(--text-color, #182026);
     word-break: break-all;
   }
 `;
