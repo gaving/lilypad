@@ -226,10 +226,16 @@ class Containers extends Component {
     
     try {
       const response = await fetch("/api/containers");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const containers = await response.json();
-      this.setState({ containers });
+      // Ensure containers is an array
+      this.setState({ containers: Array.isArray(containers) ? containers : [] });
     } catch (error) {
       console.error("Failed to fetch containers:", error);
+      // Set empty array on error so UI shows "No containers found"
+      this.setState({ containers: [] });
     }
   };
 
@@ -256,11 +262,13 @@ class Containers extends Component {
 
   getStats = () => {
     const { containers } = this.state;
+    // Ensure containers is an array (handles API errors)
+    const safeContainers = Array.isArray(containers) ? containers : [];
     return {
-      total: containers.length,
-      running: containers.filter(c => c.State === "running").length,
-      stopped: containers.filter(c => c.State === "exited").length,
-      pinned: containers.filter(c => c.State === "pinned").length,
+      total: safeContainers.length,
+      running: safeContainers.filter(c => c.State === "running").length,
+      stopped: safeContainers.filter(c => c.State === "exited").length,
+      pinned: safeContainers.filter(c => c.State === "pinned").length,
     };
   };
 
@@ -288,7 +296,10 @@ class Containers extends Component {
     const { containers } = this.state;
     const stats = this.getStats();
     
-    const filteredContainers = containers.filter(c => 
+    // Ensure containers is an array (handles API errors when Docker is offline)
+    const safeContainers = Array.isArray(containers) ? containers : [];
+    
+    const filteredContainers = safeContainers.filter(c => 
       c.Labels?.hasOwnProperty(import.meta.env.VITE_CONTAINER_TAG)
     );
 
