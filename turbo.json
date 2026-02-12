@@ -7,7 +7,7 @@
     "VITE_CONTAINER_ICON",
     "VITE_LAUNCH_URL"
   ],
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", "build/**"],

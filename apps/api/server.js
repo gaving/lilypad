@@ -27,13 +27,18 @@ app.use("/api/networks", networks);
 app.use("/api/volumes", volumes);
 
 app.use(express.static(path.join(__dirname, "build")));
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
+app.get("/{*path}", (req, res) => {
+  const indexPath = path.join(__dirname, "build", "index.html");
+  if (process.env.NODE_ENV === "production") {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).json({ 
+      error: "Not found", 
+      message: "Frontend not built. Run pnpm build to build the web app." 
+    });
+  }
 });
 
-let port;
-process.env.NODE_ENV && process.env.NODE_ENV === "production"
-  ? (port = 8888)
-  : (port = 4000);
+const port = process.env.NODE_ENV === "production" ? 8888 : 4000;
 
 app.listen(port, () => console.log(`Serving on *${port}...`));
