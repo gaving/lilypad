@@ -1,6 +1,7 @@
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 import express from "express";
 import got from "got";
+import logger from "../utils/logger.js";
 
 const _got = got.extend({ enableUnixSockets: true });
 
@@ -34,7 +35,7 @@ router.get("/", async (req, res) => {
     let data = await _got(CONTAINERS);
     data = JSON.parse(data.body);
 
-    data.map((c) => {
+    data.forEach((c) => {
       if (PINNED.has(c.Names[0])) {
         c.State = "pinned";
       }
@@ -42,158 +43,183 @@ router.get("/", async (req, res) => {
 
     res.send(data);
   } catch (error) {
-    console.error(error);
+    logger.error("Failed to fetch containers:", error.message);
+    res.status(500).send({ error: "Failed to fetch containers" });
   }
 });
 
 router.post("/pin", async (req, res) => {
   try {
-    if (PINNED.has(req.body.containerName)) {
-      PINNED.delete(req.body.containerName);
+    const { containerName } = req.body;
+    if (PINNED.has(containerName)) {
+      PINNED.delete(containerName);
+      logger.info(`Container ${containerName} unpinned`);
     } else {
-      PINNED.add(req.body.containerName);
+      PINNED.add(containerName);
+      logger.info(`Container ${containerName} pinned`);
     }
     res.sendStatus(200);
   } catch (error) {
-    res.sendStatus(error.statusCode);
-    console.error("Error", error);
+    logger.error("Error pinning container:", error.message);
+    res.sendStatus(error.statusCode || 500);
   }
 });
 
 router.post("/stop", async (req, res) => {
-  console.log(CONTAINER_STOP(req.body.containerId));
+  const { containerId } = req.body;
+  logger.debug("Stopping container:", containerId?.substring(0, 12));
 
   try {
-    const data = await _got.post(CONTAINER_STOP(req.body.containerId));
-    res.sendStatus(await data.statusCode);
+    const data = await _got.post(CONTAINER_STOP(containerId));
+    logger.info(`Container ${containerId?.substring(0, 12)} stopped`);
+    res.sendStatus(data.statusCode);
   } catch (error) {
-    res.sendStatus(error.statusCode);
-    console.error("Error", error);
+    logger.error("Error stopping container:", error.message);
+    res.sendStatus(error.statusCode || 500);
   }
 });
 
 router.post("/prune", async (req, res) => {
-  console.log(CONTAINER_PRUNE);
+  logger.debug("Pruning containers");
 
   try {
     const data = await _got.post(CONTAINER_PRUNE);
-    res.send(await data.body);
+    logger.info("Containers pruned");
+    res.send(data.body);
   } catch (error) {
-    res.sendStatus(error.statusCode);
-    console.error("Error", error);
+    logger.error("Error pruning containers:", error.message);
+    res.sendStatus(error.statusCode || 500);
   }
 });
 
 router.get("/:containerId", async (req, res) => {
-  console.log(CONTAINER(req.params.containerId));
+  const { containerId } = req.params;
+  logger.debug("Fetching container:", containerId?.substring(0, 12));
 
   try {
-    const data = await _got(CONTAINER(req.params.containerId));
+    const data = await _got(CONTAINER(containerId));
     res.send(data.body);
   } catch (error) {
-    console.error(error);
+    logger.error("Error fetching container:", error.message);
+    res.status(500).send({ error: "Failed to fetch container" });
   }
 });
 
 router.delete("/:containerId", async (req, res) => {
-  console.log(CONTAINER_REMOVE(req.params.containerId));
+  const { containerId } = req.params;
+  logger.debug("Removing container:", containerId?.substring(0, 12));
 
   try {
-    const data = await _got.delete(CONTAINER_REMOVE(req.params.containerId));
-    res.sendStatus(await data.statusCode);
+    const data = await _got.delete(CONTAINER_REMOVE(containerId));
+    logger.info(`Container ${containerId?.substring(0, 12)} removed`);
+    res.sendStatus(data.statusCode);
   } catch (error) {
-    res.sendStatus(error.statusCode);
-    console.error("Error", error);
+    logger.error("Error removing container:", error.message);
+    res.sendStatus(error.statusCode || 500);
   }
 });
 
 router.post("/:containerId", async (req, res) => {
-  console.log(CONTAINER_START(req.params.containerId));
+  const { containerId } = req.params;
+  logger.debug("Starting container:", containerId?.substring(0, 12));
 
   try {
-    const data = await _got.post(CONTAINER_START(req.params.containerId));
-    res.sendStatus(await data.statusCode);
+    const data = await _got.post(CONTAINER_START(containerId));
+    logger.info(`Container ${containerId?.substring(0, 12)} started`);
+    res.sendStatus(data.statusCode);
   } catch (error) {
-    res.sendStatus(error.statusCode);
-    console.error("Error", error);
+    logger.error("Error starting container:", error.message);
+    res.sendStatus(error.statusCode || 500);
   }
 });
 
 router.get("/:containerId/logs", async (req, res) => {
-  console.log(CONTAINER_LOGS(req.params.containerId));
+  const { containerId } = req.params;
+  logger.debug("Fetching logs for container:", containerId?.substring(0, 12));
 
   try {
-    const data = await _got(CONTAINER_LOGS(req.params.containerId));
+    const data = await _got(CONTAINER_LOGS(containerId));
 
     let logs = data.body.split("\n");
     let text = [];
 
-    logs.map((log) => {
+    logs.forEach((log) => {
       // header parsing can go here
       text.push(`${log.slice(8)}`);
     });
 
     res.send(JSON.stringify(text));
   } catch (error) {
-    console.error(error);
+    logger.error("Error fetching logs:", error.message);
+    res.status(500).send({ error: "Failed to fetch logs" });
   }
 });
 
 router.post("/:containerId/restart", async (req, res) => {
-  console.log(CONTAINER_RESTART(req.params.containerId));
+  const { containerId } = req.params;
+  logger.debug("Restarting container:", containerId?.substring(0, 12));
 
   try {
-    const data = await _got.post(CONTAINER_RESTART(req.params.containerId));
-    res.sendStatus(await data.statusCode);
+    const data = await _got.post(CONTAINER_RESTART(containerId));
+    logger.info(`Container ${containerId?.substring(0, 12)} restarted`);
+    res.sendStatus(data.statusCode);
   } catch (error) {
-    res.sendStatus(error.statusCode);
-    console.error("Error", error);
+    logger.error("Error restarting container:", error.message);
+    res.sendStatus(error.statusCode || 500);
   }
 });
 
 router.post("/:containerId/rename", async (req, res) => {
-  console.log(CONTAINER_RENAME(req.params.containerId, req.query.name));
+  const { containerId } = req.params;
+  const { name } = req.query;
+  logger.debug("Renaming container:", containerId?.substring(0, 12), "to", name);
 
   try {
     const data = await _got.post(
-      CONTAINER_RENAME(req.params.containerId, req.query.name),
+      CONTAINER_RENAME(containerId, name),
     );
-    res.sendStatus(await data.statusCode);
+    logger.info(`Container ${containerId?.substring(0, 12)} renamed to ${name}`);
+    res.sendStatus(data.statusCode);
   } catch (error) {
-    res.sendStatus(error.statusCode);
-    console.error("Error", error);
+    logger.error("Error renaming container:", error.message);
+    res.sendStatus(error.statusCode || 500);
   }
 });
 
 router.post("/:containerId/pause", async (req, res) => {
-  console.log(CONTAINER_PAUSE(req.params.containerId));
+  const { containerId } = req.params;
+  logger.debug("Pausing container:", containerId?.substring(0, 12));
 
   try {
-    const data = await _got.post(CONTAINER_PAUSE(req.params.containerId));
-    res.sendStatus(await data.statusCode);
+    const data = await _got.post(CONTAINER_PAUSE(containerId));
+    logger.info(`Container ${containerId?.substring(0, 12)} paused`);
+    res.sendStatus(data.statusCode);
   } catch (error) {
-    res.sendStatus(error.statusCode);
-    console.error("Error", error);
+    logger.error("Error pausing container:", error.message);
+    res.sendStatus(error.statusCode || 500);
   }
 });
 
 router.post("/:containerId/unpause", async (req, res) => {
-  console.log(CONTAINER_UNPAUSE(req.params.containerId));
+  const { containerId } = req.params;
+  logger.debug("Unpausing container:", containerId?.substring(0, 12));
 
   try {
-    const data = await _got.post(CONTAINER_UNPAUSE(req.params.containerId));
-    res.sendStatus(await data.statusCode);
+    const data = await _got.post(CONTAINER_UNPAUSE(containerId));
+    logger.info(`Container ${containerId?.substring(0, 12)} unpaused`);
+    res.sendStatus(data.statusCode);
   } catch (error) {
-    res.sendStatus(error.statusCode);
-    console.error("Error", error);
+    logger.error("Error unpausing container:", error.message);
+    res.sendStatus(error.statusCode || 500);
   }
 });
 
 router.get("/:containerId/stats", async (req, res) => {
-  console.log(CONTAINER_STATS(req.params.containerId));
+  const { containerId } = req.params;
+  logger.debug("Fetching stats for container:", containerId?.substring(0, 12));
 
   try {
-    const data = await _got(CONTAINER_STATS(req.params.containerId));
+    const data = await _got(CONTAINER_STATS(containerId));
     const stats = JSON.parse(data.body);
     
     // Calculate CPU percentage
@@ -213,8 +239,8 @@ router.get("/:containerId/stats", async (req, res) => {
       memoryLimit: Math.round(memoryLimit / 1024 / 1024 * 100) / 100, // MB
     });
   } catch (error) {
+    logger.error("Error fetching stats:", error.message);
     res.status(500).send({ error: "Failed to get stats" });
-    console.error("Error getting stats:", error);
   }
 });
 
