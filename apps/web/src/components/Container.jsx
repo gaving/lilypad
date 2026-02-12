@@ -256,9 +256,25 @@ class Container extends Component {
 
   getActionButtons = () => {
     const { container } = this.props;
-    const { startIsLoading, stopIsLoading, restartIsLoading, removeIsLoading } = this.state;
+    const { startIsLoading, stopIsLoading, restartIsLoading, removeIsLoading, pinIsLoading } = this.state;
     
     const actions = [];
+    
+    // Pin/Unpin button (shown for all states)
+    actions.push(
+      <Button
+        key="pin"
+        icon={container.State === "pinned" ? "unpin" : "pin"}
+        intent={Intent.SUCCESS}
+        loading={pinIsLoading}
+        onClick={(e) => {
+          e.stopPropagation();
+          this.handleAction("pin", "/api/containers/pin", "POST");
+        }}
+      >
+        {container.State === "pinned" ? "Unpin" : "Pin"}
+      </Button>
+    );
     
     if (container.State === "exited") {
       actions.push(
