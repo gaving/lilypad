@@ -1,13 +1,18 @@
 import PropTypes from "prop-types";
 import { Component } from "react";
-import { Flex } from "rebass";
 import styled from "styled-components";
 
-const Shell = styled(Flex)`
+const Shell = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: space-between;
   border-radius: 3px;
   background-color: #182026;
   max-height: 500px;
   overflow-y: auto;
+  padding: 10px;
+  width: 100%;
 `;
 
 const Log = styled.code`
@@ -17,7 +22,13 @@ const Log = styled.code`
   white-space: pre-wrap;
   word-break: break-all;
 
-  ${(props) => `color: ${props.color}`};
+  ${(props) => props.color && `color: ${props.color}`};
+`;
+
+const Container = styled.div`
+  display: flex;
+  padding-bottom: 8px;
+  width: 100%;
 `;
 
 class Logs extends Component {
@@ -37,14 +48,8 @@ class Logs extends Component {
 
   render() {
     return (
-      <Flex pb={2} w={1}>
-        <Shell
-          flexDirection="column"
-          flexGrow={1}
-          justifyContent="space-between"
-          p={10}
-          w={1}
-        >
+      <Container>
+        <Shell>
           <Log color="limegreen">Last 200 lines</Log>
           {this.state.logs.map((log, i) => {
             if (this.state.logs.length <= 1)
@@ -52,7 +57,7 @@ class Logs extends Component {
             return <Log key={`log-${i}`}>{log}</Log>;
           })}
         </Shell>
-      </Flex>
+      </Container>
     );
   }
 }

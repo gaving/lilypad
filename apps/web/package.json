@@ -16,20 +16,19 @@
     "@blueprintjs/icons": "^6.5.1",
     "@blueprintjs/select": "^6.0.14",
     "lodash": "^4.17.21",
-    "moment": "^2.29.4",
-    "react": "^18.2.0",
+    "moment": "^2.30.1",
+    "react": "^18.3.1",
     "react-copy-to-clipboard": "^5.1.0",
-    "react-dom": "^18.2.0",
+    "react-dom": "^18.3.1",
     "react-emoji-render": "^2.0.1",
-    "react-router-dom": "^6.16.0",
-    "rebass": "^4.0.7",
-    "styled-components": "^6.0.8"
+    "react-router-dom": "^7.3.0",
+    "styled-components": "^6.1.15"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.14",
     "@lilypad/config": "workspace:*",
     "@vitejs/plugin-react": "^5.1.4",
     "prop-types": "^15.8.1",
-    "vite": "^7.3.1"
+    "vite": "^6.2.6"
   }
 }

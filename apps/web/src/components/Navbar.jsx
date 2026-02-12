@@ -10,13 +10,17 @@ import {
 } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import PropTypes from "prop-types";
-import { Flex } from "rebass";
 import styled from "styled-components";
 
 const Container = styled.div`
   max-width: 1750px;
   width: 100%;
   margin: auto;
+`;
+
+const Flex = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const Navbar = ({ darkTheme, toggleDarkTheme }) => {
