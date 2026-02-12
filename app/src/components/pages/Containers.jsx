@@ -1,5 +1,6 @@
 import {
-  Collapse as C,
+  Card,
+  Elevation,
   Intent,
   NonIdealState,
   OverlayToaster,
@@ -8,195 +9,325 @@ import {
 } from "@blueprintjs/core";
 import _ from "lodash";
 import { Component, Fragment } from "react";
-import { Box, Flex } from "rebass";
 import styled from "styled-components";
 
-import Container from "../Container";
+import Container from "../Container.jsx";
 
-const Title = styled.h2`
-  margin: 0;
+const Page = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  min-height: 100vh;
+  background: inherit;
 `;
 
-const Collapse = styled(C)`
-  max-width: 1750px;
-  width: 100%;
-  margin: auto;
+const Header = styled.div`
+  margin-bottom: 32px;
+  
+  h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: var(--text-color, #182026);
+  }
+  
+  p {
+    color: var(--text-muted, #5c7080);
+    margin: 0;
+    font-size: 14px;
+  }
+`;
+
+const StatsRow = styled.div`
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+`;
+
+const StatCard = styled(Card)`
+  flex: 1;
+  min-width: 140px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  
+  .stat-info {
+    flex: 1;
+    
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: #5c7080;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+`;
+
+const Section = styled.div`
+  margin-bottom: 24px;
+`;
+
+const SectionTitle = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  
+  h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    text-transform: capitalize;
+    color: var(--text-color, #182026);
+  }
+`;
+
+const EmptyState = styled.div`
+  text-align: center;
+  padding: 80px 24px;
+  
+  .icon {
+    font-size: 80px;
+    margin-bottom: 24px;
+    opacity: 0.5;
+  }
+  
+  h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 12px 0;
+  }
+  
+  p {
+    color: #5c7080;
+    margin: 0 0 8px 0;
+    line-height: 1.6;
+  }
+  
+  code {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 13px;
+  }
 `;
 
 class Containers extends Component {
-  constructor() {
-    super();
-    this.state = {
-      containers: [],
-      createContainerIsOpen: false,
-    };
-  }
+  state = {
+    containers: [],
+  };
 
   async componentDidMount() {
     this.updateAllContainers();
-    this.update = setInterval(() => this.updateAllContainers(), 5 * 1000);
+    this.update = setInterval(() => this.updateAllContainers(), 5000);
   }
 
   componentWillUnmount() {
     clearInterval(this.update);
   }
 
-  setCreateContainerIsOpen = (open) => {
-    this.setState({ createContainerIsOpen: open });
-  };
-
   showToast = (message, intent) => {
     const AppToaster = OverlayToaster.create({
-      className: "recipe-toaster",
       position: Position.BOTTOM,
     });
-
     AppToaster.show({ message, intent });
   };
 
   updateAllContainers = async () => {
-    const containers = await fetch("/api/containers");
-    this.setState({
-      containers: await containers.json(),
-    });
+    try {
+      const response = await fetch("/api/containers");
+      const containers = await response.json();
+      this.setState({ containers });
+    } catch (error) {
+      console.error("Failed to fetch containers:", error);
+    }
   };
 
   updateContainer = async (container) => {
-    let newContainer;
     try {
-      newContainer = await fetch(`/api/containers/${container.Id}`);
-      newContainer = await newContainer.json();
+      const response = await fetch(`/api/containers/${container.Id}`);
+      const [newContainer] = await response.json();
+      
+      if (!newContainer) {
+        this.setState(prev => ({
+          containers: prev.containers.filter(c => c.Id !== container.Id)
+        }));
+      } else {
+        this.setState(prev => ({
+          containers: prev.containers.map(c => 
+            c.Id === container.Id ? newContainer : c
+          )
+        }));
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Failed to update container:", error);
     }
-
-    newContainer = await newContainer[0];
-
-    let containers = this.state.containers;
-    const containerIndex = _.findIndex(containers, { Id: container.Id });
-
-    if (newContainer === undefined) {
-      _.remove(containers, (n) => n === containers[containerIndex]);
-    } else {
-      containers[containerIndex] = newContainer;
-    }
-
-    this.setState({ containers });
   };
 
-  deleteStoppedContainers = async () => {
-    let response, status, intent;
+  getStats = () => {
+    const { containers } = this.state;
+    return {
+      total: containers.length,
+      running: containers.filter(c => c.State === "running").length,
+      stopped: containers.filter(c => c.State === "exited").length,
+      pinned: containers.filter(c => c.State === "pinned").length,
+    };
+  };
 
-    try {
-      response = await fetch("/api/containers/prune", {
-        method: "POST",
-      });
-    } catch (error) {
-      console.error(error);
+  getStatusColor = (state) => {
+    switch (state) {
+      case "running": return "#0f9960";
+      case "exited": return "#db3737";
+      case "paused": return "#d9822b";
+      case "pinned": return "#2965cc";
+      default: return "#5c7080";
     }
+  };
 
-    switch (await response.status) {
-      case 200: {
-        // eslint-disable-next-line no-case-declarations
-        const body = await response.json();
-
-        status = body.ContainersDeleted
-          ? `${body.ContainersDeleted.length} containers deleted`
-          : "No containers were deleted";
-        intent = "success";
-        break;
-      }
-      case 500: {
-        status = "Server error";
-        intent = "danger";
-        break;
-      }
-      default: {
-        status = response.status;
-      }
+  getStatusBg = (state) => {
+    switch (state) {
+      case "running": return "rgba(15, 153, 96, 0.1)";
+      case "exited": return "rgba(219, 55, 55, 0.1)";
+      case "paused": return "rgba(217, 130, 43, 0.1)";
+      case "pinned": return "rgba(41, 101, 204, 0.1)";
+      default: return "rgba(92, 112, 128, 0.1)";
     }
-
-    this.showToast(status, intent);
-    this.updateAllContainers();
   };
 
   render() {
-    let { containers } = this.state;
-    containers = containers.filter((i) =>
-      // eslint-disable-next-line no-prototype-builtins
-      i.Labels.hasOwnProperty(import.meta.env.VITE_CONTAINER_TAG),
+    const { containers } = this.state;
+    const stats = this.getStats();
+    
+    const filteredContainers = containers.filter(c => 
+      c.Labels?.hasOwnProperty(import.meta.env.VITE_CONTAINER_TAG)
     );
 
-    if (containers.length === 0) {
-      console.log(
-        "No containers found, is VITE_CONTAINER_TAG set properly?",
-        import.meta.env,
-      );
-    }
-
-    const description = (
-      <>
-        {/* eslint-disable-next-line react/no-unescaped-entities */}
-        Deploy apps to see them appear here.
-      </>
+    const sections = ["pinned", "running", "paused", "exited"].filter(state =>
+      filteredContainers.some(c => c.State === state)
     );
 
     return (
-      <Collapse isOpen={true}>
-        <Box p={2} style={{ height: "80vh" }}>
-          {containers.length === 0 && (
-            <NonIdealState
-              description={description}
-              icon="heatmap"
-              title="No apps found"
-            />
-          )}
-          {["pinned", "running", "paused", "exited"].map((s) => {
-            return (
-              <Fragment key={s}>
-                {containers.some(({ State }) => State === s) && (
-                  <>
-                    <Flex align="center" justify="space-between" key={s} p={15}>
-                      <Flex align="center">
-                        <Title>{_.startCase(s)}</Title>
-                        <Box ml={1}>
-                          <Tag
-                            intent={
-                              s === "running"
-                                ? Intent.SUCCESS
-                                : s === "pinned"
-                                ? Intent.PRIMARY
-                                : Intent.DANGER
-                            }
-                            large
-                            minimal
-                            round
-                          >
-                            {
-                              containers.filter(({ State }) => State === s)
-                                .length
-                            }
-                          </Tag>
-                        </Box>
-                      </Flex>
-                    </Flex>
-                    {containers
-                      .filter(({ State }) => State === s)
-                      .map((container, i) => (
-                        <Container
-                          container={container}
-                          key={`container-${i}`}
-                          showToast={this.showToast}
-                          updateContainer={this.updateContainer}
-                        />
-                      ))}
-                  </>
-                )}
-              </Fragment>
-            );
-          })}
-        </Box>
-      </Collapse>
+      <Page>
+        <Header>
+          <h1>Containers</h1>
+          <p>Manage and monitor your Docker containers</p>
+        </Header>
+
+        {filteredContainers.length > 0 && (
+          <StatsRow>
+            <StatCard elevation={Elevation.ONE}>
+              <div 
+                className="stat-icon" 
+                style={{ background: this.getStatusBg("running"), color: this.getStatusColor("running") }}
+              >
+                ▶
+              </div>
+              <div className="stat-info">
+                <div className="stat-value">{stats.running}</div>
+                <div className="stat-label">Running</div>
+              </div>
+            </StatCard>
+            
+            <StatCard elevation={Elevation.ONE}>
+              <div 
+                className="stat-icon"
+                style={{ background: this.getStatusBg("exited"), color: this.getStatusColor("exited") }}
+              >
+                ■
+              </div>
+              <div className="stat-info">
+                <div className="stat-value">{stats.stopped}</div>
+                <div className="stat-label">Stopped</div>
+              </div>
+            </StatCard>
+            
+            <StatCard elevation={Elevation.ONE}>
+              <div 
+                className="stat-icon"
+                style={{ background: this.getStatusBg("pinned"), color: this.getStatusColor("pinned") }}
+              >
+                📌
+              </div>
+              <div className="stat-info">
+                <div className="stat-value">{stats.pinned}</div>
+                <div className="stat-label">Pinned</div>
+              </div>
+            </StatCard>
+            
+            <StatCard elevation={Elevation.ONE}>
+              <div className="stat-icon" style={{ background: "#f5f8fa", color: "#5c7080" }}>
+                ∑
+              </div>
+              <div className="stat-info">
+                <div className="stat-value">{stats.total}</div>
+                <div className="stat-label">Total</div>
+              </div>
+            </StatCard>
+          </StatsRow>
+        )}
+
+        {filteredContainers.length === 0 ? (
+          <Card elevation={Elevation.TWO}>
+            <EmptyState>
+              <div className="icon">🐸</div>
+              <h3>No containers found</h3>
+              <p>
+                Deploy Docker containers with the label<br />
+                <code>org.domain.review.name</code> to see them here.
+              </p>
+            </EmptyState>
+          </Card>
+        ) : (
+          sections.map(state => (
+            <Section key={state}>
+              <SectionTitle>
+                <h2>{state}</h2>
+                <Tag 
+                  minimal 
+                  intent={
+                    state === "running" ? Intent.SUCCESS :
+                    state === "pinned" ? Intent.PRIMARY :
+                    state === "paused" ? Intent.WARNING :
+                    Intent.DANGER
+                  }
+                >
+                  {filteredContainers.filter(c => c.State === state).length}
+                </Tag>
+              </SectionTitle>
+              
+              {filteredContainers
+                .filter(c => c.State === state)
+                .map(container => (
+                  <Container
+                    key={container.Id}
+                    container={container}
+                    showToast={this.showToast}
+                    updateContainer={this.updateContainer}
+                  />
+                ))}
+            </Section>
+          ))
+        )}
+      </Page>
     );
   }
 }
