@@ -141,33 +141,53 @@ const SectionTitle = styled.div`
 const EmptyState = styled.div`
   text-align: center;
   padding: 80px 24px;
+  background: transparent;
   
   .icon {
     font-size: 80px;
     margin-bottom: 24px;
-    opacity: 0.5;
+    opacity: 0.7;
+    filter: drop-shadow(0 4px 8px rgba(255, 107, 138, 0.3));
   }
   
   h3 {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 600;
-    margin: 0 0 12px 0;
+    margin: 0 0 16px 0;
     color: var(--text-color, #182026);
+    letter-spacing: -0.5px;
   }
   
   p {
     color: var(--text-muted, #5c7080);
-    margin: 0 0 8px 0;
+    margin: 0 0 12px 0;
     line-height: 1.6;
+    font-size: 15px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
   }
   
   code {
     background: var(--code-bg, rgba(0, 0, 0, 0.05));
     padding: 8px 12px;
-    border-radius: 4px;
+    border-radius: 6px;
     font-family: 'SF Mono', Monaco, monospace;
     font-size: 13px;
-    color: var(--text-color, #182026);
+    color: #ff6b8a;
+    border: 1px solid rgba(255, 107, 138, 0.2);
+    
+    .bp5-dark & {
+      color: #ff85a1;
+      border-color: rgba(255, 133, 161, 0.3);
+    }
+  }
+  
+  .hint {
+    margin-top: 24px;
+    font-size: 13px;
+    color: var(--text-muted, #5c7080);
+    opacity: 0.8;
   }
 `;
 
@@ -363,16 +383,17 @@ class Containers extends Component {
         )}
 
         {filteredContainers.length === 0 ? (
-          <Card elevation={Elevation.TWO}>
-            <EmptyState>
-              <div className="icon">🌸</div>
-              <h3>No containers found</h3>
-              <p>
-                Deploy Docker containers with the label<br />
-                <code>org.domain.review.name</code> to see them here.
-              </p>
-            </EmptyState>
-          </Card>
+          <EmptyState>
+            <div className="icon">🌸</div>
+            <h3>No containers found</h3>
+            <p>
+              Deploy Docker containers with the label<br />
+              <code>org.domain.review.name</code> to see them here.
+            </p>
+            <p className="hint">
+              Make sure Docker is running and containers are properly labeled.
+            </p>
+          </EmptyState>
         ) : (
           sections.map(state => (
             <Section key={state}>
