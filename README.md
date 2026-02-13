@@ -133,8 +133,6 @@ See [docs/LABELS.md](./docs/LABELS.md) for more examples.
 
 MIT License - see [LICENSE](LICENSE) for details.
 
-Do whatever you want with this AI slop! 😄
-
 ---
 
 <p align="center">
