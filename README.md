@@ -124,3 +124,4 @@ UNLICENSED - Private repository
 <p align="center">
   <strong>🌸 Lilypad - Making container management beautiful!</strong>
 </p>
+# GitHub Actions enabled
