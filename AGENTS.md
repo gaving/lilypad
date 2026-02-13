@@ -316,6 +316,45 @@ When working on Lilypad:
 9. **Test with Docker** running to see actual containers
 10. **Bulk actions** should handle edge cases (running containers need force remove)
 
+## Commit Message Format (Gitmoji)
+
+Use [gitmoji](https://gitmoji.dev/) for all commits:
+
+| Emoji | Code | Use for |
+|-------|------|---------|
+| ✨ | `:sparkles:` | New features |
+| 🐛 | `:bug:` | Bug fixes |
+| 📝 | `:memo:` | Documentation |
+| 🎨 | `:art:` | Code style/formatting |
+| ♻️ | `:recycle:` | Refactoring |
+| ⚡️ | `:zap:` | Performance |
+| 🔥 | `:fire:` | Removing code/files |
+| 🚀 | `:rocket:` | Deploy stuff |
+| ✅ | `:white_check_mark:` | Tests |
+| 🔒 | `:lock:` | Security |
+| ⬆️ | `:arrow_up:` | Upgrading dependencies |
+| ⬇️ | `:arrow_down:` | Downgrading dependencies |
+| 🔧 | `:wrench:` | Configuration files |
+| 🏷️ | `:label:` | TypeScript types |
+| 💄 | `:lipstick:` | CSS/UI |
+| 🚚 | `:truck:` | Moving/renaming files |
+| 📦 | `:package:` | Dependencies |
+| 👷 | `:construction_worker:` | CI/CD |
+| 💚 | `:green_heart:` | Fixing CI build |
+| ⬆️ | `:arrow_up:` | Upgrading dependencies |
+| 🙈 | `:see_no_evil:` | .gitignore |
+| 🐳 | `:whale:` | Docker |
+
+### Example Commits
+
+```bash
+git commit -m ":sparkles: Add bulk actions for container management"
+git commit -m ":bug: Fix checkbox event propagation"
+git commit -m ":memo: Update README with setup instructions"
+git commit -m ":arrow_up: Upgrade React 18 to 19"
+git commit -m ":see_no_evil: Add .turbo to .gitignore"
+```
+
 ---
 
 *Generated for commit: kermit 9b230f1 - docs: split AGENTS.md into separate documentation files*
