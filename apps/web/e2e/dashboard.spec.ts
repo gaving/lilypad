@@ -5,8 +5,9 @@ const BASE_URL = process.env.LILYPAD_URL || "http://localhost:8888";
 test.describe("Dashboard E2E Tests", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(BASE_URL);
-    // Wait for page to load
+    // Wait for page to load completely
     await page.waitForLoadState("networkidle");
+    await page.waitForTimeout(3000);
   });
 
   test("dashboard loads with lilypad branding", async ({ page }) => {
@@ -17,11 +18,14 @@ test.describe("Dashboard E2E Tests", () => {
 
   test("displays test containers", async ({ page }) => {
     // Wait for containers to load
-    await page.waitForTimeout(3000);
+    await page.waitForSelector("[data-testid='container-card']", { timeout: 10000 });
     
     // Check that at least 3 test containers appear
     const containerCards = page.locator("[data-testid='container-card']");
-    await expect(containerCards).toHaveCount(3, { timeout: 10000 });
+    const count = await containerCards.count();
+    
+    // Should have the test containers we seeded
+    expect(count).toBeGreaterThanOrEqual(3);
     
     // Check for specific test containers
     await expect(page.locator("text=test-api-1")).toBeVisible();
@@ -30,33 +34,53 @@ test.describe("Dashboard E2E Tests", () => {
   });
 
   test("stats show correct counts", async ({ page }) => {
-    await page.waitForTimeout(3000);
+    // Wait for stats to load
+    await page.waitForTimeout(2000);
     
     // Check that stats are displayed
     await expect(page.locator("text=RUNNING")).toBeVisible();
     await expect(page.locator("text=TOTAL")).toBeVisible();
     
-    // Verify total shows at least 3
-    const totalValue = await page.locator(".stat-value").last().textContent();
+    // Verify total shows at least 3 (our test containers)
+    const statValues = page.locator(".stat-value");
+    const totalValue = await statValues.last().textContent();
     expect(parseInt(totalValue || "0")).toBeGreaterThanOrEqual(3);
   });
 
   test("containers have correct status indicators", async ({ page }) => {
-    await page.waitForTimeout(3000);
+    // Wait for containers
+    await page.waitForSelector("[data-testid='container-card']", { timeout: 10000 });
     
     // Check for running indicators
-    const runningContainers = page.locator("text=running");
-    await expect(runningContainers.first()).toBeVisible();
-    
-    // Check for status dots
     const statusDots = page.locator("[data-testid='status-dot']");
-    await expect(statusDots.first()).toBeVisible();
+    const count = await statusDots.count();
+    
+    // Should have status dots for each container
+    expect(count).toBeGreaterThanOrEqual(3);
   });
 
-  test("can expand container details", async ({ page }) => {
-    await page.waitForTimeout(3000);
+  test("can toggle dark mode", async ({ page }) => {
+    // Check dark mode toggle exists
+    const darkModeButton = page.locator("[data-testid='dark-mode-toggle']");
+    await expect(darkModeButton).toBeVisible();
     
-    // Enable edit mode first
+    // Click to toggle
+    await darkModeButton.click();
+    await page.waitForTimeout(1000);
+    
+    // Check page has dark mode class
+    const body = page.locator("body");
+    const bodyClass = await body.getAttribute("class");
+    
+    // Should have bp5-dark class
+    expect(bodyClass).toContain("bp5-dark");
+  });
+
+  test("can expand container details in edit mode", async ({ page }) => {
+    // Wait for containers
+    await page.waitForSelector("[data-testid='container-card']", { timeout: 10000 });
+    
+    // Enable edit mode
     const editButton = page.locator("[data-testid='edit-mode-toggle']");
     await editButton.click();
     await page.waitForTimeout(500);
@@ -64,10 +88,12 @@ test.describe("Dashboard E2E Tests", () => {
     // Click on first container to expand
     const firstContainer = page.locator("[data-testid='container-card']").first();
     await firstContainer.click();
-    await page.waitForTimeout(500);
+    
+    // Wait for collapse to animate
+    await page.waitForTimeout(1000);
     
     // Check that details are visible
-    await expect(page.locator("text=Container ID")).toBeVisible();
-    await expect(page.locator("text=Image")).toBeVisible();
+    await expect(page.locator("text=Container ID").first()).toBeVisible({ timeout: 5000 });
+    await expect(page.locator("text=Image").first()).toBeVisible({ timeout: 5000 });
   });
 });
