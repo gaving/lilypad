@@ -8,7 +8,7 @@ ARG VITE_CONTAINER_ICON=org.domain.review.icon
 ARG VITE_LAUNCH_URL=org.domain.review.url
 
 # Install pnpm and turbo
-RUN npm install -g pnpm@9 turbo
+RUN npm install -g pnpm@10 turbo
 
 WORKDIR /lilypad
 
