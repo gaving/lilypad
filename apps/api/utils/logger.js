@@ -1,5 +1,7 @@
 // Simple logger utility with log levels
-const LOG_LEVEL = process.env.LOG_LEVEL || (process.env.NODE_ENV === "production" ? "warn" : "info");
+const LOG_LEVEL =
+  process.env.LOG_LEVEL ||
+  (process.env.NODE_ENV === "production" ? "warn" : "info");
 
 const levels = {
   error: 0,

@@ -5,7 +5,7 @@ import logger from "../utils/logger.js";
 
 const _got = got.extend({ enableUnixSockets: true });
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 const router = express.Router();
 
@@ -30,10 +30,16 @@ const CONTAINER_STATS = (id) =>
 
 const PINNED = new Set();
 
-router.get("/", async (req, res) => {
+// Filter to only return containers managed by Lilypad (ones with the label)
+const CONTAINER_TAG = process.env.CONTAINER_TAG || "org.domain.review.name";
+
+router.get("/", async (_req, res) => {
   try {
     let data = await _got(CONTAINERS);
     data = JSON.parse(data.body);
+
+    // Filter to only include containers with the Lilypad label
+    data = data.filter((c) => c.Labels && CONTAINER_TAG in c.Labels);
 
     data.forEach((c) => {
       if (PINNED.has(c.Names[0])) {
@@ -79,7 +85,7 @@ router.post("/stop", async (req, res) => {
   }
 });
 
-router.post("/prune", async (req, res) => {
+router.post("/prune", async (_req, res) => {
   logger.debug("Pruning containers");
 
   try {
@@ -107,10 +113,14 @@ router.get("/:containerId", async (req, res) => {
 
 router.delete("/:containerId", async (req, res) => {
   const { containerId } = req.params;
-  logger.debug("Removing container:", containerId?.substring(0, 12));
+  const { force } = req.query;
+  logger.debug("Removing container:", containerId?.substring(0, 12), force ? "(force)" : "");
 
   try {
-    const data = await _got.delete(CONTAINER_REMOVE(containerId));
+    const url = force === "true" 
+      ? `${CONTAINER_REMOVE(containerId)}?force=true`
+      : CONTAINER_REMOVE(containerId);
+    const data = await _got.delete(url);
     logger.info(`Container ${containerId?.substring(0, 12)} removed`);
     res.sendStatus(data.statusCode);
   } catch (error) {
@@ -140,8 +150,8 @@ router.get("/:containerId/logs", async (req, res) => {
   try {
     const data = await _got(CONTAINER_LOGS(containerId));
 
-    let logs = data.body.split("\n");
-    let text = [];
+    const logs = data.body.split("\n");
+    const text = [];
 
     logs.forEach((log) => {
       // header parsing can go here
@@ -172,13 +182,18 @@ router.post("/:containerId/restart", async (req, res) => {
 router.post("/:containerId/rename", async (req, res) => {
   const { containerId } = req.params;
   const { name } = req.query;
-  logger.debug("Renaming container:", containerId?.substring(0, 12), "to", name);
+  logger.debug(
+    "Renaming container:",
+    containerId?.substring(0, 12),
+    "to",
+    name,
+  );
 
   try {
-    const data = await _got.post(
-      CONTAINER_RENAME(containerId, name),
+    const data = await _got.post(CONTAINER_RENAME(containerId, name));
+    logger.info(
+      `Container ${containerId?.substring(0, 12)} renamed to ${name}`,
     );
-    logger.info(`Container ${containerId?.substring(0, 12)} renamed to ${name}`);
     res.sendStatus(data.statusCode);
   } catch (error) {
     logger.error("Error renaming container:", error.message);
@@ -221,22 +236,26 @@ router.get("/:containerId/stats", async (req, res) => {
   try {
     const data = await _got(CONTAINER_STATS(containerId));
     const stats = JSON.parse(data.body);
-    
+
     // Calculate CPU percentage
-    const cpuDelta = stats.cpu_stats.cpu_usage.total_usage - stats.precpu_stats.cpu_usage.total_usage;
-    const systemDelta = stats.cpu_stats.system_cpu_usage - stats.precpu_stats.system_cpu_usage;
-    const cpuPercent = (cpuDelta / systemDelta) * stats.cpu_stats.online_cpus * 100;
-    
+    const cpuDelta =
+      stats.cpu_stats.cpu_usage.total_usage -
+      stats.precpu_stats.cpu_usage.total_usage;
+    const systemDelta =
+      stats.cpu_stats.system_cpu_usage - stats.precpu_stats.system_cpu_usage;
+    const cpuPercent =
+      (cpuDelta / systemDelta) * stats.cpu_stats.online_cpus * 100;
+
     // Calculate memory usage
     const memoryUsage = stats.memory_stats.usage || 0;
     const memoryLimit = stats.memory_stats.limit || 1;
     const memoryPercent = (memoryUsage / memoryLimit) * 100;
-    
+
     res.send({
       cpuPercent: Math.round(cpuPercent * 100) / 100,
       memoryPercent: Math.round(memoryPercent * 100) / 100,
-      memoryUsage: Math.round(memoryUsage / 1024 / 1024 * 100) / 100, // MB
-      memoryLimit: Math.round(memoryLimit / 1024 / 1024 * 100) / 100, // MB
+      memoryUsage: Math.round((memoryUsage / 1024 / 1024) * 100) / 100, // MB
+      memoryLimit: Math.round((memoryLimit / 1024 / 1024) * 100) / 100, // MB
     });
   } catch (error) {
     logger.error("Error fetching stats:", error.message);

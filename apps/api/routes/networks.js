@@ -8,7 +8,7 @@ const DOCKER_SOCK = process.env.DOCKER_SOCK;
 
 const NETWORKS = `${DOCKER_SOCK}/networks`;
 
-router.get("/", async (req, res) => {
+router.get("/", async (_req, res) => {
   logger.debug("Fetching networks");
 
   try {

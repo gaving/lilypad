@@ -8,7 +8,7 @@ const DOCKER_SOCK = process.env.DOCKER_SOCK;
 
 const VOLUMES = `${DOCKER_SOCK}/volumes`;
 
-router.get("/", async (req, res) => {
+router.get("/", async (_req, res) => {
   logger.debug("Fetching volumes");
 
   try {

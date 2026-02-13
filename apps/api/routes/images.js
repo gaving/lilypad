@@ -9,7 +9,7 @@ const DOCKER_SOCK = process.env.DOCKER_SOCK;
 const IMAGES = `${DOCKER_SOCK}/images/json`;
 const IMAGE_REMOVE = (id) => `${DOCKER_SOCK}/images/${id}`;
 
-router.get("/", async (req, res) => {
+router.get("/", async (_req, res) => {
   logger.debug("Fetching images");
 
   try {
