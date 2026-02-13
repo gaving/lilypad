@@ -25,13 +25,13 @@ A modern, fast web interface for managing Docker containers with real-time updat
 
 | Light Mode | Dark Mode | Bulk Actions |
 |------------|-----------|--------------|
-| ![Dashboard Light](screenshots/dashboard-light.png) | ![Dashboard Dark](screenshots/dashboard-dark.png) | ![Bulk Actions](screenshots/bulk-actions.png) |
+| ![Dashboard Light](screenshots/dashboard-light.png?v=2) | ![Dashboard Dark](screenshots/dashboard-dark.png?v=2) | ![Bulk Actions](screenshots/bulk-actions.png?v=2) |
 
 ### Responsive
 
 | Mobile (375x812) | Tablet (768x1024) |
 |------------------|-------------------|
-| ![Mobile](screenshots/dashboard-mobile.png) | ![Tablet](screenshots/dashboard-tablet.png) |
+| ![Mobile](screenshots/dashboard-mobile.png?v=2) | ![Tablet](screenshots/dashboard-tablet.png?v=2) |
 
 ## 🚀 Quick Start
 
