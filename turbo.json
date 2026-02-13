@@ -1,0 +1,34 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "globalEnv": [
+    "VITE_CONTAINER_TAG",
+    "VITE_CONTAINER_DESC",
+    "VITE_CONTAINER_ICON",
+    "VITE_LAUNCH_URL"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "build/**"],
+      "env": [
+        "VITE_CONTAINER_TAG",
+        "VITE_CONTAINER_DESC",
+        "VITE_CONTAINER_ICON",
+        "VITE_LAUNCH_URL"
+      ]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^build"]
+    },
+    "lint:fix": {},
+    "format": {},
+    "clean": {
+      "cache": false
+    }
+  }
+}

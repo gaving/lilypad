@@ -1,28 +1,56 @@
-ARG IMAGE_REGISTRY
-ARG IMAGE_GROUP
+# Dockerfile for Lilypad - Modern Docker container management
+FROM node:24-alpine AS deps
 
-FROM ${IMAGE_REGISTRY}/${IMAGE_GROUP}/tyrell/node:14-alpine3.12 AS deps
+# Build args for Vite environment variables
+ARG VITE_CONTAINER_TAG=org.domain.review.name
+ARG VITE_CONTAINER_DESC=org.domain.review.desc
+ARG VITE_CONTAINER_ICON=org.domain.review.icon
+ARG VITE_LAUNCH_URL=org.domain.review.url
 
-ARG REACT_APP_CONTAINER_TAG
-ARG REACT_APP_CONTAINER_DESC
-ARG REACT_APP_CONTAINER_ICON
-ARG REACT_APP_LAUNCH_URL
-
-ENV NODE_ENV production
-ARG NEXUS_REPOSITORY_NPM
+# Install pnpm and turbo
+RUN npm install -g pnpm@10 turbo
 
 WORKDIR /lilypad
+
+# Copy workspace configuration files first (for layer caching)
+COPY pnpm-workspace.yaml package.json turbo.json pnpm-lock.yaml ./
+
+# Copy shared packages
+COPY packages/ ./packages/
+
+# Copy package manifests (for dependency installation layer caching)
+COPY apps/web/package.json ./apps/web/
+COPY apps/api/package.json ./apps/api/
+
+# Install all dependencies using pnpm workspace
+RUN pnpm install
+
+# Copy source code
 COPY . .
 
-RUN npm config set strict-ssl false && npm config set registry ${NEXUS_REPOSITORY_NPM}
+# Build web app using Turborepo (builds web, ensures proper ordering)
+RUN pnpm turbo run build --filter=@lilypad/web
 
-RUN npm install --prefix ./app --force
-RUN npm run build --prefix ./app
-RUN npm install --prefix ./server
+# Create build directory in API and copy web build output
+RUN mkdir -p apps/api/build && cp -r apps/web/build/* apps/api/build/
 
-FROM ${IMAGE_REGISTRY}/${IMAGE_GROUP}/tyrell/node:14-alpine3.12 AS release
+FROM node:24-alpine AS release
 WORKDIR /lilypad
-COPY --from=deps /lilypad/server .
 
-EXPOSE 4000
+ENV NODE_ENV=production
+ENV DOCKER_SOCK=http://unix:/var/run/docker.sock:
+ENV CONTAINER_TAG=org.domain.review.name
+
+# Copy the entire workspace structure with node_modules
+COPY --from=deps /lilypad/package.json /lilypad/pnpm-workspace.yaml ./
+COPY --from=deps /lilypad/node_modules ./node_modules
+COPY --from=deps /lilypad/apps/api ./apps/api
+
+# Set working directory to API app
+WORKDIR /lilypad/apps/api
+
+# Expose the API port
+EXPOSE 8888
+
+# Start the server
 CMD ["node", "server.js"]

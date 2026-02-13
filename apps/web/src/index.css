@@ -1,0 +1,142 @@
+@import "@blueprintjs/core/lib/css/blueprint.css";
+@import "@blueprintjs/icons/lib/css/blueprint-icons.css";
+@import "@blueprintjs/select/lib/css/blueprint-select.css";
+
+:root {
+  --text-color: #182026;
+  --text-muted: #5c7080;
+  --bg-color: #f6f8fa;
+  --card-bg: #ffffff;
+  --code-bg: rgba(0, 0, 0, 0.05);
+
+  /* Pink accent colors */
+  --pink-primary: #ff6b8a;
+  --pink-light: #ff8fa3;
+  --pink-pale: rgba(255, 107, 138, 0.15);
+  --pink-dark: #ff85a1;
+}
+
+.bp5-dark {
+  --text-color: #f5f8fa;
+  --text-muted: #a7b6c2;
+  --bg-color: #1a1d21;
+  --card-bg: #252a31;
+  --code-bg: rgba(255, 255, 255, 0.1);
+
+  /* Pink accent colors - vibrant in dark mode */
+  --pink-primary: #ff85a1;
+  --pink-light: #ff9eb3;
+  --pink-pale: rgba(255, 133, 161, 0.25);
+  --pink-dark: #ff6b8a;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+.bp4-navbar {
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+}
+
+.bp4-popover-target {
+  display: flex;
+}
+
+/* Mobile utility classes */
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none;
+  }
+
+  .mobile-only {
+    display: flex;
+  }
+
+  /* Make page padding smaller on mobile */
+  body {
+    font-size: 14px;
+  }
+
+  /* Ensure touch targets are large enough */
+  button,
+  a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  .bp5-navbar {
+    padding: 0 12px;
+  }
+
+  .bp5-navbar-heading {
+    font-size: 16px;
+  }
+}
+
+/* Hide scrollbars on all platforms while keeping scroll functionality */
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 4px;
+}
+
+/* Show scrollbar on hover */
+:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.bp5-dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+*:hover {
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.bp5-dark *:hover {
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+/* IE and Edge Legacy */
+body {
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}
