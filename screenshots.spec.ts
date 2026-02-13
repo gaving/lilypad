@@ -28,15 +28,12 @@ test.describe("Lilypad Screenshots", () => {
     await page.waitForLoadState("networkidle");
     await setTimeout(3000);
 
-    // Try to click dark mode toggle
-    const buttons = await page.locator('button').all();
-    for (const button of buttons) {
-      const text = await button.textContent().catch(() => "");
-      if (text.includes("🌙") || text.includes("☀️") || text.toLowerCase().includes("dark")) {
-        await button.click();
-        await setTimeout(1000);
-        break;
-      }
+    // Click the dark mode toggle button (moon icon button in navbar)
+    // It's the button with icon in the right navbar group
+    const darkModeButton = page.locator('.bp5-navbar-group[align="right"] button').nth(1);
+    if (await darkModeButton.count() > 0) {
+      await darkModeButton.click();
+      await setTimeout(1500); // Wait for theme transition
     }
 
     await takeScreenshot(page, "dashboard-dark", { width: 1200, height: 800 });
