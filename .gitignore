@@ -25,3 +25,4 @@ yarn-error.log*
 # Turborepo
 .turbo
 *.cookie
+test-results/

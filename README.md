@@ -23,9 +23,7 @@ A modern, fast web interface for managing Docker containers with real-time updat
 
 | Light Mode | Dark Mode | Bulk Actions |
 |------------|-----------|--------------|
-| ![Dashboard Light](screenshots/dashboard-light.svg) | ![Dashboard Dark](screenshots/dashboard-dark.svg) | ![Bulk Actions](screenshots/bulk-actions.svg) |
-
-> 💡 **Note:** These are placeholder SVGs. Replace with actual screenshots after deployment.
+| ![Dashboard Light](screenshots/dashboard-light.png) | ![Dashboard Dark](screenshots/dashboard-dark.png) | ![Bulk Actions](screenshots/bulk-actions.png) |
 
 ## 🚀 Quick Start
 
