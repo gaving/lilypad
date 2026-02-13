@@ -3,9 +3,9 @@ import { Component } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import styled from "styled-components";
 
-import Navbar from "./components/Navbar.jsx";
-import Containers from "./components/pages/Containers.jsx";
-import SplashScreen from "./components/SplashScreen.jsx";
+import Navbar from "./components/Navbar";
+import Containers from "./components/pages/Containers";
+import SplashScreen from "./components/SplashScreen";
 
 const Main = styled.div`
   display: inline-flex;
@@ -23,15 +23,21 @@ const Container = styled(Card)`
   border-radius: 0px;
 `;
 
-class App extends Component {
-  state = {
+interface AppState {
+  dark: boolean;
+  editMode: boolean;
+}
+
+class App extends Component<Record<string, never>, AppState> {
+  state: AppState = {
     dark: false,
     editMode: false,
   };
 
-  setDarkInStorage = () => localStorage.setItem("dark", this.state.dark);
+  setDarkInStorage = () =>
+    localStorage.setItem("dark", String(this.state.dark));
 
-  toggleDarkTheme = (dark) => {
+  toggleDarkTheme = (dark?: boolean) => {
     if (dark === undefined)
       this.setState({ dark: !this.state.dark }, () => this.setDarkInStorage());
     else this.setState({ dark }, () => this.setDarkInStorage());
@@ -49,7 +55,10 @@ class App extends Component {
 
   render() {
     return (
-      <Main className={this.state.dark ? "bp5-dark" : ""} style={{ background: this.state.dark ? "#1a1d21" : "#f6f8fa" }}>
+      <Main
+        className={this.state.dark ? "bp5-dark" : ""}
+        style={{ background: this.state.dark ? "#1a1d21" : "#f6f8fa" }}
+      >
         <SplashScreen dark={this.state.dark} />
         <Navbar
           darkTheme={this.state.dark}
@@ -57,10 +66,15 @@ class App extends Component {
           editMode={this.state.editMode}
           toggleEditMode={this.toggleEditMode}
         />
-        <Container column="true" style={{ background: this.state.dark ? "#1a1d21" : "#f6f8fa" }}>
+        <Container
+          style={{ background: this.state.dark ? "#1a1d21" : "#f6f8fa" }}
+        >
           <Routes>
-            <Route element={<Navigate to="/containers" />} exact path="/" />
-            <Route element={<Containers editMode={this.state.editMode} />} path="/containers" />
+            <Route element={<Navigate to="/containers" />} path="/" />
+            <Route
+              element={<Containers editMode={this.state.editMode} />}
+              path="/containers"
+            />
           </Routes>
         </Container>
       </Main>

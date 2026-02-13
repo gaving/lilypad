@@ -1,27 +1,19 @@
 import {
   AnchorButton,
   Button,
-  ButtonGroup,
   Card,
+  Checkbox,
   Collapse,
   Elevation,
-  Icon,
   Intent,
-  Popover,
-  Position,
-  Tag,
-  Tooltip,
 } from "@blueprintjs/core";
-import { IconNames } from "@blueprintjs/icons";
-import _ from "lodash";
-import moment from "moment";
-import PropTypes from "prop-types";
+import { format, formatDistanceToNow } from "date-fns";
 import { Component } from "react";
 
 import Emoji from "react-emoji-render";
 import styled from "styled-components";
 
-import Logs from "./Logs.jsx";
+import Logs from "./Logs";
 
 const {
   VITE_LAUNCH_URL,
@@ -29,6 +21,44 @@ const {
   VITE_CONTAINER_DESC,
   VITE_CONTAINER_ICON,
 } = import.meta.env;
+
+interface ContainerLabels {
+  [key: string]: string;
+}
+
+interface ContainerData {
+  Id: string;
+  Names: string[];
+  Image: string;
+  State: "running" | "exited" | "paused" | "pinned" | string;
+  Status: string;
+  Created: number;
+  Labels: ContainerLabels;
+}
+
+interface ContainerStats {
+  cpuPercent: number;
+}
+
+interface ContainerProps {
+  container: ContainerData;
+  showToast: (message: string, intent: Intent) => void;
+  updateContainer: (container: ContainerData) => void;
+  editMode?: boolean;
+  isSelected?: boolean;
+  onToggleSelect?: () => void;
+}
+
+interface ContainerState {
+  isOpen: boolean;
+  startIsLoading: boolean;
+  unpauseIsLoading: boolean;
+  pauseIsLoading: boolean;
+  stopIsLoading: boolean;
+  removeIsLoading: boolean;
+  pinIsLoading: boolean;
+  stats: ContainerStats | null;
+}
 
 const ContainerCard = styled(Card)`
   margin-bottom: 12px;
@@ -78,14 +108,32 @@ const LeftSection = styled.div`
   gap: 16px;
   flex: 1;
   min-width: 0;
-  
+
   @media (max-width: 768px) {
     gap: 12px;
     width: 100%;
   }
 `;
 
-const IconContainer = styled.div`
+const SelectionCheckbox = styled.div`
+  margin-right: 4px;
+  opacity: 1;
+
+  .bp5-control.bp5-checkbox {
+    margin-bottom: 0;
+
+    .bp5-control-indicator {
+      border-color: rgba(255, 107, 138, 0.5);
+
+      &:checked {
+        background-color: #ff6b8a;
+        border-color: #ff6b8a;
+      }
+    }
+  }
+`;
+
+const IconContainer = styled.div<{ $state?: string }>`
   width: 48px;
   height: 48px;
   border-radius: 12px;
@@ -94,16 +142,26 @@ const IconContainer = styled.div`
   justify-content: center;
   font-size: 24px;
   flex-shrink: 0;
-  background: ${props => props.$state === 'running' ? 'rgba(15, 153, 96, 0.2)' :
-    props.$state === 'exited' ? 'rgba(219, 55, 55, 0.2)' :
-    props.$state === 'paused' ? 'rgba(217, 130, 43, 0.2)' :
-    props.$state === 'pinned' ? 'rgba(255, 107, 138, 0.2)' :
-    'rgba(41, 101, 204, 0.2)'};
-  color: ${props => props.$state === 'running' ? '#0f9960' :
-    props.$state === 'exited' ? '#db3737' :
-    props.$state === 'paused' ? '#d9822b' :
-    props.$state === 'pinned' ? '#ff6b8a' :
-    '#2965cc'};
+  background: ${(props) =>
+    props.$state === "running"
+      ? "rgba(15, 153, 96, 0.2)"
+      : props.$state === "exited"
+        ? "rgba(219, 55, 55, 0.2)"
+        : props.$state === "paused"
+          ? "rgba(217, 130, 43, 0.2)"
+          : props.$state === "pinned"
+            ? "rgba(255, 107, 138, 0.2)"
+            : "rgba(41, 101, 204, 0.2)"};
+  color: ${(props) =>
+    props.$state === "running"
+      ? "#0f9960"
+      : props.$state === "exited"
+        ? "#db3737"
+        : props.$state === "paused"
+          ? "#d9822b"
+          : props.$state === "pinned"
+            ? "#ff6b8a"
+            : "#2965cc"};
   
   @media (max-width: 768px) {
     width: 40px;
@@ -161,7 +219,7 @@ const MetaRow = styled.div`
   }
 `;
 
-const LoadIndicator = styled.div`
+const LoadIndicator = styled.div<{ $load?: number }>`
   display: flex;
   align-items: center;
   gap: 6px;
@@ -184,30 +242,34 @@ const LoadIndicator = styled.div`
   
   .load-fill {
     height: 100%;
-    background: ${props => props.$load > 80 ? '#db3737' : props.$load > 50 ? '#d9822b' : '#0f9960'};
+    background: ${(props) => (props.$load && props.$load > 80 ? "#db3737" : props.$load && props.$load > 50 ? "#d9822b" : "#0f9960")};
     transition: width 0.3s ease;
   }
   
   .load-text {
     font-size: 11px;
     font-weight: 600;
-    color: ${props => props.$load > 80 ? '#db3737' : props.$load > 50 ? '#d9822b' : '#0f9960'};
+    color: ${(props) => (props.$load && props.$load > 80 ? "#db3737" : props.$load && props.$load > 50 ? "#d9822b" : "#0f9960")};
   }
 `;
 
-const StatusDot = styled.span`
+const StatusDot = styled.span<{ $state?: string }>`
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: ${props => props.$state === 'running' ? '#0f9960' :
-    props.$state === 'exited' ? '#db3737' :
-    props.$state === 'paused' ? '#d9822b' :
-    '#2965cc'};
+  background: ${(props) =>
+    props.$state === "running"
+      ? "#0f9960"
+      : props.$state === "exited"
+        ? "#db3737"
+        : props.$state === "paused"
+          ? "#d9822b"
+          : "#2965cc"};
   display: inline-block;
   margin-right: 6px;
 `;
 
-const Actions = styled.div`
+const _Actions = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
@@ -281,7 +343,7 @@ const DetailsGrid = styled.div`
 `;
 
 const DetailItem = styled.div`
-  label {
+  .detail-label {
     display: block;
     font-size: 11px;
     text-transform: uppercase;
@@ -289,21 +351,21 @@ const DetailItem = styled.div`
     color: var(--text-muted, #5c7080);
     margin-bottom: 4px;
   }
-  
-  value {
+
+  .detail-value {
     display: block;
     font-family: 'SF Mono', Monaco, monospace;
     font-size: 13px;
     color: var(--text-color, #182026);
     word-break: break-all;
   }
-  
+
   @media (max-width: 768px) {
-    label {
+    .detail-label {
       font-size: 10px;
     }
-    
-    value {
+
+    .detail-value {
       font-size: 12px;
     }
   }
@@ -317,8 +379,10 @@ const LogsSection = styled.div`
   }
 `;
 
-class Container extends Component {
-  state = {
+class Container extends Component<ContainerProps, ContainerState> {
+  private statsInterval: ReturnType<typeof setInterval> | null = null;
+
+  state: ContainerState = {
     isOpen: false,
     startIsLoading: false,
     unpauseIsLoading: false,
@@ -330,7 +394,9 @@ class Container extends Component {
   };
 
   componentDidMount() {
-    const openContainers = JSON.parse(localStorage.getItem("openContainers"));
+    const openContainers = JSON.parse(
+      localStorage.getItem("openContainers") || "null",
+    );
     if (openContainers?.includes(this.props.container.Id)) {
       this.setOpen(true);
     }
@@ -350,13 +416,13 @@ class Container extends Component {
     if (document.visibilityState === "hidden") {
       return;
     }
-    
+
     const { container } = this.props;
     if (container.State !== "running") {
       this.setState({ stats: null });
       return;
     }
-    
+
     try {
       const response = await fetch(`/api/containers/${container.Id}/stats`);
       if (response.ok) {
@@ -368,45 +434,59 @@ class Container extends Component {
     }
   };
 
-  setOpen = (open) => {
+  setOpen = (open?: boolean) => {
     const { container } = this.props;
     const newState = open !== undefined ? open : !this.state.isOpen;
-    
+
     this.setState({ isOpen: newState });
-    
-    const openContainers = JSON.parse(localStorage.getItem("openContainers")) || [];
+
+    let openContainers =
+      JSON.parse(localStorage.getItem("openContainers") || "null") || [];
     if (newState) {
       if (!openContainers.includes(container.Id)) {
         openContainers.push(container.Id);
       }
     } else {
-      _.remove(openContainers, id => id === container.Id);
+      openContainers = openContainers.filter(
+        (id: string) => id !== container.Id,
+      );
     }
     localStorage.setItem("openContainers", JSON.stringify(openContainers));
   };
 
-  handleAction = async (action, endpoint, method = "POST", body = null) => {
+  handleAction = async (
+    action: string,
+    endpoint: string,
+    method: string = "POST",
+    body: object | null = null,
+  ) => {
     const { container, showToast, updateContainer } = this.props;
-    const loadingKey = `${action}IsLoading`;
-    
-    this.setState({ [loadingKey]: true });
-    
+    const loadingKey = `${action}IsLoading` as keyof ContainerState;
+
+    this.setState({ [loadingKey]: true } as Pick<
+      ContainerState,
+      keyof ContainerState
+    >);
+
     try {
-      const options = { method };
+      const options: RequestInit = { method };
       if (body) {
         options.headers = { "Content-Type": "application/json" };
         options.body = JSON.stringify(body);
       }
-      
+
       const response = await fetch(endpoint, options);
-      
-      let status, intent;
+
+      let status: string, intent: Intent;
       switch (response.status) {
         case 200:
         case 204:
-          status = action === 'pin' ? 'Container pinned' : 
-                   action === 'unpin' ? 'Container unpinned' :
-                   `App ${action}ed`;
+          status =
+            action === "pin"
+              ? "Container pinned"
+              : action === "unpin"
+                ? "Container unpinned"
+                : `App ${action}ed`;
           intent = Intent.SUCCESS;
           break;
         case 304:
@@ -421,22 +501,26 @@ class Container extends Component {
           status = "Server error";
           intent = Intent.DANGER;
       }
-      
+
       showToast(status, intent);
       updateContainer(container);
-    } catch (error) {
+    } catch (_error) {
       showToast("Network error", Intent.DANGER);
     }
-    
-    this.setState({ [loadingKey]: false });
+
+    this.setState({ [loadingKey]: false } as Pick<
+      ContainerState,
+      keyof ContainerState
+    >);
   };
 
   getActionButtons = () => {
     const { container } = this.props;
-    const { startIsLoading, stopIsLoading, removeIsLoading, pinIsLoading } = this.state;
-    
+    const { startIsLoading, stopIsLoading, removeIsLoading, pinIsLoading } =
+      this.state;
+
     const actions = [];
-    
+
     // Pin/Unpin button (shown for all states)
     actions.push(
       <Button
@@ -444,20 +528,17 @@ class Container extends Component {
         icon={container.State === "pinned" ? "unpin" : "pin"}
         intent={Intent.SUCCESS}
         loading={pinIsLoading}
-        onClick={(e) => {
+        onClick={(e: React.MouseEvent) => {
           e.stopPropagation();
-          this.handleAction(
-            "pin",
-            "/api/containers/pin",
-            "POST",
-            { containerName: container.Names[0] }
-          );
+          this.handleAction("pin", "/api/containers/pin", "POST", {
+            containerName: container.Names[0],
+          });
         }}
       >
         {container.State === "pinned" ? "Unpin" : "Pin"}
-      </Button>
+      </Button>,
     );
-    
+
     if (container.State === "exited") {
       actions.push(
         <Button
@@ -465,13 +546,13 @@ class Container extends Component {
           icon="play"
           intent={Intent.SUCCESS}
           loading={startIsLoading}
-          onClick={(e) => {
+          onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
             this.handleAction("start", `/api/containers/${container.Id}`);
           }}
         >
           Start
-        </Button>
+        </Button>,
       );
       actions.push(
         <Button
@@ -479,13 +560,17 @@ class Container extends Component {
           icon="trash"
           intent={Intent.DANGER}
           loading={removeIsLoading}
-          onClick={(e) => {
+          onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
-            this.handleAction("remove", `/api/containers/${container.Id}`, "DELETE");
+            this.handleAction(
+              "remove",
+              `/api/containers/${container.Id}`,
+              "DELETE",
+            );
           }}
         >
           Remove
-        </Button>
+        </Button>,
       );
     } else {
       if (container.State === "running") {
@@ -493,63 +578,94 @@ class Container extends Component {
           <Button
             key="pause"
             icon="pause"
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
-              this.handleAction("pause", `/api/containers/${container.Id}/pause`);
+              this.handleAction(
+                "pause",
+                `/api/containers/${container.Id}/pause`,
+              );
             }}
           >
             Pause
-          </Button>
+          </Button>,
         );
       } else if (container.State === "paused") {
         actions.push(
           <Button
             key="unpause"
             icon="play"
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
-              this.handleAction("unpause", `/api/containers/${container.Id}/unpause`);
+              this.handleAction(
+                "unpause",
+                `/api/containers/${container.Id}/unpause`,
+              );
             }}
           >
             Resume
-          </Button>
+          </Button>,
         );
       }
-      
+
       actions.push(
         <Button
           key="stop"
           icon="stop"
           intent={Intent.WARNING}
           loading={stopIsLoading}
-          onClick={(e) => {
+          onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
-            this.handleAction("stop", `/api/containers/stop`, "POST", { containerId: container.Id });
+            this.handleAction("stop", `/api/containers/stop`, "POST", {
+              containerId: container.Id,
+            });
           }}
         >
           Stop
-        </Button>
+        </Button>,
       );
     }
-    
+
     return actions;
   };
 
   render() {
-    const { container, editMode } = this.props;
+    const { container, editMode, isSelected, onToggleSelect } = this.props;
     const { isOpen } = this.state;
-    
+
     const rawIcon = container.Labels[VITE_CONTAINER_ICON] ?? "package";
     // Wrap icon in colons for emoji shortcode if not already wrapped
-    const icon = rawIcon.startsWith(':') ? rawIcon : `:${rawIcon}:`;
-    const name = container.Labels[VITE_CONTAINER_DESC] ?? container.Names[0]?.replace(/^\//, '') ?? "Unnamed";
+    const icon = rawIcon.startsWith(":") ? rawIcon : `:${rawIcon}:`;
+    const name =
+      container.Labels[VITE_CONTAINER_DESC] ??
+      container.Names[0]?.replace(/^\//, "") ??
+      "Unnamed";
     const tag = container.Labels[VITE_CONTAINER_TAG] ?? "unknown";
     const url = container.Labels[VITE_LAUNCH_URL] ?? "#";
-    
+
     return (
       <ContainerCard elevation={Elevation.TWO}>
-        <Header onClick={editMode ? () => this.setOpen() : undefined} style={{ cursor: editMode ? 'pointer' : 'default' }}>
+        <Header
+          onClick={editMode ? () => this.setOpen() : undefined}
+          style={{ cursor: editMode ? "pointer" : "default" }}
+        >
           <LeftSection>
+            {editMode && onToggleSelect && (
+              <SelectionCheckbox
+                onClick={(e: React.MouseEvent) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  onToggleSelect();
+                }}
+              >
+                <Checkbox 
+                  checked={isSelected} 
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    onToggleSelect();
+                  }}
+                />
+              </SelectionCheckbox>
+            )}
             <IconContainer $state={container.State}>
               <Emoji text={icon} />
             </IconContainer>
@@ -564,88 +680,98 @@ class Container extends Component {
                 <span className="hide-mobile">•</span>
                 <span className="container-tag hide-mobile">{tag}</span>
                 <span>•</span>
-                <span>{moment.unix(container.Created).fromNow()}</span>
+                <span>
+                  {formatDistanceToNow(new Date(container.Created * 1000), {
+                    addSuffix: true,
+                  })}
+                </span>
                 {this.state.stats && (
                   <>
                     <span className="hide-mobile">•</span>
                     <LoadIndicator $load={this.state.stats.cpuPercent}>
                       <div className="load-bar">
-                        <div 
-                          className="load-fill" 
-                          style={{ width: `${Math.min(this.state.stats.cpuPercent, 100)}%` }}
+                        <div
+                          className="load-fill"
+                          style={{
+                            width: `${Math.min(this.state.stats.cpuPercent, 100)}%`,
+                          }}
                         />
                       </div>
-                      <span className="load-text">{this.state.stats.cpuPercent}%</span>
+                      <span className="load-text">
+                        {this.state.stats.cpuPercent}%
+                      </span>
                     </LoadIndicator>
                   </>
                 )}
               </MetaRow>
             </Info>
           </LeftSection>
-          
-          <DesktopActions onClick={(e) => e.stopPropagation()}>
-            <Tooltip content="Open in browser">
-              <AnchorButton
-                minimal
-                icon="share"
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-              />
-            </Tooltip>
-            
+
+          <DesktopActions
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+          >
+            <AnchorButton
+              minimal
+              icon="share"
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Open in browser"
+            />
+
             {editMode && (
               <Button
                 minimal
                 icon={isOpen ? "chevron-up" : "chevron-down"}
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent) => {
                   e.stopPropagation();
                   this.setOpen();
                 }}
               />
             )}
           </DesktopActions>
-          
+
           {editMode && (
             <Button
               minimal
               icon={isOpen ? "chevron-up" : "chevron-down"}
               className="mobile-only"
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 this.setOpen();
               }}
             />
           )}
         </Header>
-        
+
         <Collapse isOpen={editMode && isOpen}>
           <ExpandedContent>
-            {editMode && (
-              <QuickActions>
-                {this.getActionButtons()}
-              </QuickActions>
-            )}
-            
+            {editMode && <QuickActions>{this.getActionButtons()}</QuickActions>}
+
             <DetailsGrid>
               <DetailItem>
-                <label>Container ID</label>
-                <value>{container.Id}</value>
+                <div className="detail-label">Container ID</div>
+                <div className="detail-value">{container.Id}</div>
               </DetailItem>
               <DetailItem>
-                <label>Image</label>
-                <value>{container.Image}</value>
+                <div className="detail-label">Image</div>
+                <div className="detail-value">{container.Image}</div>
               </DetailItem>
               <DetailItem className="hide-mobile">
-                <label>Created</label>
-                <value>{moment.unix(container.Created).format("MMM Do YYYY, h:mm:ss a")}</value>
+                <div className="detail-label">Created</div>
+                <div className="detail-value">
+                  {format(
+                    new Date(container.Created * 1000),
+                    "MMM do yyyy, h:mm:ss a",
+                  )}
+                </div>
               </DetailItem>
               <DetailItem>
-                <label>Status</label>
-                <value>{container.Status}</value>
+                <div className="detail-label">Status</div>
+                <div className="detail-value">{container.Status}</div>
               </DetailItem>
             </DetailsGrid>
-            
+
             <LogsSection>
               <Logs container={container} />
             </LogsSection>
@@ -655,16 +781,5 @@ class Container extends Component {
     );
   }
 }
-
-Container.propTypes = {
-  container: PropTypes.object.isRequired,
-  showToast: PropTypes.func.isRequired,
-  updateContainer: PropTypes.func.isRequired,
-  editMode: PropTypes.bool,
-};
-
-Container.defaultProps = {
-  editMode: false,
-};
 
 export default Container;

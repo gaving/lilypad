@@ -4,13 +4,16 @@ import { FocusStyleManager } from "@blueprintjs/core";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
 
-import App from "./App.jsx";
+import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
 const container = document.querySelector("#root");
-const root = createRoot(container); // createRoot(container!) if you use TypeScript
+if (!container) {
+  throw new Error("Root element not found");
+}
+const root = createRoot(container);
 
 root.render(
   <Router>

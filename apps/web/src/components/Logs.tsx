@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { Component } from "react";
 import styled from "styled-components";
 
@@ -15,14 +14,12 @@ const Shell = styled.div`
   width: 100%;
 `;
 
-const Log = styled.code`
-  color: #e1e8ed;
+const Log = styled.code<{ color?: string }>`
+  color: ${(props) => props.color || "#e1e8ed"};
   font-size: 16px;
   margin: 0;
   white-space: pre-wrap;
   word-break: break-all;
-
-  ${(props) => props.color && `color: ${props.color}`};
 `;
 
 const Container = styled.div`
@@ -31,8 +28,20 @@ const Container = styled.div`
   width: 100%;
 `;
 
-class Logs extends Component {
-  state = {
+interface ContainerType {
+  Id: string;
+}
+
+interface LogsProps {
+  container: ContainerType;
+}
+
+interface LogsState {
+  logs: string[];
+}
+
+class Logs extends Component<LogsProps, LogsState> {
+  state: LogsState = {
     logs: [],
   };
 
@@ -42,7 +51,6 @@ class Logs extends Component {
 
   updateLogs = async () => {
     const logs = await fetch(`/api/containers/${this.props.container.Id}/logs`);
-
     this.setState({ logs: await logs.json() });
   };
 
@@ -51,19 +59,15 @@ class Logs extends Component {
       <Container>
         <Shell>
           <Log color="limegreen">Last 200 lines</Log>
-          {this.state.logs.map((log, i) => {
+          {this.state.logs.map((log) => {
             if (this.state.logs.length <= 1)
-              return <Log key={`log-${i}`}>No logs for this container</Log>;
-            return <Log key={`log-${i}`}>{log}</Log>;
+              return <Log key="no-logs">No logs for this container</Log>;
+            return <Log key={log}>{log}</Log>;
           })}
         </Shell>
       </Container>
     );
   }
 }
-
-Logs.propTypes = {
-  container: PropTypes.object.isRequired,
-};
 
 export default Logs;

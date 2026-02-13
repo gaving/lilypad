@@ -9,7 +9,6 @@ import {
   Tooltip,
 } from "@blueprintjs/core";
 
-import PropTypes from "prop-types";
 import styled from "styled-components";
 
 const StyledNavbar = styled(Nav)`
@@ -39,16 +38,16 @@ const Container = styled.div`
   color: var(--text-color, #182026);
 `;
 
-const Flex = styled.div`
+const Flex = styled.div<{ $gap?: number }>`
   display: flex;
   align-items: center;
-  gap: ${props => props.$gap || 0}px;
+  gap: ${(props) => props.$gap || 0}px;
 `;
 
-const LogoIcon = styled.span`
+const LogoIcon = styled.span<{ $dark?: boolean }>`
   font-size: 24px;
   margin-right: 0.5em;
-  filter: ${props => props.$dark ? 'brightness(1.2)' : 'none'};
+  filter: ${(props) => (props.$dark ? "brightness(1.2)" : "none")};
 `;
 
 const VersionBadge = styled.span`
@@ -73,7 +72,19 @@ const VersionBadge = styled.span`
   }
 `;
 
-const Navbar = ({ darkTheme, toggleDarkTheme, editMode, toggleEditMode }) => {
+interface NavbarProps {
+  darkTheme: boolean;
+  toggleDarkTheme: () => void;
+  editMode: boolean;
+  toggleEditMode: () => void;
+}
+
+const Navbar = ({
+  darkTheme,
+  toggleDarkTheme,
+  editMode,
+  toggleEditMode,
+}: NavbarProps) => {
   return (
     <StyledNavbar>
       <Container>
@@ -86,9 +97,11 @@ const Navbar = ({ darkTheme, toggleDarkTheme, editMode, toggleEditMode }) => {
         </NavbarGroup>
         <NavbarGroup align={Alignment.RIGHT}>
           <Flex $gap={8}>
-            <Tooltip content={editMode ? "Disable edit mode" : "Enable edit mode"}>
-              <Button 
-                minimal 
+            <Tooltip
+              content={editMode ? "Disable edit mode" : "Enable edit mode"}
+            >
+              <Button
+                minimal
                 intent={editMode ? Intent.WARNING : Intent.NONE}
                 onClick={() => toggleEditMode()}
               >
@@ -103,13 +116,6 @@ const Navbar = ({ darkTheme, toggleDarkTheme, editMode, toggleEditMode }) => {
       </Container>
     </StyledNavbar>
   );
-};
-
-Navbar.propTypes = {
-  darkTheme: PropTypes.bool.isRequired,
-  toggleDarkTheme: PropTypes.func.isRequired,
-  editMode: PropTypes.bool.isRequired,
-  toggleEditMode: PropTypes.func.isRequired,
 };
 
 export default Navbar;
