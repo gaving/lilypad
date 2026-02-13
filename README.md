@@ -131,7 +131,9 @@ See [docs/LABELS.md](./docs/LABELS.md) for more examples.
 
 ## 📄 License
 
-UNLICENSED - Private repository
+MIT License - see [LICENSE](LICENSE) for details.
+
+Do whatever you want with this AI slop! 😄
 
 ---
 

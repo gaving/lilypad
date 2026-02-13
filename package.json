@@ -1,8 +1,8 @@
 {
   "name": "lilypad",
   "version": "10.0.0",
-  "private": true,
   "description": "Lilypad X - Modern Docker container management",
+  "license": "MIT",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
