@@ -93,7 +93,7 @@ docker rm lilypad-e2e test-api
 ## GitHub Actions CI
 
 The E2E tests run automatically on:
-- Push to `master` or `kermit`
+- Push to `master`
 - Pull requests to `master`
 
 See `.github/workflows/e2e.yml` for configuration.

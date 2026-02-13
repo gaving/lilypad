@@ -1,4 +1,4 @@
-# Lilypad X (Kermit) 🐸
+# Lilypad X 🐸
 
 [![Version](https://img.shields.io/badge/version-10.0.0-blue.svg)](https://github.com/anomalyco/lilypad)
 [![Node.js](https://img.shields.io/badge/node-24.x-green.svg)](https://nodejs.org/)

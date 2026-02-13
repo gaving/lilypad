@@ -5,9 +5,9 @@
 **Lilypad** is a modern Docker container management web application with a cherry blossom (pink) theme. It provides a beautiful, responsive UI for viewing, starting, stopping, and managing Docker containers.
 
 - **Repository**: `anomalyco/lilypad`
-- **Current Branch**: `kermit`
-- **Version**: 4.0.0
-- **License**: UNLICENSED (private)
+- **Current Branch**: `master`
+- **Version**: 10.0.0
+- **License**: MIT
 
 ## Tech Stack
 
@@ -357,4 +357,4 @@ git commit -m ":see_no_evil: Add .turbo to .gitignore"
 
 ---
 
-*Generated for commit: kermit 9b230f1 - docs: split AGENTS.md into separate documentation files*
+*Generated for commit: master - Lilypad X v10.0.0*
