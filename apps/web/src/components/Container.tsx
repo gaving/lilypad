@@ -643,7 +643,7 @@ class Container extends Component<ContainerProps, ContainerState> {
     const url = container.Labels[VITE_LAUNCH_URL] ?? "#";
 
     return (
-      <ContainerCard elevation={Elevation.TWO}>
+      <ContainerCard elevation={Elevation.TWO} data-testid="container-card">
         <Header
           onClick={editMode ? () => this.setOpen() : undefined}
           style={{ cursor: editMode ? "pointer" : "default" }}
@@ -663,6 +663,7 @@ class Container extends Component<ContainerProps, ContainerState> {
                     e.stopPropagation();
                     onToggleSelect();
                   }}
+                  data-testid="container-checkbox"
                 />
               </SelectionCheckbox>
             )}
@@ -674,7 +675,7 @@ class Container extends Component<ContainerProps, ContainerState> {
               <AppName>{name}</AppName>
               <MetaRow>
                 <span>
-                  <StatusDot $state={container.State} />
+                  <StatusDot $state={container.State} data-testid="status-dot" />
                   {container.State}
                 </span>
                 <span className="hide-mobile">•</span>

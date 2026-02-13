@@ -104,6 +104,7 @@ const Navbar = ({
                 minimal
                 intent={editMode ? Intent.WARNING : Intent.NONE}
                 onClick={() => toggleEditMode()}
+                data-testid="edit-mode-toggle"
               >
                 <Icon icon={editMode ? "unlock" : "lock"} />
               </Button>

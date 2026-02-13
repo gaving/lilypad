@@ -1,0 +1,171 @@
+name: E2E Tests with Docker-in-Docker
+
+on:
+  push:
+    branches: [master, kermit]
+  pull_request:
+    branches: [master]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    
+    services:
+      docker:
+        image: docker:24-dind
+        privileged: true
+        options: >-
+          --name docker
+          --hostname docker
+        ports:
+          - 2375:2375
+          - 8888:8888
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build web app
+        run: pnpm turbo run build --filter=@lilypad/web
+
+      - name: Wait for Docker daemon
+        run: |
+          echo "Waiting for Docker daemon..."
+          for i in {1..30}; do
+            if docker info >/dev/null 2>&1; then
+              echo "Docker daemon is ready!"
+              break
+            fi
+            echo "Waiting... ($i/30)"
+            sleep 2
+          done
+
+      - name: Seed test containers
+        run: |
+          echo "Creating test containers with labels..."
+          docker run -d \
+            --name test-api-1 \
+            -p 8081:80 \
+            -l org.domain.review.name=test-api-1 \
+            -l org.domain.review.desc="Test API Server 1" \
+            -l org.domain.review.icon=rocket \
+            -l org.domain.review.url=http://localhost:8081 \
+            nginx:alpine
+          
+          docker run -d \
+            --name test-web-1 \
+            -p 8082:80 \
+            -l org.domain.review.name=test-web-1 \
+            -l org.domain.review.desc="Test Web App 1" \
+            -l org.domain.review.icon=globe \
+            -l org.domain.review.url=http://localhost:8082 \
+            nginx:alpine
+          
+          docker run -d \
+            --name test-db-1 \
+            -p 5432:5432 \
+            -e POSTGRES_PASSWORD=test \
+            -l org.domain.review.name=test-db-1 \
+            -l org.domain.review.desc="Test Database" \
+            -l org.domain.review.icon=database \
+            postgres:15-alpine
+          
+          echo "Test containers created:"
+          docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Labels}}"
+
+      - name: Build Lilypad Docker image
+        run: |
+          docker build -t lilypad:test .
+          echo "Image built successfully"
+
+      - name: Start Lilypad
+        run: |
+          echo "Starting Lilypad..."
+          docker run -d \
+            --name lilypad-e2e \
+            -p 8888:8888 \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -e NODE_ENV=production \
+            -e CONTAINER_TAG=org.domain.review.name \
+            lilypad:test
+          
+          echo "Waiting for Lilypad to be ready..."
+          for i in {1..30}; do
+            if curl -s http://localhost:8888 > /dev/null 2>&1; then
+              echo "Lilypad is ready!"
+              break
+            fi
+            echo "Waiting... ($i/30)"
+            sleep 2
+          done
+          
+          echo "Lilypad containers:"
+          curl -s http://localhost:8888/api/containers | python3 -c "import sys,json; c=json.load(sys.stdin); print(f'Found {len(c)} containers')"
+
+      - name: Install Playwright
+        run: |
+          cd apps/web
+          pnpm add -D @playwright/test
+          pnpm exec playwright install chromium
+
+      - name: Run Playwright E2E tests
+        run: |
+          cd apps/web
+          pnpm exec playwright test e2e/
+        env:
+          LILYPAD_URL: http://localhost:8888
+          CI: true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: |
+            apps/web/playwright-report/
+            apps/web/test-results/
+          retention-days: 30
+
+      - name: Upload test screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-screenshots
+          path: |
+            apps/web/e2e-screenshots/
+          retention-days: 30
+
+      - name: Cleanup
+        if: always()
+        run: |
+          echo "Cleaning up test containers..."
+          docker stop test-api-1 test-web-1 test-db-1 lilypad-e2e 2>/dev/null || true
+          docker rm test-api-1 test-web-1 test-db-1 lilypad-e2e 2>/dev/null || true
+          docker system prune -f
