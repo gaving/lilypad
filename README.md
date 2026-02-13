@@ -19,6 +19,14 @@ A modern, fast web interface for managing Docker containers with real-time updat
 - 📱 **Responsive** - Works on desktop and mobile
 - 📦 **Bulk Actions** - Select and manage multiple containers at once
 
+## 📸 Screenshots
+
+| Light Mode | Dark Mode | Bulk Actions |
+|------------|-----------|--------------|
+| ![Dashboard Light](screenshots/dashboard-light.svg) | ![Dashboard Dark](screenshots/dashboard-dark.svg) | ![Bulk Actions](screenshots/bulk-actions.svg) |
+
+> 💡 **Note:** These are placeholder SVGs. Replace with actual screenshots after deployment.
+
 ## 🚀 Quick Start
 
 ```bash
