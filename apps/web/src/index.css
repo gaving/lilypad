@@ -8,7 +8,7 @@
   --bg-color: #f6f8fa;
   --card-bg: #ffffff;
   --code-bg: rgba(0, 0, 0, 0.05);
-  
+
   /* Pink accent colors */
   --pink-primary: #ff6b8a;
   --pink-light: #ff8fa3;
@@ -22,7 +22,7 @@
   --bg-color: #1a1d21;
   --card-bg: #252a31;
   --code-bg: rgba(255, 255, 255, 0.1);
-  
+
   /* Pink accent colors - vibrant in dark mode */
   --pink-primary: #ff85a1;
   --pink-light: #ff9eb3;
@@ -38,16 +38,16 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
 .bp4-navbar {
@@ -56,30 +56,31 @@ code {
 }
 
 .bp4-popover-target {
-  display: flex !important;
+  display: flex;
 }
 
 /* Mobile utility classes */
 .mobile-only {
-  display: none !important;
+  display: none;
 }
 
 @media (max-width: 768px) {
   .hide-mobile {
-    display: none !important;
+    display: none;
   }
-  
+
   .mobile-only {
-    display: flex !important;
+    display: flex;
   }
-  
+
   /* Make page padding smaller on mobile */
   body {
     font-size: 14px;
   }
-  
+
   /* Ensure touch targets are large enough */
-  button, a {
+  button,
+  a {
     min-height: 44px;
     min-width: 44px;
   }
@@ -90,7 +91,7 @@ code {
   .bp5-navbar {
     padding: 0 12px;
   }
-  
+
   .bp5-navbar-heading {
     font-size: 16px;
   }
