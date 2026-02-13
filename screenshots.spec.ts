@@ -5,9 +5,9 @@ const BASE_URL = "http://localhost:8080";
 const SCREENSHOT_DIR = "./screenshots";
 
 // Helper to take screenshot
-async function takeScreenshot(page, name) {
+async function takeScreenshot(page, name, viewport = { width: 1200, height: 800 }) {
   console.log(`Taking screenshot: ${name}...`);
-  await page.setViewportSize({ width: 1200, height: 800 });
+  await page.setViewportSize(viewport);
   await page.screenshot({
     path: `${SCREENSHOT_DIR}/${name}.png`,
     fullPage: false,
@@ -16,46 +16,45 @@ async function takeScreenshot(page, name) {
 }
 
 test.describe("Lilypad Screenshots", () => {
-  test("Dashboard Light Mode", async ({ page }) => {
+  test("Dashboard Light Mode - Desktop", async ({ page }) => {
     await page.goto(BASE_URL);
-    // Wait for page to load
     await page.waitForLoadState("networkidle");
-    await setTimeout(3000);
-    await takeScreenshot(page, "dashboard-light");
+    await setTimeout(5000); // Wait for containers to load
+    await takeScreenshot(page, "dashboard-light", { width: 1200, height: 800 });
   });
 
-  test("Dashboard Dark Mode", async ({ page }) => {
+  test("Dashboard Dark Mode - Desktop", async ({ page }) => {
     await page.goto(BASE_URL);
     await page.waitForLoadState("networkidle");
-    await setTimeout(2000);
+    await setTimeout(3000);
 
-    // Try to click dark mode toggle (look for moon/sun icon)
+    // Try to click dark mode toggle
     const buttons = await page.locator('button').all();
     for (const button of buttons) {
       const text = await button.textContent().catch(() => "");
-      if (text.includes("🌙") || text.includes("☀️") || text.includes("moon") || text.includes("sun")) {
+      if (text.includes("🌙") || text.includes("☀️") || text.toLowerCase().includes("dark")) {
         await button.click();
         await setTimeout(1000);
         break;
       }
     }
 
-    await takeScreenshot(page, "dashboard-dark");
+    await takeScreenshot(page, "dashboard-dark", { width: 1200, height: 800 });
   });
 
-  test("Bulk Actions", async ({ page }) => {
+  test("Bulk Actions - Desktop", async ({ page }) => {
     await page.goto(BASE_URL);
     await page.waitForLoadState("networkidle");
-    await setTimeout(2000);
+    await setTimeout(3000);
 
-    // Look for Edit button and click it
+    // Look for Edit button
     const editButton = page.locator('button:has-text("Edit")');
     if (await editButton.count() > 0) {
       await editButton.first().click();
       await setTimeout(1000);
     }
 
-    // Look for checkboxes and click first two
+    // Click first two checkboxes
     const checkboxes = await page.locator('input[type="checkbox"]').all();
     for (let i = 0; i < Math.min(2, checkboxes.length); i++) {
       await checkboxes[i].click();
@@ -63,6 +62,20 @@ test.describe("Lilypad Screenshots", () => {
     }
 
     await setTimeout(1000);
-    await takeScreenshot(page, "bulk-actions");
+    await takeScreenshot(page, "bulk-actions", { width: 1200, height: 800 });
+  });
+
+  test("Dashboard - Mobile", async ({ page }) => {
+    await page.goto(BASE_URL);
+    await page.waitForLoadState("networkidle");
+    await setTimeout(3000);
+    await takeScreenshot(page, "dashboard-mobile", { width: 375, height: 812 });
+  });
+
+  test("Dashboard - Tablet", async ({ page }) => {
+    await page.goto(BASE_URL);
+    await page.waitForLoadState("networkidle");
+    await setTimeout(3000);
+    await takeScreenshot(page, "dashboard-tablet", { width: 768, height: 1024 });
   });
 });
