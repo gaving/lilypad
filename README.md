@@ -35,11 +35,36 @@ See [docs/SETUP.md](./docs/SETUP.md) for detailed setup instructions.
 
 ## 🐳 Docker
 
+### Run from GitHub Container Registry (Recommended)
+
 ```bash
-# Build
+# Pull and run latest version
+docker run -d \
+  -p 8080:8888 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  --name lilypad \
+  ghcr.io/gaving/lilypad:latest
+
+# Or run specific version
+docker run -d \
+  -p 8080:8888 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  --name lilypad \
+  ghcr.io/gaving/lilypad:v10.0.0
+```
+
+Available tags:
+- `ghcr.io/gaving/lilypad:latest` - Latest stable
+- `ghcr.io/gaving/lilypad:v10.0.0` - Version 10
+- `ghcr.io/gaving/lilypad:X` - Version X
+
+### Build from Source
+
+```bash
+# Build locally
 docker build -t lilypad .
 
-# Run
+# Run locally
 docker run -d \
   -p 8080:8888 \
   -v /var/run/docker.sock:/var/run/docker.sock \
