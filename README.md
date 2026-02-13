@@ -5,9 +5,9 @@
 [![Turborepo](https://img.shields.io/badge/turborepo-2.x-purple.svg)](https://turbo.build/)
 [![pnpm](https://img.shields.io/badge/pnpm-10.x-orange.svg)](https://pnpm.io/)
 
-> *"It's not easy being green... but it is easy managing containers!"*
+> *Container management in full bloom 🌸*
 
-A modern, fast web interface for managing Docker containers with real-time updates, dark mode support, and a beautiful cherry blossom theme.
+A modern, beautiful web interface for managing Docker containers. Built with React, Vite, and a cherry blossom theme that makes container orchestration a breath of fresh air.
 
 ## ✨ Features
 
