@@ -44,8 +44,8 @@ test.describe("Bulk Actions", () => {
     await checkboxes.nth(0).click({ force: true });
     await page.waitForTimeout(500);
     
-    // Verify bulk action buttons appear
-    await expect(page.locator('button:has-text("Stop Selected")')).toBeVisible();
-    await expect(page.locator('button:has-text("Start Selected")')).toBeVisible();
+    // Verify bulk action buttons appear (buttons say "Stop" and "Start", not "Stop Selected")
+    await expect(page.locator('button:has-text("Stop")').filter({ hasNotText: "Clear" })).toBeVisible();
+    await expect(page.locator('button:has-text("Start")')).toBeVisible();
   });
 });
