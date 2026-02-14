@@ -26,3 +26,6 @@ yarn-error.log*
 .turbo
 *.cookie
 test-results/
+
+# npm lockfiles (project uses pnpm)
+package-lock.json
