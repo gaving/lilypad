@@ -116,9 +116,8 @@ jobs:
           echo "Lilypad containers:"
           curl -s http://localhost:8888/api/containers | python3 -c "import sys,json; c=json.load(sys.stdin); print(f'Found {len(c)} containers')"
 
-      - name: Install Playwright
+      - name: Install Playwright browsers
         run: |
-          pnpm add -D @playwright/test
           pnpm exec playwright install chromium
 
       - name: Run Playwright E2E tests
