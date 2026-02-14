@@ -120,7 +120,7 @@ const SplashScreen = ({ dark }: SplashScreenProps) => {
     <SplashContainer $dark={dark} $hide={hide}>
       <Logo>🌸</Logo>
       <Title $dark={dark}>Lilypad X</Title>
-      <Subtitle $dark={dark}>Docker Container Management</Subtitle>
+      <Subtitle $dark={dark}>Container management in full bloom</Subtitle>
       <LoadingBar $dark={dark} />
     </SplashContainer>
   );
