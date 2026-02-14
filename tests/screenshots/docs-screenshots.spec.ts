@@ -1,6 +1,15 @@
 import { test } from "@playwright/test";
 import { setTimeout } from "timers/promises";
 
+/**
+ * Screenshot Tests for Documentation
+ * 
+ * These tests are for generating documentation screenshots only.
+ * Run manually with: pnpm exec playwright test --config=playwright.screenshots.config.ts
+ * 
+ * Note: Requires Lilypad to be running on http://localhost:8080 with test containers
+ */
+
 const BASE_URL = "http://localhost:8080";
 const SCREENSHOT_DIR = "./screenshots";
 
@@ -15,7 +24,7 @@ async function takeScreenshot(page, name, viewport = { width: 1200, height: 800 
   console.log(`✓ Saved: ${SCREENSHOT_DIR}/${name}.png`);
 }
 
-test.describe("Lilypad Screenshots", () => {
+test.describe("Documentation Screenshots", () => {
   test("Dashboard Light Mode - Desktop", async ({ page }) => {
     await page.goto(BASE_URL);
     await page.waitForLoadState("networkidle");
