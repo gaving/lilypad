@@ -119,6 +119,25 @@ router.post("/stop", async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+router.post("/start", async (req: Request, res: Response): Promise<void> => {
+  const { containerId } = req.body as { containerId: string };
+  if (!isValidContainerId(containerId)) {
+    res.status(400).send({ error: "Invalid container ID" });
+    return;
+  }
+  logger.debug("Starting container:", containerId?.substring(0, 12));
+
+  try {
+    const data = await _got.post(CONTAINER_START(containerId));
+    logger.info(`Container ${containerId?.substring(0, 12)} started`);
+    res.sendStatus(data.statusCode);
+  } catch (error) {
+    const err = error as DockerError;
+    logger.error("Error starting container:", err.message);
+    res.sendStatus(err.statusCode || 500);
+  }
+});
+
 router.post("/prune", async (_req: Request, res: Response) => {
   logger.debug("Pruning containers");
 

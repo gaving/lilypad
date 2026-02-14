@@ -455,7 +455,7 @@ class Containers extends Component<ContainersProps, ContainersState> {
 
     const selectedIds = Array.from(selectedContainers);
     const promises = selectedIds.map((id) =>
-      fetch(`/api/containers/${action === "start" ? "" : "stop"}`, {
+      fetch(`/api/containers/${action}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
