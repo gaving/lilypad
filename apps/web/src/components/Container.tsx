@@ -742,7 +742,7 @@ class Container extends Component<ContainerProps, ContainerState> {
     }
 
     // Extract domain prefix from containerTag (e.g., "org.domain.review.name" -> "org.domain.review")
-    const domainPrefix = this.context?.config?.containerTag
+    const domainPrefix = this.context?.containerTag
       ?.split(".")
       .slice(0, -1)
       .join(".");
@@ -826,24 +826,24 @@ class Container extends Component<ContainerProps, ContainerState> {
     const { container, editMode, isSelected, onToggleSelect } = this.props;
     const { isOpen } = this.state;
 
-    const config = this.context?.config;
+    const { containerTag, containerDesc, containerIcon, launchUrl } = this.context || {};
     const rawIcon =
-      config?.containerIcon && container.Labels[config.containerIcon]
-        ? container.Labels[config.containerIcon]
+      containerIcon && container.Labels[containerIcon]
+        ? container.Labels[containerIcon]
         : "package";
     // Wrap icon in colons for emoji shortcode if not already wrapped
     const icon = rawIcon.startsWith(":") ? rawIcon : `:${rawIcon}:`;
     const name =
-      config?.containerDesc && container.Labels[config.containerDesc]
-        ? container.Labels[config.containerDesc]
+      containerDesc && container.Labels[containerDesc]
+        ? container.Labels[containerDesc]
         : (container.Names[0]?.replace(/^\//, "") ?? "Unnamed");
     const tag =
-      config?.containerTag && container.Labels[config.containerTag]
-        ? container.Labels[config.containerTag]
+      containerTag && container.Labels[containerTag]
+        ? container.Labels[containerTag]
         : "unknown";
     const url =
-      config?.launchUrl && container.Labels[config.launchUrl]
-        ? container.Labels[config.launchUrl]
+      launchUrl && container.Labels[launchUrl]
+        ? container.Labels[launchUrl]
         : "#";
 
     return (

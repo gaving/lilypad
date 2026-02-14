@@ -1,29 +1,34 @@
 import { Component, createContext, type ReactNode } from "react";
 
 interface Config {
-  containerTag: string;
-  containerDesc: string;
-  containerIcon: string;
-  launchUrl: string;
+  namespace: string;
 }
 
 interface ConfigContextType {
   config: Config | null;
   loading: boolean;
   error: string | null;
+  // Helper getters for label keys
+  containerTag: string;
+  containerDesc: string;
+  containerIcon: string;
+  launchUrl: string;
 }
 
+const defaultNamespace = "org.domain.review";
+
 const defaultConfig: Config = {
-  containerTag: "org.domain.review.name",
-  containerDesc: "org.domain.review.desc",
-  containerIcon: "org.domain.review.icon",
-  launchUrl: "org.domain.review.url",
+  namespace: defaultNamespace,
 };
 
 export const ConfigContext = createContext<ConfigContextType>({
   config: defaultConfig,
   loading: true,
   error: null,
+  containerTag: `${defaultNamespace}.name`,
+  containerDesc: `${defaultNamespace}.desc`,
+  containerIcon: `${defaultNamespace}.icon`,
+  launchUrl: `${defaultNamespace}.url`,
 });
 
 interface ConfigProviderProps {
@@ -65,13 +70,29 @@ class ConfigProvider extends Component<
     }
   }
 
+  getLabelKeys = (namespace: string) => {
+    return {
+      containerTag: `${namespace}.name`,
+      containerDesc: `${namespace}.desc`,
+      containerIcon: `${namespace}.icon`,
+      launchUrl: `${namespace}.url`,
+    };
+  };
+
   render() {
     const { children } = this.props;
     const { config, loading, error } = this.state;
+    const effectiveConfig = config || defaultConfig;
+    const labelKeys = this.getLabelKeys(effectiveConfig.namespace);
 
     return (
       <ConfigContext.Provider
-        value={{ config: config || defaultConfig, loading, error }}
+        value={{
+          config: effectiveConfig,
+          loading,
+          error,
+          ...labelKeys,
+        }}
       >
         {children}
       </ConfigContext.Provider>

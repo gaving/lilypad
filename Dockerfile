@@ -36,10 +36,7 @@ WORKDIR /lilypad
 
 ENV NODE_ENV=production
 ENV DOCKER_SOCK=http://unix:/var/run/docker.sock:
-ENV CONTAINER_TAG=org.domain.review.name
-ENV CONTAINER_DESC=org.domain.review.desc
-ENV CONTAINER_ICON=org.domain.review.icon
-ENV LAUNCH_URL=org.domain.review.url
+ENV NAMESPACE=org.domain.review
 
 # Copy the workspace configuration and node_modules
 COPY --from=deps /lilypad/package.json /lilypad/pnpm-workspace.yaml ./

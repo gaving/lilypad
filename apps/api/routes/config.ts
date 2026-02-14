@@ -4,18 +4,12 @@ import express from "express";
 const router: Router = express.Router();
 
 interface ConfigResponse {
-  containerTag: string;
-  containerDesc: string;
-  containerIcon: string;
-  launchUrl: string;
+  namespace: string;
 }
 
 router.get("/", (_req: Request, res: Response<ConfigResponse>) => {
   const config: ConfigResponse = {
-    containerTag: process.env.CONTAINER_TAG || "org.domain.review.name",
-    containerDesc: process.env.CONTAINER_DESC || "org.domain.review.desc",
-    containerIcon: process.env.CONTAINER_ICON || "org.domain.review.icon",
-    launchUrl: process.env.LAUNCH_URL || "org.domain.review.url",
+    namespace: process.env.NAMESPACE || "org.domain.review",
   };
 
   res.json(config);

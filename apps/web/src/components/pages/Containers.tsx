@@ -588,7 +588,7 @@ class Containers extends Component<ContainersProps, ContainersState> {
     const safeContainers = Array.isArray(containers) ? containers : [];
 
     const filteredContainers = safeContainers.filter((c) =>
-      Object.hasOwn(c.Labels || {}, this.context?.config?.containerTag || ""),
+      Object.hasOwn(c.Labels || {}, this.context?.containerTag || ""),
     );
 
     const sections = ["pinned", "running", "paused", "exited"].filter((state) =>
@@ -791,7 +791,7 @@ class Containers extends Component<ContainersProps, ContainersState> {
             <ul style={{ marginTop: "8px", paddingLeft: "20px" }}>
               {selectedContainersData.slice(0, 5).map((c) => (
                 <li key={c.Id}>
-                  {c.Labels[this.context?.config?.containerDesc || ""] ||
+                  {c.Labels[this.context?.containerDesc || ""] ||
                     c.Names[0]?.replace(/^\//, "") ||
                     "Unnamed"}
                 </li>

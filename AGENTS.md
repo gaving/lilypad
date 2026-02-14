@@ -153,10 +153,7 @@ Set these environment variables when running the container:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `CONTAINER_TAG` | `org.domain.review.name` | Label key to identify Lilypad containers |
-| `CONTAINER_DESC` | `org.domain.review.desc` | Label key for display description |
-| `CONTAINER_ICON` | `org.domain.review.icon` | Label key for emoji icon |
-| `LAUNCH_URL` | `org.domain.review.url` | Label key for launch URL |
+| `NAMESPACE` | `org.domain.review` | Namespace for container labels. Lilypad will look for `${NAMESPACE}.name`, `.desc`, `.icon`, and `.url` |
 | `DOCKER_SOCK` | `http://unix:/var/run/docker.sock:` | Docker socket path |
 | `NODE_ENV` | `production` | Production mode flag |
 
@@ -166,12 +163,15 @@ Set these environment variables when running the container:
 docker run -d \
   -p 8080:8888 \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  -e CONTAINER_TAG=yourcompany.work.project.name \
-  -e CONTAINER_DESC=yourcompany.work.project.desc \
-  -e CONTAINER_ICON=yourcompany.work.project.icon \
-  -e LAUNCH_URL=yourcompany.work.project.url \
+  -e NAMESPACE=yourcompany.work.project \
   ghcr.io/gaving/lilypad:latest
 ```
+
+With `NAMESPACE=yourcompany.work.project`, Lilypad will look for containers with these labels:
+- `yourcompany.work.project.name` (required)
+- `yourcompany.work.project.desc` (optional)
+- `yourcompany.work.project.icon` (optional)
+- `yourcompany.work.project.url` (optional)
 
 ### No Build Args Required
 
@@ -181,10 +181,7 @@ Unlike previous versions, **no build arguments are needed**. The same image work
 # These are the only ENVs needed in Dockerfile
 ENV NODE_ENV=production
 ENV DOCKER_SOCK=http://unix:/var/run/docker.sock:
-ENV CONTAINER_TAG=org.domain.review.name
-ENV CONTAINER_DESC=org.domain.review.desc
-ENV CONTAINER_ICON=org.domain.review.icon
-ENV LAUNCH_URL=org.domain.review.url
+ENV NAMESPACE=org.domain.review
 ```
 
 ## Container Label System

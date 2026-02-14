@@ -61,14 +61,11 @@ docker run -d \
   --name lilypad \
   ghcr.io/gaving/lilypad:latest
 
-# Run with custom labels for your organization
+# Run with custom namespace for your organization
 docker run -d \
   -p 8080:8888 \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  -e CONTAINER_TAG=yourcompany.work.project.name \
-  -e CONTAINER_DESC=yourcompany.work.project.desc \
-  -e CONTAINER_ICON=yourcompany.work.project.icon \
-  -e LAUNCH_URL=yourcompany.work.project.url \
+  -e NAMESPACE=yourcompany.work.project \
   --name lilypad \
   ghcr.io/gaving/lilypad:latest
 ```
@@ -84,11 +81,11 @@ Available tags:
 # Build locally
 docker build -t lilypad .
 
-# Run locally with custom config
+# Run locally with custom namespace
 docker run -d \
   -p 8080:8888 \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  -e CONTAINER_TAG=yourcompany.work.project.name \
+  -e NAMESPACE=yourcompany.work.project \
   lilypad
 ```
 

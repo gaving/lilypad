@@ -39,7 +39,8 @@ const isValidContainerId = (id: string | undefined): boolean => {
 const PINNED = new Set<string>();
 
 // Filter to only return containers managed by Lilypad (ones with the label)
-const CONTAINER_TAG = process.env.CONTAINER_TAG || "org.domain.review.name";
+const NAMESPACE = process.env.NAMESPACE || "org.domain.review";
+const CONTAINER_TAG = `${NAMESPACE}.name`;
 
 interface ContainerLabels {
   [key: string]: string;
