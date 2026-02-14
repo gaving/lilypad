@@ -52,7 +52,7 @@ COPY apps/api/package.json ./apps/api/
 # Copy packages (for workspace resolution)
 COPY --from=builder /lilypad/packages ./packages
 
-# Install only production dependencies for API
+# Install only production dependencies for API and clean up
 RUN pnpm install --prod --filter=@lilypad/api && \
     npm uninstall -g pnpm && \
     rm -rf /root/.npm /root/.pnpm-store
