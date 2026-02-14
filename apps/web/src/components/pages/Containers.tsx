@@ -675,7 +675,7 @@ class Containers extends Component<ContainersProps, ContainersState> {
             <p>
               Deploy Docker containers with the label
               <br />
-              <code>org.domain.review.name</code> to see them here.
+              <code>{this.context?.containerTag || "org.domain.review.name"}</code> to see them here.
             </p>
             <p className="hint">
               Make sure Docker is running and containers are properly labeled.
