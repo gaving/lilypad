@@ -11,7 +11,7 @@ import {
 import { Component } from "react";
 import styled from "styled-components";
 
-import { ConfigContext } from "../context/ConfigContext";
+import { ConfigContext } from "../../context/ConfigContext";
 import Container from "../Container";
 
 interface ContainerLabels {
