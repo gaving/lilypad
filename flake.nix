@@ -1,5 +1,5 @@
 {
-  description = "Lilypad X - Modern Docker container management with Turborepo";
+  description = "Lilypad X - Container management in full bloom";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";

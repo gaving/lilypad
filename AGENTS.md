@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**Lilypad** is a modern Docker container management web application with a cherry blossom (pink) theme. It provides a beautiful, responsive UI for viewing, starting, stopping, and managing Docker containers.
+**Lilypad** is a modern container management in full bloom web application with a cherry blossom (pink) theme. It provides a beautiful, responsive UI for viewing, starting, stopping, and managing Docker containers.
 
 - **Repository**: `anomalyco/lilypad`
 - **Current Branch**: `master`

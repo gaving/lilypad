@@ -1,4 +1,4 @@
-# Dockerfile for Lilypad - Modern Docker container management
+# Dockerfile for Lilypad - Container management in full bloom
 FROM node:25-alpine AS deps
 
 # Install pnpm and turbo
