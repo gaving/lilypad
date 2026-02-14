@@ -1,3 +1,4 @@
+import { Button } from "@blueprintjs/core";
 import { Component } from "react";
 import styled from "styled-components";
 
@@ -24,8 +25,18 @@ const Log = styled.code<{ color?: string }>`
 
 const Container = styled.div`
   display: flex;
+  flex-direction: column;
   padding-bottom: 8px;
   width: 100%;
+`;
+
+const LogHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 `;
 
 interface ContainerType {
@@ -38,11 +49,13 @@ interface LogsProps {
 
 interface LogsState {
   logs: string[];
+  isLoading: boolean;
 }
 
 class Logs extends Component<LogsProps, LogsState> {
   state: LogsState = {
     logs: [],
+    isLoading: false,
   };
 
   async componentDidMount() {
@@ -50,17 +63,35 @@ class Logs extends Component<LogsProps, LogsState> {
   }
 
   updateLogs = async () => {
-    const logs = await fetch(`/api/containers/${this.props.container.Id}/logs`);
-    this.setState({ logs: await logs.json() });
+    this.setState({ isLoading: true });
+    try {
+      const logs = await fetch(`/api/containers/${this.props.container.Id}/logs`);
+      this.setState({ logs: await logs.json(), isLoading: false });
+    } catch (error) {
+      console.error("Failed to fetch logs:", error);
+      this.setState({ isLoading: false });
+    }
   };
 
   render() {
+    const { logs, isLoading } = this.state;
+
     return (
       <Container>
         <Shell>
-          <Log color="limegreen">Last 200 lines</Log>
-          {this.state.logs.map((log) => {
-            if (this.state.logs.length <= 1)
+          <LogHeader>
+            <Log color="limegreen">Last 200 lines</Log>
+            <Button
+              icon="refresh"
+              minimal
+              small
+              loading={isLoading}
+              onClick={this.updateLogs}
+              title="Refresh logs"
+            />
+          </LogHeader>
+          {logs.map((log) => {
+            if (logs.length <= 1)
               return <Log key="no-logs">No logs for this container</Log>;
             return <Log key={log}>{log}</Log>;
           })}
