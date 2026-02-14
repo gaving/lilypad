@@ -34,8 +34,8 @@ RUN pnpm turbo run build --filter=@lilypad/web
 # Build API TypeScript
 RUN cd apps/api && pnpm run build
 
-# Create build directory in API and copy web build output
-RUN mkdir -p apps/api/build && cp -r apps/web/build/* apps/api/build/
+# Create build directory in API and copy web build output to public subdirectory
+RUN mkdir -p apps/api/build/public && cp -r apps/web/build/* apps/api/build/public/
 
 FROM node:25-alpine AS release
 WORKDIR /lilypad

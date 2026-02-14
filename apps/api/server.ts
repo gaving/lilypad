@@ -35,11 +35,11 @@ app.use("/api/volumes", volumes);
 // Only serve static files in production mode
 // In dev mode, use Vite dev server (port 3000) which proxies API requests to port 4000
 if (process.env.NODE_ENV === "production") {
-  // When running from project root: node apps/api/build/server.js
-  // __dirname is /lilypad/apps/api/build/ where the web files are copied
-  app.use(staticFileLimiter, express.static(__dirname));
+  // Serve only the public subdirectory to avoid exposing server files
+  const publicDir = path.join(__dirname, "public");
+  app.use(staticFileLimiter, express.static(publicDir));
   app.get("/{*path}", staticFileLimiter, (_req, res) => {
-    res.sendFile(path.join(__dirname, "index.html"));
+    res.sendFile(path.join(publicDir, "index.html"));
   });
 }
 
