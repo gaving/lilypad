@@ -13,14 +13,16 @@ test.describe("Bulk Actions", () => {
     await page.waitForTimeout(1000);
     
     // Get all checkboxes and click first two
-    const checkboxes = page.locator('input[type="checkbox"]');
+    // Note: Blueprint.js checkboxes have an overlay span that intercepts clicks,
+    // so we need to use force: true to click through it
+    const checkboxes = page.locator('[data-testid="container-checkbox"]');
     const count = await checkboxes.count();
     expect(count).toBeGreaterThanOrEqual(2);
     
-    // Click first two checkboxes
-    await checkboxes.nth(0).click();
+    // Click first two checkboxes (force to bypass Blueprint.js overlay)
+    await checkboxes.nth(0).click({ force: true });
     await page.waitForTimeout(500);
-    await checkboxes.nth(1).click();
+    await checkboxes.nth(1).click({ force: true });
     await page.waitForTimeout(500);
     
     // Verify checkboxes are checked
@@ -37,9 +39,9 @@ test.describe("Bulk Actions", () => {
     await editButton.click();
     await page.waitForTimeout(1000);
     
-    // Select a container
-    const checkboxes = page.locator('input[type="checkbox"]');
-    await checkboxes.nth(0).click();
+    // Select a container (force to bypass Blueprint.js overlay)
+    const checkboxes = page.locator('[data-testid="container-checkbox"]');
+    await checkboxes.nth(0).click({ force: true });
     await page.waitForTimeout(500);
     
     // Verify bulk action buttons appear
