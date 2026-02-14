@@ -30,6 +30,7 @@ interface ContainerData {
 
 interface ContainersProps {
   editMode?: boolean;
+  dark?: boolean;
 }
 
 interface ContainersState {

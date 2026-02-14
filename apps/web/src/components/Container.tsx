@@ -43,6 +43,7 @@ interface ContainerProps {
   editMode?: boolean;
   isSelected?: boolean;
   onToggleSelect?: () => void;
+  dark?: boolean;
 }
 
 interface ContainerState {
@@ -471,6 +472,35 @@ const ExpandButton = styled.button`
   }
 `;
 
+const QRDialogContent = styled.div`
+  padding: 20px;
+  text-align: center;
+  background: var(--card-bg, #ffffff);
+  
+  .qr-hint {
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--text-muted, #5c7080);
+  }
+  
+  .qr-url-container {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .qr-url {
+    font-size: 12px;
+    color: var(--text-color, #182026);
+    background: var(--code-bg, rgba(0, 0, 0, 0.05));
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-family: 'SF Mono', Monaco, monospace;
+  }
+`;
+
 class Container extends Component<ContainerProps, ContainerState> {
   static contextType = ConfigContext;
   declare context: React.ContextType<typeof ConfigContext>;
@@ -832,7 +862,7 @@ class Container extends Component<ContainerProps, ContainerState> {
   };
 
   render() {
-    const { container, editMode, isSelected, onToggleSelect } = this.props;
+    const { container, editMode, isSelected, onToggleSelect, dark } = this.props;
     const { isOpen } = this.state;
 
     const { containerTag, containerDesc, containerIcon, launchUrl } = this.context || {};
@@ -929,15 +959,6 @@ class Container extends Component<ContainerProps, ContainerState> {
           <DesktopActions
             onClick={(e: React.MouseEvent) => e.stopPropagation()}
           >
-            <AnchorButton
-              minimal
-              icon="share"
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Open in browser"
-            />
-
             {!editMode && (
               <Button
                 minimal
@@ -951,6 +972,15 @@ class Container extends Component<ContainerProps, ContainerState> {
                 className="desktop-qr-button"
               />
             )}
+
+            <AnchorButton
+              minimal
+              icon="share"
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Open in browser"
+            />
 
             {editMode && (
               <Button
@@ -1019,20 +1049,21 @@ class Container extends Component<ContainerProps, ContainerState> {
           onClose={this.toggleQRDialog}
           title={name}
           style={{ width: '400px' }}
+          className={dark ? 'bp5-dark' : ''}
         >
-          <div style={{ padding: '20px', textAlign: 'center' }}>
+          <QRDialogContent>
             <QRCodeSVG
               value={url}
               size={256}
               fgColor="#ff6b8a"
-              bgColor="#ffffff"
+              bgColor="transparent"
               level="M"
             />
-            <div style={{ marginTop: '16px', fontSize: '14px', color: '#5c7080' }}>
+            <div className="qr-hint">
               Scan with your phone to open
             </div>
-            <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-              <code style={{ fontSize: '12px', color: '#182026' }}>{url}</code>
+            <div className="qr-url-container">
+              <code className="qr-url">{url}</code>
               <Button
                 minimal
                 small
@@ -1043,7 +1074,7 @@ class Container extends Component<ContainerProps, ContainerState> {
                 title="Copy URL"
               />
             </div>
-          </div>
+          </QRDialogContent>
         </Dialog>
       </ContainerCard>
     );
