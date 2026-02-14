@@ -827,12 +827,36 @@ class Container extends Component<ContainerProps, ContainerState> {
     const { isOpen } = this.state;
 
     const { containerTag, containerDesc, containerIcon, launchUrl } = this.context || {};
-    const rawIcon =
+    let rawIcon =
       containerIcon && container.Labels[containerIcon]
         ? container.Labels[containerIcon]
         : "package";
+    // Trim whitespace from icon
+    rawIcon = rawIcon.trim();
     // Wrap icon in colons for emoji shortcode if not already wrapped
-    const icon = rawIcon.startsWith(":") ? rawIcon : `:${rawIcon}:`;
+    let icon = rawIcon.startsWith(":") ? rawIcon : `:${rawIcon}:`;
+    
+    // Validate emoji shortcode - fallback to package if invalid
+    // Common valid emojis used in Lilypad: rocket, globe, database, etc.
+    const validEmojis = [
+      "package", "rocket", "globe", "database", "coffee", "phone", "sparkles", 
+      "wink", "unlock", "star", "heart", "fire", "bug", "gear", "zap", 
+      "mag", "link", "lock", "key", "bell", "book", "calendar", "camera",
+      "clipboard", "clock", "cloud", "code", "compass", "credit_card", "crown",
+      "cup", "diamond", "email", "flag", "folder", "gift", "hammer", "home",
+      "hourglass", "inbox", "label", "laptop", "light_bulb", "mag_right",
+      "mailbox", "memo", "microphone", "moneybag", "mortar_board", "musical_note",
+      "newspaper", "paintbrush", "paperclip", "pencil", "pill", "pin", "pushpin",
+      "radio", "ruler", "satellite", "scissors", "scroll", "shield", "shopping_cart",
+      "signal", "speaker", "sound", "loud_sound", "loudspeaker", "stopwatch", "sunny",
+      "telephone", "telescope", "television", "ticket", "tools", "traffic_light",
+      "train", "tram", "trolleybus", "truck", "tv", "umbrella", "vhs", "video_camera",
+      "warning", "wastebasket", "watch", "wheelchair", "wrench", "yen", "zipper_mouth"
+    ];
+    const iconName = icon.replace(/:/g, "");
+    if (!validEmojis.includes(iconName)) {
+      icon = ":package:";
+    }
     const name =
       containerDesc && container.Labels[containerDesc]
         ? container.Labels[containerDesc]
