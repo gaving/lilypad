@@ -7,12 +7,10 @@ test.describe("Bulk Actions", () => {
     await page.goto(BASE_URL);
     await page.waitForTimeout(3000);
     
-    // Enter edit mode
-    const editButton = page.locator('button:has-text("Edit")');
-    if (await editButton.count() > 0) {
-      await editButton.first().click();
-      await page.waitForTimeout(1000);
-    }
+    // Enter edit mode using the toggle button
+    const editButton = page.locator('[data-testid="edit-mode-toggle"]');
+    await editButton.click();
+    await page.waitForTimeout(1000);
     
     // Get all checkboxes and click first two
     const checkboxes = page.locator('input[type="checkbox"]');
@@ -34,12 +32,10 @@ test.describe("Bulk Actions", () => {
     await page.goto(BASE_URL);
     await page.waitForTimeout(3000);
     
-    // Enter edit mode
-    const editButton = page.locator('button:has-text("Edit")');
-    if (await editButton.count() > 0) {
-      await editButton.first().click();
-      await page.waitForTimeout(1000);
-    }
+    // Enter edit mode using the toggle button
+    const editButton = page.locator('[data-testid="edit-mode-toggle"]');
+    await editButton.click();
+    await page.waitForTimeout(1000);
     
     // Select a container
     const checkboxes = page.locator('input[type="checkbox"]');
