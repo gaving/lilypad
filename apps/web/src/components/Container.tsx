@@ -765,7 +765,7 @@ class Container extends Component<ContainerProps, ContainerState> {
       return (
         <span className="label-value">
           {isExpanded ? value : `${value.slice(0, 60)}...`}
-          <ExpandButton onClick={() => this.toggleLabelExpanded(key)}>
+          <ExpandButton onClick={() => this.toggleLabelExpanded(key)} data-testid="expand-label-button">
             {isExpanded ? 'less' : 'more'}
           </ExpandButton>
         </span>
@@ -773,13 +773,13 @@ class Container extends Component<ContainerProps, ContainerState> {
     };
     
     return (
-      <LabelsSection>
+      <LabelsSection data-testid="labels-section">
           {lilypadLabels.length > 0 && (
           <>
             <LabelsSubheading className="lilypad">Lilypad Labels</LabelsSubheading>
             <div style={{ marginBottom: '16px' }}>
               {lilypadLabels.map(([key, value]) => (
-                <LilypadLabelBadge key={key}>
+                <LilypadLabelBadge key={key} data-testid="lilypad-label-badge">
                   <span className="label-key">{key.replace(domainPrefix + '.', '')}:</span>
                   <span className="label-value">{value}</span>
                 </LilypadLabelBadge>
@@ -793,7 +793,7 @@ class Container extends Component<ContainerProps, ContainerState> {
             <LabelsSubheading>Docker Labels</LabelsSubheading>
             <DockerLabelsList>
               {dockerLabels.map(([key, value]) => (
-                <DockerLabelRow key={key}>
+                <DockerLabelRow key={key} data-testid="docker-label-row">
                   <span className="label-key">{key}</span>
                   {renderExpandableValue(key, value)}
                 </DockerLabelRow>
@@ -905,6 +905,7 @@ class Container extends Component<ContainerProps, ContainerState> {
                   e.stopPropagation();
                   this.setOpen();
                 }}
+                data-testid="expand-container"
               />
             )}
           </DesktopActions>
