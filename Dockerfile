@@ -47,6 +47,7 @@ ENV CONTAINER_TAG=org.domain.review.name
 # Copy the entire workspace structure with node_modules
 COPY --from=deps /lilypad/package.json /lilypad/pnpm-workspace.yaml ./
 COPY --from=deps /lilypad/node_modules ./node_modules
+COPY --from=deps /lilypad/apps/api/package.json ./apps/api/
 COPY --from=deps /lilypad/apps/api/build ./apps/api/build
 
 # Set working directory to API app
