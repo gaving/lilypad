@@ -109,7 +109,11 @@ const Navbar = ({
                 <Icon icon={editMode ? "unlock" : "lock"} />
               </Button>
             </Tooltip>
-            <Button minimal onClick={() => toggleDarkTheme()} data-testid="dark-mode-toggle">
+            <Button
+              minimal
+              onClick={() => toggleDarkTheme()}
+              data-testid="dark-mode-toggle"
+            >
               <Icon icon={darkTheme ? "flash" : "moon"} />
             </Button>
           </Flex>

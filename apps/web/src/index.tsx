@@ -5,6 +5,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
 
 import App from "./App";
+import ConfigProvider from "./context/ConfigContext";
 import * as serviceWorker from "./serviceWorker";
 
 FocusStyleManager.onlyShowFocusOnTabs();
@@ -17,7 +18,9 @@ const root = createRoot(container);
 
 root.render(
   <Router>
-    <App />
+    <ConfigProvider>
+      <App />
+    </ConfigProvider>
   </Router>,
 );
 

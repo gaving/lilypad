@@ -5,6 +5,7 @@ import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-
 import express from "express";
 import rateLimit from "express-rate-limit";
 
+import config from "./routes/config.js";
 import containers from "./routes/containers.js";
 import images from "./routes/images.js";
 import info from "./routes/info.js";
@@ -26,6 +27,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 
+app.use("/api/config", config);
 app.use("/api/info", info);
 app.use("/api/containers", containers);
 app.use("/api/images", images);

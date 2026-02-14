@@ -11,6 +11,7 @@ import {
 import { Component } from "react";
 import styled from "styled-components";
 
+import { ConfigContext } from "../context/ConfigContext";
 import Container from "../Container";
 
 interface ContainerLabels {
@@ -243,7 +244,7 @@ const BulkActionBar = styled.div<{ $isVisible: boolean }>`
   bottom: 0;
   left: 50%;
   transform: translateX(-50%)
-    translateY(${props => props.$isVisible ? "0" : "100%"});
+    translateY(${(props) => (props.$isVisible ? "0" : "100%")});
   max-width: 600px;
   width: calc(100% - 32px);
   background: var(--card-bg, #ffffff);
@@ -267,7 +268,7 @@ const BulkActionBar = styled.div<{ $isVisible: boolean }>`
     width: 100%;
     border-radius: 0;
     left: 0;
-    transform: translateY(${props => props.$isVisible ? "0" : "100%"});
+    transform: translateY(${(props) => (props.$isVisible ? "0" : "100%")});
     padding: 12px 16px;
   }
 `;
@@ -301,6 +302,9 @@ const ClearButton = styled.button`
 `;
 
 class Containers extends Component<ContainersProps, ContainersState> {
+  static contextType = ConfigContext;
+  declare context: React.ContextType<typeof ConfigContext>;
+
   private update: ReturnType<typeof setInterval> | null = null;
 
   state: ContainersState = {
@@ -469,10 +473,7 @@ class Containers extends Component<ContainersProps, ContainersState> {
       this.updateAllContainers();
       this.clearSelection();
     } catch (error) {
-      this.showToast(
-        `Failed to ${action} some containers`,
-        Intent.DANGER,
-      );
+      this.showToast(`Failed to ${action} some containers`, Intent.DANGER);
     } finally {
       this.setState({ isBulkActionLoading: false });
     }
@@ -488,7 +489,7 @@ class Containers extends Component<ContainersProps, ContainersState> {
 
     // First, stop any running containers
     const runningContainers = containers.filter(
-      (c) => selectedContainers.has(c.Id) && c.State === "running"
+      (c) => selectedContainers.has(c.Id) && c.State === "running",
     );
 
     if (runningContainers.length > 0) {
@@ -499,8 +500,8 @@ class Containers extends Component<ContainersProps, ContainersState> {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ containerId: c.Id }),
-            })
-          )
+            }),
+          ),
         );
         // Wait a moment for containers to stop
         await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -513,14 +514,14 @@ class Containers extends Component<ContainersProps, ContainersState> {
     const promises = selectedIds.map((id) =>
       fetch(`/api/containers/${id}?force=true`, {
         method: "DELETE",
-      })
+      }),
     );
 
     try {
       await Promise.all(promises);
       this.showToast(
         `Removed ${selectedContainers.size} containers`,
-        Intent.SUCCESS
+        Intent.SUCCESS,
       );
       this.updateAllContainers();
       this.clearSelection();
@@ -587,7 +588,7 @@ class Containers extends Component<ContainersProps, ContainersState> {
     const safeContainers = Array.isArray(containers) ? containers : [];
 
     const filteredContainers = safeContainers.filter((c) =>
-      Object.hasOwn(c.Labels || {}, import.meta.env.VITE_CONTAINER_TAG),
+      Object.hasOwn(c.Labels || {}, this.context?.config?.containerTag || ""),
     );
 
     const sections = ["pinned", "running", "paused", "exited"].filter((state) =>
@@ -731,7 +732,8 @@ class Containers extends Component<ContainersProps, ContainersState> {
         {editMode && (
           <BulkActionBar $isVisible={hasSelection}>
             <BulkActionInfo>
-              {selectedCount} {selectedCount === 1 ? "container" : "containers"} selected
+              {selectedCount} {selectedCount === 1 ? "container" : "containers"}{" "}
+              selected
             </BulkActionInfo>
             <BulkActionButtons>
               <Button
@@ -763,9 +765,7 @@ class Containers extends Component<ContainersProps, ContainersState> {
                 icon="trash"
                 intent={Intent.DANGER}
                 loading={isBulkActionLoading}
-                onClick={() =>
-                  this.setState({ showRemoveConfirm: true })
-                }
+                onClick={() => this.setState({ showRemoveConfirm: true })}
               >
                 Remove
               </Button>
@@ -791,7 +791,7 @@ class Containers extends Component<ContainersProps, ContainersState> {
             <ul style={{ marginTop: "8px", paddingLeft: "20px" }}>
               {selectedContainersData.slice(0, 5).map((c) => (
                 <li key={c.Id}>
-                  {c.Labels[import.meta.env.VITE_CONTAINER_DESC] ||
+                  {c.Labels[this.context?.config?.containerDesc || ""] ||
                     c.Names[0]?.replace(/^\//, "") ||
                     "Unnamed"}
                 </li>

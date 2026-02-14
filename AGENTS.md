@@ -145,22 +145,46 @@ class MyComponent extends Component<MyComponentProps, MyComponentState> {
 
 ## Environment Variables
 
-### For Web (Vite)
-- `VITE_CONTAINER_TAG=org.domain.review.name` - Label to filter containers
-- `VITE_CONTAINER_DESC=org.domain.review.desc` - Description label key
-- `VITE_CONTAINER_ICON=org.domain.review.icon` - Icon label key
-- `VITE_LAUNCH_URL=org.domain.review.url` - URL label key
+Configuration is now **runtime-based** - no build-time variables needed!
 
-### For API
-- `DOCKER_SOCK=http://unix:/var/run/docker.sock:` - Docker socket path
-- `CONTAINER_TAG=org.domain.review.name` - Label filter for API
-- `NODE_ENV=production` - Production mode flag
+### Runtime Configuration
 
-### In Dockerfile
+Set these environment variables when running the container:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `CONTAINER_TAG` | `org.domain.review.name` | Label key to identify Lilypad containers |
+| `CONTAINER_DESC` | `org.domain.review.desc` | Label key for display description |
+| `CONTAINER_ICON` | `org.domain.review.icon` | Label key for emoji icon |
+| `LAUNCH_URL` | `org.domain.review.url` | Label key for launch URL |
+| `DOCKER_SOCK` | `http://unix:/var/run/docker.sock:` | Docker socket path |
+| `NODE_ENV` | `production` | Production mode flag |
+
+### Example: Custom Organization
+
+```bash
+docker run -d \
+  -p 8080:8888 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -e CONTAINER_TAG=yourcompany.work.project.name \
+  -e CONTAINER_DESC=yourcompany.work.project.desc \
+  -e CONTAINER_ICON=yourcompany.work.project.icon \
+  -e LAUNCH_URL=yourcompany.work.project.url \
+  ghcr.io/gaving/lilypad:latest
+```
+
+### No Build Args Required
+
+Unlike previous versions, **no build arguments are needed**. The same image works for everyone - just configure at runtime!
+
 ```dockerfile
+# These are the only ENVs needed in Dockerfile
 ENV NODE_ENV=production
 ENV DOCKER_SOCK=http://unix:/var/run/docker.sock:
 ENV CONTAINER_TAG=org.domain.review.name
+ENV CONTAINER_DESC=org.domain.review.desc
+ENV CONTAINER_ICON=org.domain.review.icon
+ENV LAUNCH_URL=org.domain.review.url
 ```
 
 ## Container Label System

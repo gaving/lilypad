@@ -13,14 +13,8 @@ import { Component } from "react";
 import Emoji from "react-emoji-render";
 import styled from "styled-components";
 
+import { ConfigContext } from "../context/ConfigContext";
 import Logs from "./Logs";
-
-const {
-  VITE_LAUNCH_URL,
-  VITE_CONTAINER_TAG,
-  VITE_CONTAINER_DESC,
-  VITE_CONTAINER_ICON,
-} = import.meta.env;
 
 interface ContainerLabels {
   [key: string]: string;
@@ -475,6 +469,9 @@ const ExpandButton = styled.button`
 `;
 
 class Container extends Component<ContainerProps, ContainerState> {
+  static contextType = ConfigContext;
+  declare context: React.ContextType<typeof ConfigContext>;
+
   private statsInterval: ReturnType<typeof setInterval> | null = null;
 
   state: ContainerState = {
@@ -551,7 +548,7 @@ class Container extends Component<ContainerProps, ContainerState> {
   };
 
   toggleLabelExpanded = (labelKey: string) => {
-    this.setState(prevState => {
+    this.setState((prevState) => {
       const expandedLabels = new Set(prevState.expandedLabels);
       if (expandedLabels.has(labelKey)) {
         expandedLabels.delete(labelKey);
@@ -739,55 +736,75 @@ class Container extends Component<ContainerProps, ContainerState> {
   renderLabels = () => {
     const { container } = this.props;
     const { expandedLabels } = this.state;
-    
+
     if (!container.Labels || Object.keys(container.Labels).length === 0) {
       return null;
     }
-    
-    // Extract domain prefix from VITE_CONTAINER_TAG (e.g., "org.domain.review.name" -> "org.domain.review")
-    const domainPrefix = VITE_CONTAINER_TAG.split('.').slice(0, -1).join('.');
-    
-    const lilypadLabels = Object.entries(container.Labels).filter(([key]) => 
-      key.startsWith(domainPrefix)
+
+    // Extract domain prefix from containerTag (e.g., "org.domain.review.name" -> "org.domain.review")
+    const domainPrefix = this.context?.config?.containerTag
+      ?.split(".")
+      .slice(0, -1)
+      .join(".");
+
+    const lilypadLabels = Object.entries(container.Labels).filter(([key]) =>
+      key.startsWith(domainPrefix),
     );
-    const dockerLabels = Object.entries(container.Labels).filter(([key]) => 
-      !key.startsWith(domainPrefix)
+    const dockerLabels = Object.entries(container.Labels).filter(
+      ([key]) => !key.startsWith(domainPrefix),
     );
-    
+
     const renderExpandableValue = (key: string, value: string) => {
       const isExpanded = expandedLabels.has(key);
       const shouldTruncate = value.length > 60;
-      
+
       if (!shouldTruncate) {
         return <span className="label-value">{value}</span>;
       }
-      
+
       return (
         <span className="label-value">
           {isExpanded ? value : `${value.slice(0, 60)}...`}
-          <ExpandButton onClick={() => this.toggleLabelExpanded(key)} data-testid="expand-label-button">
-            {isExpanded ? 'less' : 'more'}
+          <ExpandButton
+            onClick={() => this.toggleLabelExpanded(key)}
+            data-testid="expand-label-button"
+          >
+            {isExpanded ? "less" : "more"}
           </ExpandButton>
         </span>
       );
     };
-    
+
     return (
       <LabelsSection data-testid="labels-section">
-          {lilypadLabels.length > 0 && (
+        {lilypadLabels.length > 0 && (
           <>
-            <LabelsSubheading className="lilypad">Lilypad Labels</LabelsSubheading>
-            <div style={{ marginBottom: '16px' }}>
+            <LabelsSubheading className="lilypad">
+              Lilypad Labels
+            </LabelsSubheading>
+            <div style={{ marginBottom: "16px" }}>
               {lilypadLabels.map(([key, value]) => (
                 <LilypadLabelBadge key={key} data-testid="lilypad-label-badge">
-                  <span className="label-key">{key.replace(domainPrefix + '.', '')}:</span>
+                  <span className="label-key">
+                    {key.replace(`${domainPrefix}.`, "")}:
+                  </span>
                   <span className="label-value">{value}</span>
                 </LilypadLabelBadge>
               ))}
+              {(!lilypadLabels || lilypadLabels.length === 0) && (
+                <span
+                  style={{
+                    color: "var(--text-muted, #5c7080)",
+                    fontSize: "12px",
+                  }}
+                >
+                  No Lilypad labels found
+                </span>
+              )}
             </div>
           </>
         )}
-        
+
         {dockerLabels.length > 0 && (
           <>
             <LabelsSubheading>Docker Labels</LabelsSubheading>
@@ -809,15 +826,25 @@ class Container extends Component<ContainerProps, ContainerState> {
     const { container, editMode, isSelected, onToggleSelect } = this.props;
     const { isOpen } = this.state;
 
-    const rawIcon = container.Labels[VITE_CONTAINER_ICON] ?? "package";
+    const config = this.context?.config;
+    const rawIcon =
+      config?.containerIcon && container.Labels[config.containerIcon]
+        ? container.Labels[config.containerIcon]
+        : "package";
     // Wrap icon in colons for emoji shortcode if not already wrapped
     const icon = rawIcon.startsWith(":") ? rawIcon : `:${rawIcon}:`;
     const name =
-      container.Labels[VITE_CONTAINER_DESC] ??
-      container.Names[0]?.replace(/^\//, "") ??
-      "Unnamed";
-    const tag = container.Labels[VITE_CONTAINER_TAG] ?? "unknown";
-    const url = container.Labels[VITE_LAUNCH_URL] ?? "#";
+      config?.containerDesc && container.Labels[config.containerDesc]
+        ? container.Labels[config.containerDesc]
+        : (container.Names[0]?.replace(/^\//, "") ?? "Unnamed");
+    const tag =
+      config?.containerTag && container.Labels[config.containerTag]
+        ? container.Labels[config.containerTag]
+        : "unknown";
+    const url =
+      config?.launchUrl && container.Labels[config.launchUrl]
+        ? container.Labels[config.launchUrl]
+        : "#";
 
     return (
       <ContainerCard elevation={Elevation.TWO} data-testid="container-card">
@@ -834,8 +861,8 @@ class Container extends Component<ContainerProps, ContainerState> {
                   onToggleSelect();
                 }}
               >
-                <Checkbox 
-                  checked={isSelected} 
+                <Checkbox
+                  checked={isSelected}
                   onChange={(e) => {
                     e.stopPropagation();
                     onToggleSelect();
@@ -852,7 +879,10 @@ class Container extends Component<ContainerProps, ContainerState> {
               <AppName>{name}</AppName>
               <MetaRow>
                 <span>
-                  <StatusDot $state={container.State} data-testid="status-dot" />
+                  <StatusDot
+                    $state={container.State}
+                    data-testid="status-dot"
+                  />
                   {container.State}
                 </span>
                 <span className="hide-mobile">•</span>

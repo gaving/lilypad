@@ -51,20 +51,26 @@ See [docs/SETUP.md](./docs/SETUP.md) for detailed setup instructions.
 
 ### Run from GitHub Container Registry (Recommended)
 
+No need to fork or build! Just pull the official image and configure at runtime:
+
 ```bash
-# Pull and run latest version
+# Run with default labels (org.domain.review.*)
 docker run -d \
   -p 8080:8888 \
   -v /var/run/docker.sock:/var/run/docker.sock \
   --name lilypad \
   ghcr.io/gaving/lilypad:latest
 
-# Or run specific version
+# Run with custom labels for your organization
 docker run -d \
   -p 8080:8888 \
   -v /var/run/docker.sock:/var/run/docker.sock \
+  -e CONTAINER_TAG=yourcompany.work.project.name \
+  -e CONTAINER_DESC=yourcompany.work.project.desc \
+  -e CONTAINER_ICON=yourcompany.work.project.icon \
+  -e LAUNCH_URL=yourcompany.work.project.url \
   --name lilypad \
-  ghcr.io/gaving/lilypad:v10.0.0
+  ghcr.io/gaving/lilypad:latest
 ```
 
 Available tags:
@@ -78,10 +84,11 @@ Available tags:
 # Build locally
 docker build -t lilypad .
 
-# Run locally
+# Run locally with custom config
 docker run -d \
   -p 8080:8888 \
   -v /var/run/docker.sock:/var/run/docker.sock \
+  -e CONTAINER_TAG=yourcompany.work.project.name \
   lilypad
 ```
 

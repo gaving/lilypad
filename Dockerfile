@@ -1,12 +1,6 @@
 # Dockerfile for Lilypad - Modern Docker container management
 FROM node:25-alpine AS deps
 
-# Build args for Vite environment variables
-ARG VITE_CONTAINER_TAG=org.domain.review.name
-ARG VITE_CONTAINER_DESC=org.domain.review.desc
-ARG VITE_CONTAINER_ICON=org.domain.review.icon
-ARG VITE_LAUNCH_URL=org.domain.review.url
-
 # Install pnpm and turbo
 RUN npm install -g pnpm@10 turbo
 
@@ -43,6 +37,9 @@ WORKDIR /lilypad
 ENV NODE_ENV=production
 ENV DOCKER_SOCK=http://unix:/var/run/docker.sock:
 ENV CONTAINER_TAG=org.domain.review.name
+ENV CONTAINER_DESC=org.domain.review.desc
+ENV CONTAINER_ICON=org.domain.review.icon
+ENV LAUNCH_URL=org.domain.review.url
 
 # Copy the workspace configuration and node_modules
 COPY --from=deps /lilypad/package.json /lilypad/pnpm-workspace.yaml ./
