@@ -1,5 +1,5 @@
 # Dockerfile for Lilypad - Modern Docker container management
-FROM node:24-alpine AS deps
+FROM node:25-alpine AS deps
 
 # Build args for Vite environment variables
 ARG VITE_CONTAINER_TAG=org.domain.review.name
@@ -34,7 +34,7 @@ RUN pnpm turbo run build --filter=@lilypad/web
 # Create build directory in API and copy web build output
 RUN mkdir -p apps/api/build && cp -r apps/web/build/* apps/api/build/
 
-FROM node:24-alpine AS release
+FROM node:25-alpine AS release
 WORKDIR /lilypad
 
 ENV NODE_ENV=production
