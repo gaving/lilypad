@@ -140,3 +140,15 @@ code {
 body {
   -ms-overflow-style: -ms-autohiding-scrollbar;
 }
+
+/* QR Code button - desktop only */
+.desktop-qr-button {
+  display: none !important;
+}
+
+@media (min-width: 769px) {
+  .desktop-qr-button {
+    display: inline-flex !important;
+  }
+}
+

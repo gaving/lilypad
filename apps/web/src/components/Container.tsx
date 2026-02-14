@@ -4,9 +4,11 @@ import {
   Card,
   Checkbox,
   Collapse,
+  Dialog,
   Elevation,
   Intent,
 } from "@blueprintjs/core";
+import { QRCodeSVG } from "qrcode.react";
 import { format, formatDistanceToNow } from "date-fns";
 import { Component } from "react";
 
@@ -53,6 +55,7 @@ interface ContainerState {
   pinIsLoading: boolean;
   stats: ContainerStats | null;
   expandedLabels: Set<string>;
+  qrDialogOpen: boolean;
 }
 
 const ContainerCard = styled(Card)`
@@ -559,6 +562,12 @@ class Container extends Component<ContainerProps, ContainerState> {
     });
   };
 
+  toggleQRDialog = () => {
+    this.setState((prevState) => ({
+      qrDialogOpen: !prevState.qrDialogOpen,
+    }));
+  };
+
   handleAction = async (
     action: string,
     endpoint: string,
@@ -929,6 +938,20 @@ class Container extends Component<ContainerProps, ContainerState> {
               title="Open in browser"
             />
 
+            {!editMode && (
+              <Button
+                minimal
+                icon="barcode"
+                onClick={(e: React.MouseEvent) => {
+                  e.stopPropagation();
+                  this.toggleQRDialog();
+                }}
+                title="Show QR code for mobile"
+                style={{ display: 'none' }}
+                className="desktop-qr-button"
+              />
+            )}
+
             {editMode && (
               <Button
                 minimal
@@ -990,6 +1013,38 @@ class Container extends Component<ContainerProps, ContainerState> {
             </LogsSection>
           </ExpandedContent>
         </Collapse>
+
+        <Dialog
+          isOpen={this.state.qrDialogOpen}
+          onClose={this.toggleQRDialog}
+          title={name}
+          style={{ width: '400px' }}
+        >
+          <div style={{ padding: '20px', textAlign: 'center' }}>
+            <QRCodeSVG
+              value={url}
+              size={256}
+              fgColor="#ff6b8a"
+              bgColor="#ffffff"
+              level="M"
+            />
+            <div style={{ marginTop: '16px', fontSize: '14px', color: '#5c7080' }}>
+              Scan with your phone to open
+            </div>
+            <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              <code style={{ fontSize: '12px', color: '#182026' }}>{url}</code>
+              <Button
+                minimal
+                small
+                icon="duplicate"
+                onClick={() => {
+                  navigator.clipboard.writeText(url);
+                }}
+                title="Copy URL"
+              />
+            </div>
+          </div>
+        </Dialog>
       </ContainerCard>
     );
   }
