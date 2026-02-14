@@ -31,6 +31,9 @@ COPY . .
 # Build web app using Turborepo (builds web, ensures proper ordering)
 RUN pnpm turbo run build --filter=@lilypad/web
 
+# Build API TypeScript
+RUN cd apps/api && pnpm run build
+
 # Create build directory in API and copy web build output
 RUN mkdir -p apps/api/build && cp -r apps/web/build/* apps/api/build/
 
@@ -44,7 +47,7 @@ ENV CONTAINER_TAG=org.domain.review.name
 # Copy the entire workspace structure with node_modules
 COPY --from=deps /lilypad/package.json /lilypad/pnpm-workspace.yaml ./
 COPY --from=deps /lilypad/node_modules ./node_modules
-COPY --from=deps /lilypad/apps/api ./apps/api
+COPY --from=deps /lilypad/apps/api/build ./apps/api/build
 
 # Set working directory to API app
 WORKDIR /lilypad/apps/api
@@ -52,5 +55,5 @@ WORKDIR /lilypad/apps/api
 # Expose the API port
 EXPOSE 8888
 
-# Start the server
-CMD ["node", "server.js"]
+# Start the server (compiled TypeScript)
+CMD ["node", "build/server.js"]
