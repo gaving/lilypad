@@ -44,17 +44,15 @@ ENV NODE_ENV=production
 ENV DOCKER_SOCK=http://unix:/var/run/docker.sock:
 ENV CONTAINER_TAG=org.domain.review.name
 
-# Copy the entire workspace structure with node_modules
+# Copy the workspace configuration and node_modules
 COPY --from=deps /lilypad/package.json /lilypad/pnpm-workspace.yaml ./
 COPY --from=deps /lilypad/node_modules ./node_modules
-COPY --from=deps /lilypad/apps/api/package.json ./apps/api/
-COPY --from=deps /lilypad/apps/api/build ./apps/api/build
 
-# Set working directory to API app
-WORKDIR /lilypad/apps/api
+# Copy API app with build output
+COPY --from=deps /lilypad/apps/api ./apps/api
 
 # Expose the API port
 EXPOSE 8888
 
-# Start the server (compiled TypeScript)
-CMD ["node", "build/server.js"]
+# Start the server from project root so node_modules can be resolved
+CMD ["node", "apps/api/build/server.js"]
