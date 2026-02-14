@@ -9,6 +9,13 @@ const DOCKER_SOCK = process.env.DOCKER_SOCK;
 const IMAGES = `${DOCKER_SOCK}/images/json`;
 const IMAGE_REMOVE = (id) => `${DOCKER_SOCK}/images/${id}`;
 
+// Validate image ID to prevent SSRF
+const VALID_IMAGE_ID = /^[a-zA-Z0-9_:@.-]+$/;
+const isValidImageId = (id) => {
+  if (!id || typeof id !== 'string') return false;
+  return VALID_IMAGE_ID.test(id) && id.length <= 127;
+};
+
 router.get("/", async (_req, res) => {
   logger.debug("Fetching images");
 
@@ -24,6 +31,9 @@ router.get("/", async (_req, res) => {
 
 router.delete("/:imageId", async (req, res) => {
   const { imageId } = req.params;
+  if (!isValidImageId(imageId)) {
+    return res.status(400).send({ error: "Invalid image ID" });
+  }
   logger.debug("Removing image:", imageId?.substring(0, 12));
 
   try {

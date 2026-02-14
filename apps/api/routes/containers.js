@@ -28,6 +28,13 @@ const CONTAINER_LOGS = (id) =>
 const CONTAINER_STATS = (id) =>
   `${DOCKER_SOCK}/containers/${id}/stats?stream=false`;
 
+// Validate container ID to prevent SSRF
+const VALID_CONTAINER_ID = /^[a-zA-Z0-9_-]+$/;
+const isValidContainerId = (id) => {
+  if (!id || typeof id !== 'string') return false;
+  return VALID_CONTAINER_ID.test(id) && id.length <= 71;
+};
+
 const PINNED = new Set();
 
 // Filter to only return containers managed by Lilypad (ones with the label)
@@ -73,6 +80,9 @@ router.post("/pin", async (req, res) => {
 
 router.post("/stop", async (req, res) => {
   const { containerId } = req.body;
+  if (!isValidContainerId(containerId)) {
+    return res.status(400).send({ error: "Invalid container ID" });
+  }
   logger.debug("Stopping container:", containerId?.substring(0, 12));
 
   try {
@@ -100,6 +110,9 @@ router.post("/prune", async (_req, res) => {
 
 router.get("/:containerId", async (req, res) => {
   const { containerId } = req.params;
+  if (!isValidContainerId(containerId)) {
+    return res.status(400).send({ error: "Invalid container ID" });
+  }
   logger.debug("Fetching container:", containerId?.substring(0, 12));
 
   try {
@@ -114,6 +127,9 @@ router.get("/:containerId", async (req, res) => {
 router.delete("/:containerId", async (req, res) => {
   const { containerId } = req.params;
   const { force } = req.query;
+  if (!isValidContainerId(containerId)) {
+    return res.status(400).send({ error: "Invalid container ID" });
+  }
   logger.debug("Removing container:", containerId?.substring(0, 12), force ? "(force)" : "");
 
   try {
@@ -131,6 +147,9 @@ router.delete("/:containerId", async (req, res) => {
 
 router.post("/:containerId", async (req, res) => {
   const { containerId } = req.params;
+  if (!isValidContainerId(containerId)) {
+    return res.status(400).send({ error: "Invalid container ID" });
+  }
   logger.debug("Starting container:", containerId?.substring(0, 12));
 
   try {
@@ -145,6 +164,9 @@ router.post("/:containerId", async (req, res) => {
 
 router.get("/:containerId/logs", async (req, res) => {
   const { containerId } = req.params;
+  if (!isValidContainerId(containerId)) {
+    return res.status(400).send({ error: "Invalid container ID" });
+  }
   logger.debug("Fetching logs for container:", containerId?.substring(0, 12));
 
   try {
@@ -167,6 +189,9 @@ router.get("/:containerId/logs", async (req, res) => {
 
 router.post("/:containerId/restart", async (req, res) => {
   const { containerId } = req.params;
+  if (!isValidContainerId(containerId)) {
+    return res.status(400).send({ error: "Invalid container ID" });
+  }
   logger.debug("Restarting container:", containerId?.substring(0, 12));
 
   try {
@@ -182,6 +207,9 @@ router.post("/:containerId/restart", async (req, res) => {
 router.post("/:containerId/rename", async (req, res) => {
   const { containerId } = req.params;
   const { name } = req.query;
+  if (!isValidContainerId(containerId)) {
+    return res.status(400).send({ error: "Invalid container ID" });
+  }
   logger.debug(
     "Renaming container:",
     containerId?.substring(0, 12),
@@ -203,6 +231,9 @@ router.post("/:containerId/rename", async (req, res) => {
 
 router.post("/:containerId/pause", async (req, res) => {
   const { containerId } = req.params;
+  if (!isValidContainerId(containerId)) {
+    return res.status(400).send({ error: "Invalid container ID" });
+  }
   logger.debug("Pausing container:", containerId?.substring(0, 12));
 
   try {
@@ -217,6 +248,9 @@ router.post("/:containerId/pause", async (req, res) => {
 
 router.post("/:containerId/unpause", async (req, res) => {
   const { containerId } = req.params;
+  if (!isValidContainerId(containerId)) {
+    return res.status(400).send({ error: "Invalid container ID" });
+  }
   logger.debug("Unpausing container:", containerId?.substring(0, 12));
 
   try {
@@ -231,6 +265,9 @@ router.post("/:containerId/unpause", async (req, res) => {
 
 router.get("/:containerId/stats", async (req, res) => {
   const { containerId } = req.params;
+  if (!isValidContainerId(containerId)) {
+    return res.status(400).send({ error: "Invalid container ID" });
+  }
   logger.debug("Fetching stats for container:", containerId?.substring(0, 12));
 
   try {
