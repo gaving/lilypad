@@ -1,5 +1,6 @@
 # Dockerfile for Lilypad - Container management in full bloom
-FROM node:25-alpine AS deps
+# Build stage
+FROM node:25-alpine AS builder
 
 # Install pnpm and turbo
 RUN npm install -g pnpm@10 turbo
@@ -31,22 +32,37 @@ RUN cd apps/api && pnpm run build
 # Create build directory in API and copy web build output to public subdirectory
 RUN mkdir -p apps/api/build/public && cp -r apps/web/build/* apps/api/build/public/
 
+# Production stage - minimal image
 FROM node:25-alpine AS release
+
 WORKDIR /lilypad
+
+# Install pnpm temporarily
+RUN npm install -g pnpm@10
+
+# Copy workspace files
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+
+# Copy the built API
+COPY --from=builder /lilypad/apps/api/build ./apps/api/build
+
+# Copy only API package.json (not web)
+COPY apps/api/package.json ./apps/api/
+
+# Copy packages (for workspace resolution)
+COPY --from=builder /lilypad/packages ./packages
+
+# Install only production dependencies for API
+RUN pnpm install --prod --filter=@lilypad/api && \
+    npm uninstall -g pnpm && \
+    rm -rf /root/.npm /root/.pnpm-store
 
 ENV NODE_ENV=production
 ENV DOCKER_SOCK=http://unix:/var/run/docker.sock:
 ENV NAMESPACE=org.domain.review
 
-# Copy the workspace configuration and node_modules
-COPY --from=deps /lilypad/package.json /lilypad/pnpm-workspace.yaml ./
-COPY --from=deps /lilypad/node_modules ./node_modules
-
-# Copy API app with build output
-COPY --from=deps /lilypad/apps/api ./apps/api
-
 # Expose the API port
 EXPOSE 8888
 
-# Start the server from project root so node_modules can be resolved
+# Start the server
 CMD ["node", "apps/api/build/server.js"]
