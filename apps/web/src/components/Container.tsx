@@ -58,6 +58,7 @@ interface ContainerState {
   removeIsLoading: boolean;
   pinIsLoading: boolean;
   stats: ContainerStats | null;
+  expandedLabels: Set<string>;
 }
 
 const ContainerCard = styled(Card)`
@@ -379,6 +380,100 @@ const LogsSection = styled.div`
   }
 `;
 
+const LabelsSection = styled.div`
+  margin: 16px 0;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+  .bp5-dark & {
+    background: rgba(255, 255, 255, 0.03);
+  }
+  @media (max-width: 768px) {
+    margin: 12px 0;
+    padding: 12px;
+  }
+`;
+
+const LabelsSubheading = styled.h4`
+  margin: 0 0 12px 0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted, #5c7080);
+  font-weight: 600;
+  &.lilypad {
+    color: #ff6b8a;
+  }
+`;
+
+const LilypadLabelBadge = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: rgba(255, 107, 138, 0.12);
+  border: 1px solid rgba(255, 107, 138, 0.3);
+  border-radius: 16px;
+  font-size: 12px;
+  margin: 0 8px 8px 0;
+  .label-key {
+    font-weight: 600;
+    color: #ff6b8a;
+  }
+  .label-value {
+    color: var(--text-color, #182026);
+  }
+  .bp5-dark & {
+    background: rgba(255, 133, 161, 0.15);
+    border-color: rgba(255, 133, 161, 0.4);
+    .label-value {
+      color: #e1e8ed;
+    }
+  }
+`;
+
+const DockerLabelsList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const DockerLabelRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  .label-key {
+    font-family: 'SF Mono', Monaco, monospace;
+    color: var(--text-muted, #5c7080);
+    min-width: 120px;
+    flex-shrink: 0;
+  }
+  .label-value {
+    font-family: 'SF Mono', Monaco, monospace;
+    color: var(--text-color, #182026);
+    word-break: break-all;
+    flex: 1;
+  }
+  .bp5-dark & .label-value {
+    color: #e1e8ed;
+  }
+`;
+
+const ExpandButton = styled.button`
+  background: none;
+  border: none;
+  color: #ff6b8a;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 0;
+  margin-left: 4px;
+  text-decoration: underline;
+  &:hover {
+    color: #ff85a1;
+  }
+`;
+
 class Container extends Component<ContainerProps, ContainerState> {
   private statsInterval: ReturnType<typeof setInterval> | null = null;
 
@@ -391,6 +486,7 @@ class Container extends Component<ContainerProps, ContainerState> {
     removeIsLoading: false,
     pinIsLoading: false,
     stats: null,
+    expandedLabels: new Set(),
   };
 
   componentDidMount() {
@@ -452,6 +548,18 @@ class Container extends Component<ContainerProps, ContainerState> {
       );
     }
     localStorage.setItem("openContainers", JSON.stringify(openContainers));
+  };
+
+  toggleLabelExpanded = (labelKey: string) => {
+    this.setState(prevState => {
+      const expandedLabels = new Set(prevState.expandedLabels);
+      if (expandedLabels.has(labelKey)) {
+        expandedLabels.delete(labelKey);
+      } else {
+        expandedLabels.add(labelKey);
+      }
+      return { expandedLabels };
+    });
   };
 
   handleAction = async (
@@ -628,6 +736,72 @@ class Container extends Component<ContainerProps, ContainerState> {
     return actions;
   };
 
+  renderLabels = () => {
+    const { container } = this.props;
+    const { expandedLabels } = this.state;
+    
+    if (!container.Labels || Object.keys(container.Labels).length === 0) {
+      return null;
+    }
+    
+    const lilypadLabels = Object.entries(container.Labels).filter(([key]) => 
+      key.startsWith('org.domain.')
+    );
+    const dockerLabels = Object.entries(container.Labels).filter(([key]) => 
+      !key.startsWith('org.domain.')
+    );
+    
+    const renderExpandableValue = (key: string, value: string) => {
+      const isExpanded = expandedLabels.has(key);
+      const shouldTruncate = value.length > 60;
+      
+      if (!shouldTruncate) {
+        return <span className="label-value">{value}</span>;
+      }
+      
+      return (
+        <span className="label-value">
+          {isExpanded ? value : `${value.slice(0, 60)}...`}
+          <ExpandButton onClick={() => this.toggleLabelExpanded(key)}>
+            {isExpanded ? 'less' : 'more'}
+          </ExpandButton>
+        </span>
+      );
+    };
+    
+    return (
+      <LabelsSection>
+        {lilypadLabels.length > 0 && (
+          <>
+            <LabelsSubheading className="lilypad">Lilypad Labels</LabelsSubheading>
+            <div style={{ marginBottom: '16px' }}>
+              {lilypadLabels.map(([key, value]) => (
+                <LilypadLabelBadge key={key}>
+                  <span className="label-key">{key.replace('org.domain.review.', '')}:</span>
+                  <span className="label-value">{value}</span>
+                </LilypadLabelBadge>
+              ))}
+            </div>
+          </>
+        )}
+        
+        {dockerLabels.length > 0 && (
+          <>
+            <LabelsSubheading>Docker Labels</LabelsSubheading>
+            <DockerLabelsList>
+              {dockerLabels.map(([key, value]) => (
+                <DockerLabelRow key={key}>
+                  <span className="label-key">{key}</span>
+                  {renderExpandableValue(key, value)}
+                </DockerLabelRow>
+              ))}
+            </DockerLabelsList>
+          </>
+        )}
+      </LabelsSection>
+    );
+  };
+
   render() {
     const { container, editMode, isSelected, onToggleSelect } = this.props;
     const { isOpen } = this.state;
@@ -772,6 +946,8 @@ class Container extends Component<ContainerProps, ContainerState> {
                 <div className="detail-value">{container.Status}</div>
               </DetailItem>
             </DetailsGrid>
+
+            {this.renderLabels()}
 
             <LogsSection>
               <Logs container={container} />
