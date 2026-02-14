@@ -23,7 +23,7 @@ docker run -d \
 	-p ${LILYPAD_PORT}:8888 \
 	-v /var/run/docker.sock:/var/run/docker.sock \
 	-e NODE_ENV=production \
-	-e CONTAINER_TAG=org.domain.review.name \
+	-e NAMESPACE=org.domain.review \
 	ghcr.io/gaving/lilypad:latest
 
 echo "Waiting for Lilypad to be ready..."
