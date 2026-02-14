@@ -1,11 +1,85 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
+# Dependabot version updates configuration for Lilypad
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
 updates:
-  - package-ecosystem: "" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  # Node.js dependencies (pnpm monorepo)
+  - package-ecosystem: "npm"
+    directory: "/"
     schedule:
       interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "npm"
+    commit-message:
+      prefix: ":arrow_up:"
+      include: "scope"
+    reviewers:
+      - "anomalyco"
+    assignees:
+      - "anomalyco"
+    versioning-strategy: "auto"
+    # Groups for batching related updates
+    groups:
+      # React ecosystem updates
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react*"
+      # Blueprint.js UI library
+      blueprint:
+        patterns:
+          - "@blueprintjs/*"
+      # Development tools
+      dev-dependencies:
+        patterns:
+          - "turbo"
+          - "typescript"
+          - "@biomejs/biome"
+          - "@types/*"
+      # Testing
+      testing:
+        patterns:
+          - "@playwright/test"
+
+  # Docker base images
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: ":whale:"
+      include: "scope"
+    reviewers:
+      - "anomalyco"
+    assignees:
+      - "anomalyco"
+
+  # GitHub Actions (if you add workflows later)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: ":construction_worker:"
+      include: "scope"
+    reviewers:
+      - "anomalyco"
+    assignees:
+      - "anomalyco"
