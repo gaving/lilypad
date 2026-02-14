@@ -744,11 +744,14 @@ class Container extends Component<ContainerProps, ContainerState> {
       return null;
     }
     
+    // Extract domain prefix from VITE_CONTAINER_TAG (e.g., "org.domain.review.name" -> "org.domain.review")
+    const domainPrefix = VITE_CONTAINER_TAG.split('.').slice(0, -1).join('.');
+    
     const lilypadLabels = Object.entries(container.Labels).filter(([key]) => 
-      key.startsWith('org.domain.')
+      key.startsWith(domainPrefix)
     );
     const dockerLabels = Object.entries(container.Labels).filter(([key]) => 
-      !key.startsWith('org.domain.')
+      !key.startsWith(domainPrefix)
     );
     
     const renderExpandableValue = (key: string, value: string) => {
@@ -771,13 +774,13 @@ class Container extends Component<ContainerProps, ContainerState> {
     
     return (
       <LabelsSection>
-        {lilypadLabels.length > 0 && (
+          {lilypadLabels.length > 0 && (
           <>
             <LabelsSubheading className="lilypad">Lilypad Labels</LabelsSubheading>
             <div style={{ marginBottom: '16px' }}>
               {lilypadLabels.map(([key, value]) => (
                 <LilypadLabelBadge key={key}>
-                  <span className="label-key">{key.replace('org.domain.review.', '')}:</span>
+                  <span className="label-key">{key.replace(domainPrefix + '.', '')}:</span>
                   <span className="label-value">{value}</span>
                 </LilypadLabelBadge>
               ))}
