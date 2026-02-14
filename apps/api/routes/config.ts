@@ -1,7 +1,7 @@
-import type { Request, Response } from "express";
+import type { Request, Response, Router } from "express";
 import express from "express";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 interface ConfigResponse {
   containerTag: string;
