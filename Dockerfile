@@ -1,68 +1,52 @@
-# Dockerfile for Lilypad - Container management in full bloom
-# Build stage
-FROM node:25-alpine AS builder
-
-# Install pnpm and turbo
-RUN npm install -g pnpm@10 turbo
+# Dockerfile for Lilypad - Container management in full bloom (Bun version)
+FROM oven/bun:alpine AS builder
 
 WORKDIR /lilypad
 
 # Copy workspace configuration files first (for layer caching)
-COPY pnpm-workspace.yaml package.json turbo.json pnpm-lock.yaml ./
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
 
-# Copy shared packages
-COPY packages/ ./packages/
-
-# Copy package manifests (for dependency installation layer caching)
+# Copy package manifests
 COPY apps/web/package.json ./apps/web/
 COPY apps/api/package.json ./apps/api/
 
-# Install all dependencies using pnpm workspace
-RUN pnpm install
+# Install dependencies using bun
+# Bun reads package.json and installs to node_modules
+RUN cd apps/api && bun install
 
 # Copy source code
-COPY . .
+COPY apps/api ./apps/api
+COPY apps/web ./apps/web
 
-# Build web app using Turborepo (builds web, ensures proper ordering)
-RUN pnpm turbo run build --filter=@lilypad/web
+# Build web app
+RUN cd apps/web && bun run build
 
-# Build API TypeScript
-RUN cd apps/api && pnpm run build
+# Copy web build output
+RUN mkdir -p apps/api/public && cp -r apps/web/build/* apps/api/public/
 
-# Create build directory in API and copy web build output to public subdirectory
-RUN mkdir -p apps/api/build/public && cp -r apps/web/build/* apps/api/build/public/
-
-# Production stage - minimal image
-FROM node:25-alpine AS release
+# Production stage - minimal image with Bun
+FROM oven/bun:alpine AS release
 
 WORKDIR /lilypad
-
-# Install pnpm temporarily
-RUN npm install -g pnpm@10
-
-# Copy workspace files
-COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
-
-# Copy the built API
-COPY --from=builder /lilypad/apps/api/build ./apps/api/build
-
-# Copy only API package.json (not web)
-COPY apps/api/package.json ./apps/api/
-
-# Copy packages (for workspace resolution)
-COPY --from=builder /lilypad/packages ./packages
-
-# Install only production dependencies for API and clean up
-RUN pnpm install --prod --filter=@lilypad/api && \
-    npm uninstall -g pnpm && \
-    rm -rf /root/.npm /root/.pnpm-store
 
 ENV NODE_ENV=production
 ENV DOCKER_SOCK=http://unix:/var/run/docker.sock:
 ENV NAMESPACE=org.domain.review
 
+# Copy package.json for production install
+COPY --from=builder /lilypad/apps/api/package.json ./
+
+# Copy source files
+COPY --from=builder /lilypad/apps/api/server.ts ./server.ts
+COPY --from=builder /lilypad/apps/api/routes ./routes
+COPY --from=builder /lilypad/apps/api/utils ./utils
+COPY --from=builder /lilypad/apps/api/public ./public
+
+# Install only production dependencies
+RUN bun install --production
+
 # Expose the API port
 EXPOSE 8888
 
-# Start the server
-CMD ["node", "apps/api/build/server.js"]
+# Start the server with Bun (TypeScript runs natively!)
+CMD ["bun", "run", "server.ts"]

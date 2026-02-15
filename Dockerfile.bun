@@ -1,0 +1,53 @@
+# Dockerfile for Lilypad using Bun runtime
+# Multi-stage build for smaller image size
+FROM oven/bun:alpine AS builder
+
+WORKDIR /lilypad
+
+# Copy workspace configuration files
+COPY pnpm-workspace.yaml package.json turbo.json pnpm-lock.yaml ./
+COPY packages/ ./packages/
+
+# Copy API package
+COPY apps/api/package.json ./apps/api/
+COPY apps/web/package.json ./apps/web/
+
+# Install dependencies using bun
+# Bun supports npm/pnpm workspaces
+RUN bun install
+
+# Copy source code
+COPY apps/web ./apps/web
+COPY apps/api ./apps/api
+
+# Build web app
+RUN cd apps/web && bun run build
+
+# Create public directory and copy web build
+RUN mkdir -p apps/api/public && cp -r apps/web/build/* apps/api/public/
+
+# Production stage
+FROM oven/bun:alpine AS release
+
+WORKDIR /lilypad
+
+ENV NODE_ENV=production
+ENV DOCKER_SOCK=http://unix:/var/run/docker.sock:
+ENV NAMESPACE=org.domain.review
+
+# Copy package files
+COPY --from=builder /lilypad/package.json ./
+COPY --from=builder /lilypad/pnpm-workspace.yaml ./
+
+# Copy built public assets
+COPY --from=builder /lilypad/apps/api/public ./public
+
+# Copy API source and node_modules
+COPY --from=builder /lilypad/apps/api ./
+COPY --from=builder /lilypad/node_modules ./node_modules
+
+# Expose the API port
+EXPOSE 8888
+
+# Start the server with Bun (runs TypeScript directly!)
+CMD ["bun", "run", "server.ts"]

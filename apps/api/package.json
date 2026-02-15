@@ -5,13 +5,13 @@
   "type": "module",
   "main": "build/server.js",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsx watch server.ts",
+    "build": "echo 'No build needed with Bun!",
+    "dev": "bun --watch server.ts",
     "lint": "biome check .",
     "lint:fix": "biome check . --write",
     "format": "biome format . --write",
-    "start": "node build/server.js",
-    "clean": "rm -rf node_modules build"
+    "start": "bun run server.ts",
+    "clean": "rm -rf node_modules"
   },
   "dependencies": {
     "@types/got": "^9.6.12",
