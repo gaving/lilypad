@@ -3,24 +3,22 @@ FROM oven/bun:alpine AS builder
 
 WORKDIR /app
 
-# Copy workspace config
+# Copy workspace config and install deps
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
 COPY packages/ ./packages/
 COPY apps/api/package.json ./apps/api/
 COPY apps/web/package.json ./apps/web/
 
-# Install all deps
 RUN bun install
 
-# Copy source
+# Copy source and build
 COPY apps/web ./apps/web
 COPY apps/api ./apps/api
 
-# Build web
 RUN cd apps/web && bun run build
 
-# Copy build to API public
-RUN mkdir -p apps/api/public && cp -r apps/web/build/* apps/api/public/
+# Copy frontend build to API
+RUN mkdir -p apps/api/build/public && cp -r apps/web/build/* apps/api/build/public/
 
 # Production stage
 FROM oven/bun:alpine AS release
@@ -31,12 +29,14 @@ ENV NODE_ENV=production
 ENV DOCKER_SOCK=http://unix:/var/run/docker.sock:
 ENV NAMESPACE=org.domain.review
 
-# Copy everything from builder
+# Copy the complete app structure
+COPY --from=builder /app/apps/api ./apps/api
+COPY --from=builder /app/apps/api/build/public ./apps/api/build/public
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/apps/api ./api
 COPY --from=builder /app/package.json ./
+COPY --from=builder /app/pnpm-workspace.yaml ./
 
-WORKDIR /app/api
+WORKDIR /app/apps/api
 
 EXPOSE 8888
 
