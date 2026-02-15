@@ -14,7 +14,6 @@
         # Node.js 24 with pnpm
         nodejs = pkgs.nodejs_24;
         pnpm = pkgs.pnpm;
-        bun = pkgs.bun;
         
       in {
         # Development shell
@@ -24,7 +23,6 @@
           buildInputs = [
             nodejs
             pnpm
-            bun
             pkgs.git
             pkgs.docker
           ];
@@ -34,21 +32,15 @@
             echo ""
             echo "Node.js version: $(node --version)"
             echo "pnpm version: $(pnpm --version)"
-            echo "Bun version: $(bun --version)"
             echo ""
             echo "Quick start:"
-            echo "  pnpm install    # Install dependencies with pnpm"
-            echo "  bun install     # Install dependencies with Bun"
+            echo "  pnpm install    # Install dependencies"
             echo "  pnpm dev        # Start development server"
             echo ""
             echo "Available commands:"
             echo "  pnpm build      # Build all packages"
             echo "  pnpm lint       # Lint all packages"
             echo "  pnpm docker:build  # Build Docker image"
-            echo ""
-            echo "Bun commands:"
-            echo "  bun run server.ts  # Run API with Bun (no build needed!)"
-            echo "  bun --watch server.ts  # Run API with hot reload"
             echo ""
           '';
         };
