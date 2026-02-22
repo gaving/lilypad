@@ -1,6 +1,6 @@
 # Lilypad X 🌸
 
-[![Version](https://img.shields.io/badge/version-10.0.0-blue.svg)](https://github.com/anomalyco/lilypad)
+[![Version](https://img.shields.io/badge/version-10.0.0-blue.svg)](https://github.com/gaving/lilypad)
 [![Node.js](https://img.shields.io/badge/node-24.x-green.svg)](https://nodejs.org/)
 [![Turborepo](https://img.shields.io/badge/turborepo-2.x-purple.svg)](https://turbo.build/)
 [![pnpm](https://img.shields.io/badge/pnpm-10.x-orange.svg)](https://pnpm.io/)

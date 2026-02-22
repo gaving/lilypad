@@ -18,9 +18,9 @@ updates:
       prefix: ":arrow_up:"
       include: "scope"
     reviewers:
-      - "anomalyco"
+      - "gaving"
     assignees:
-      - "anomalyco"
+      - "gaving"
     versioning-strategy: "auto"
     # Groups for batching related updates
     groups:
@@ -61,9 +61,9 @@ updates:
       prefix: ":whale:"
       include: "scope"
     reviewers:
-      - "anomalyco"
+      - "gaving"
     assignees:
-      - "anomalyco"
+      - "gaving"
 
   # GitHub Actions (if you add workflows later)
   - package-ecosystem: "github-actions"
@@ -80,6 +80,6 @@ updates:
       prefix: ":construction_worker:"
       include: "scope"
     reviewers:
-      - "anomalyco"
+      - "gaving"
     assignees:
-      - "anomalyco"
+      - "gaving"
