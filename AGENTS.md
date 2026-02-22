@@ -4,7 +4,7 @@
 
 **Lilypad** is a modern web application for container management in full bloom. With a cherry blossom (pink) theme, it provides a beautiful, responsive UI for viewing, starting, stopping, and managing Docker containers.
 
-- **Repository**: `anomalyco/lilypad`
+- **Repository**: `gaving/lilypad`
 - **Current Branch**: `master`
 - **Version**: 10.0.0
 - **License**: MIT
@@ -319,8 +319,8 @@ Potential features to add:
 
 ## Contact & Resources
 
-- **Repository**: https://github.com/anomalyco/lilypad
-- **Issues**: https://github.com/anomalyco/lilypad/issues
+- **Repository**: https://github.com/gaving/lilypad
+- **Issues**: https://github.com/gaving/lilypad/issues
 - **Docker Hub**: Not published (build from source)
 
 ## Summary for Agents

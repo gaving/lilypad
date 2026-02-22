@@ -19,7 +19,7 @@ We take the security of Lilypad seriously. If you believe you have found a secur
 
 Instead, please report security vulnerabilities via GitHub's private vulnerability reporting:
 
-1. Go to the [Security tab](https://github.com/anomalyco/lilypad/security) of this repository
+1. Go to the [Security tab](https://github.com/gaving/lilypad/security) of this repository
 2. Click on "Report a vulnerability" under the "Private vulnerability reporting" section
 3. Fill in the vulnerability details
 
@@ -86,9 +86,9 @@ Security updates will be released as patch versions (e.g., 10.0.1). We recommend
 
 ## Related Resources
 
-- [GitHub Security Advisories](https://github.com/anomalyco/lilypad/security/advisories)
-- [Dependabot Alerts](https://github.com/anomalyco/lilypad/security/dependabot)
-- [Code Scanning Alerts](https://github.com/anomalyco/lilypad/security/code-scanning)
+- [GitHub Security Advisories](https://github.com/gaving/lilypad/security/advisories)
+- [Dependabot Alerts](https://github.com/gaving/lilypad/security/dependabot)
+- [Code Scanning Alerts](https://github.com/gaving/lilypad/security/code-scanning)
 
 ---
 
