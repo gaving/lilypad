@@ -12,18 +12,37 @@ const router: express.Router = express.Router();
 
 // Support both legacy single-endpoint and new multi-endpoint configuration
 const DOCKER_SOCK = process.env.DOCKER_SOCK;
-const DOCKER_ENDPOINTS = process.env.DOCKER_ENDPOINTS;
+const DOCKER_NORMALIZED_ENDPOINTS = process.env.DOCKER_NORMALIZED_ENDPOINTS;
 
-// Parse endpoints - use DOCKER_ENDPOINTS if available, fall back to DOCKER_SOCK
-const ENDPOINTS: string[] = DOCKER_ENDPOINTS
-  ? DOCKER_ENDPOINTS.split(',').map(e => e.trim()).filter(e => e)
+// Parse endpoints - use DOCKER_NORMALIZED_ENDPOINTS if available, fall back to DOCKER_SOCK
+const NORMALIZED_ENDPOINTS: string[] = DOCKER_NORMALIZED_ENDPOINTS
+  ? DOCKER_NORMALIZED_ENDPOINTS.split(',').map(e => e.trim()).filter(e => e)
   : DOCKER_SOCK
   ? [DOCKER_SOCK]
   : [];
 
-if (ENDPOINTS.length === 0) {
-  logger.error("No Docker endpoints configured. Set DOCKER_ENDPOINTS or DOCKER_SOCK");
+if (NORMALIZED_ENDPOINTS.length === 0) {
+  logger.error("No Docker endpoints configured. Set DOCKER_NORMALIZED_ENDPOINTS or DOCKER_SOCK");
 }
+
+// Helper to normalize endpoint URLs (supports both Unix sockets and HTTP)
+const normalizeEndpoint = (endpoint: string): string => {
+  const trimmed = endpoint.trim();
+  // If it's already HTTP(S), use as-is
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+  // If it's a Unix socket path, convert to got's format
+  if (trimmed.startsWith('/')) {
+    return `http://unix:${trimmed}:`;
+  }
+  // Unknown format, return as-is and let it fail
+  logger.warn(`Unknown endpoint format: ${trimmed}`);
+  return trimmed;
+};
+
+// Normalize all endpoints
+const NORMALIZED_NORMALIZED_ENDPOINTS = NORMALIZED_ENDPOINTS.map(normalizeEndpoint);
 
 // URL builders - now endpoint-aware
 const CONTAINERS = (endpoint: string) => `${endpoint}/containers/json?all=true`;
@@ -89,7 +108,7 @@ router.get("/", async (_req: Request, res: Response) => {
   try {
     // Query all endpoints in parallel
     const results = await Promise.allSettled(
-      ENDPOINTS.map(async (endpoint) => {
+      NORMALIZED_ENDPOINTS.map(async (endpoint) => {
         const response = await _got(CONTAINERS(endpoint));
         const data: ContainerData[] = JSON.parse(response.body);
         
@@ -107,7 +126,7 @@ router.get("/", async (_req: Request, res: Response) => {
     const nodeErrors: { node: string; error: string }[] = [];
 
     results.forEach((result, index) => {
-      const nodeName = getNodeName(ENDPOINTS[index]);
+      const nodeName = getNodeName(NORMALIZED_ENDPOINTS[index]);
       if (result.status === 'fulfilled') {
         allContainers = allContainers.concat(result.value);
       } else {
@@ -169,7 +188,7 @@ router.post("/stop", async (req: Request, res: Response): Promise<void> => {
   try {
     // Try to stop on all endpoints - container will only exist on one
     const results = await Promise.allSettled(
-      ENDPOINTS.map(endpoint => _got.post(CONTAINER_STOP(endpoint, containerId)))
+      NORMALIZED_ENDPOINTS.map(endpoint => _got.post(CONTAINER_STOP(endpoint, containerId)))
     );
     
     const success = results.find(r => r.status === 'fulfilled');
@@ -197,7 +216,7 @@ router.post("/start", async (req: Request, res: Response): Promise<void> => {
 
   try {
     const results = await Promise.allSettled(
-      ENDPOINTS.map(endpoint => _got.post(CONTAINER_START(endpoint, containerId)))
+      NORMALIZED_ENDPOINTS.map(endpoint => _got.post(CONTAINER_START(endpoint, containerId)))
     );
     
     const success = results.find(r => r.status === 'fulfilled');
@@ -220,11 +239,11 @@ router.post("/prune", async (_req: Request, res: Response) => {
 
   try {
     const results = await Promise.allSettled(
-      ENDPOINTS.map(endpoint => _got.post(CONTAINER_PRUNE(endpoint)))
+      NORMALIZED_ENDPOINTS.map(endpoint => _got.post(CONTAINER_PRUNE(endpoint)))
     );
     
     const successCount = results.filter(r => r.status === 'fulfilled').length;
-    logger.info(`Containers pruned on ${successCount}/${ENDPOINTS.length} nodes`);
+    logger.info(`Containers pruned on ${successCount}/${NORMALIZED_ENDPOINTS.length} nodes`);
     
     res.send({ success: true, nodesPruned: successCount });
   } catch (error) {
@@ -245,7 +264,7 @@ router.get("/:containerId", async (req: Request, res: Response): Promise<void> =
   try {
     // Try all endpoints and return from the first successful one
     const results = await Promise.allSettled(
-      ENDPOINTS.map(async (endpoint) => {
+      NORMALIZED_ENDPOINTS.map(async (endpoint) => {
         const data = await _got(CONTAINER(endpoint, containerId));
         const containers: ContainerData[] = JSON.parse(data.body);
         if (containers.length > 0) {
@@ -286,7 +305,7 @@ router.delete("/:containerId", async (req: Request, res: Response): Promise<void
 
   try {
     const results = await Promise.allSettled(
-      ENDPOINTS.map(endpoint => {
+      NORMALIZED_ENDPOINTS.map(endpoint => {
         const url = force === "true" 
           ? `${CONTAINER_REMOVE(endpoint, containerId)}&force=true`
           : CONTAINER_REMOVE(endpoint, containerId);
@@ -319,7 +338,7 @@ router.post("/:containerId", async (req: Request, res: Response): Promise<void> 
 
   try {
     const results = await Promise.allSettled(
-      ENDPOINTS.map(endpoint => _got.post(CONTAINER_START(endpoint, containerId)))
+      NORMALIZED_ENDPOINTS.map(endpoint => _got.post(CONTAINER_START(endpoint, containerId)))
     );
     
     const success = results.find(r => r.status === 'fulfilled');
@@ -348,7 +367,7 @@ router.get("/:containerId/logs", async (req: Request, res: Response): Promise<vo
   try {
     // Try all endpoints and return logs from the first successful one
     const results = await Promise.allSettled(
-      ENDPOINTS.map(endpoint => _got(CONTAINER_LOGS(endpoint, containerId)))
+      NORMALIZED_ENDPOINTS.map(endpoint => _got(CONTAINER_LOGS(endpoint, containerId)))
     );
     
     const success = results.find(r => r.status === 'fulfilled') as PromiseFulfilledResult<GotResponse<string>>;
@@ -383,7 +402,7 @@ router.post("/:containerId/restart", async (req: Request, res: Response): Promis
 
   try {
     const results = await Promise.allSettled(
-      ENDPOINTS.map(endpoint => _got.post(CONTAINER_RESTART(endpoint, containerId)))
+      NORMALIZED_ENDPOINTS.map(endpoint => _got.post(CONTAINER_RESTART(endpoint, containerId)))
     );
     
     const success = results.find(r => r.status === 'fulfilled');
@@ -417,7 +436,7 @@ router.post("/:containerId/rename", async (req: Request, res: Response): Promise
 
   try {
     const results = await Promise.allSettled(
-      ENDPOINTS.map(endpoint => _got.post(CONTAINER_RENAME(endpoint, containerId, name)))
+      NORMALIZED_ENDPOINTS.map(endpoint => _got.post(CONTAINER_RENAME(endpoint, containerId, name)))
     );
     
     const success = results.find(r => r.status === 'fulfilled');
@@ -447,7 +466,7 @@ router.post("/:containerId/pause", async (req: Request, res: Response): Promise<
 
   try {
     const results = await Promise.allSettled(
-      ENDPOINTS.map(endpoint => _got.post(CONTAINER_PAUSE(endpoint, containerId)))
+      NORMALIZED_ENDPOINTS.map(endpoint => _got.post(CONTAINER_PAUSE(endpoint, containerId)))
     );
     
     const success = results.find(r => r.status === 'fulfilled');
@@ -475,7 +494,7 @@ router.post("/:containerId/unpause", async (req: Request, res: Response): Promis
 
   try {
     const results = await Promise.allSettled(
-      ENDPOINTS.map(endpoint => _got.post(CONTAINER_UNPAUSE(endpoint, containerId)))
+      NORMALIZED_ENDPOINTS.map(endpoint => _got.post(CONTAINER_UNPAUSE(endpoint, containerId)))
     );
     
     const success = results.find(r => r.status === 'fulfilled');
@@ -523,7 +542,7 @@ router.get("/:containerId/stats", async (req: Request, res: Response): Promise<v
   try {
     // Try all endpoints and return stats from the first successful one
     const results = await Promise.allSettled(
-      ENDPOINTS.map(endpoint => _got(CONTAINER_STATS(endpoint, containerId)))
+      NORMALIZED_ENDPOINTS.map(endpoint => _got(CONTAINER_STATS(endpoint, containerId)))
     );
     
     const success = results.find(r => r.status === 'fulfilled') as PromiseFulfilledResult<GotResponse<string>>;
