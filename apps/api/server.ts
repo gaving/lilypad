@@ -49,4 +49,20 @@ if (process.env.NODE_ENV === "production") {
 
 const port = process.env.NODE_ENV === "production" ? 8888 : 4000;
 
-app.listen(port, () => console.log(`Serving on *${port}...`));
+app.listen(port, () => {
+  const isProd = process.env.NODE_ENV === "production";
+  const lilypadEmoji = "🪷";
+  const portEmoji = isProd ? "🔒" : "🔓";
+  const urlEmoji = "🌐";
+  const sparkles = isProd ? "✨" : "⚡";
+  
+  console.log("");
+  console.log(`${sparkles} ${lilypadEmoji}  Lilypad is in full bloom!  ${lilypadEmoji} ${sparkles}`);
+  console.log("┌────────────────────────────────────────────┐");
+  console.log(`│  ${urlEmoji}  URL: http://localhost:${port}${port === 8888 ? ' ' : ''}           │`);
+  console.log(`│  ${portEmoji}  Port: ${port}${port === 8888 ? '     ' : '    '}                            │`);
+  console.log(`│  🐳  Mode: ${isProd ? 'production ' : 'development'}                   │`);
+  console.log("└────────────────────────────────────────────┘");
+  console.log(`${lilypadEmoji}  Container management made beautiful  ${lilypadEmoji}`);
+  console.log("");
+});
