@@ -1,0 +1,74 @@
+version: "3.8"
+
+services:
+  docker-socket-proxy:
+    image: tecnativa/docker-socket-proxy:latest
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+    environment:
+      # Full container management permissions
+      CONTAINERS: 1
+      CONTAINERS_START: 1
+      CONTAINERS_STOP: 1
+      CONTAINERS_RESTART: 1
+      CONTAINERS_DELETE: 1
+      CONTAINERS_PRUNE: 1
+      CONTAINERS_ATTACH: 1
+      CONTAINERS_EXEC: 1
+      CONTAINERS_LOGS: 1
+      CONTAINERS_STATS: 1
+      CONTAINERS_TOP: 1
+      
+      # Image access (read-only)
+      IMAGES: 1
+      
+      # Volume access (for container management)
+      VOLUMES: 1
+      
+      # Network access (for container networking)
+      NETWORKS: 1
+      
+      # System info
+      INFO: 1
+      
+      # Disallow dangerous operations
+      SERVICES: 0
+      TASKS: 0
+      NODES: 0
+      SWARM: 0
+      BUILD: 0
+      COMMIT: 0
+      CONFIGS: 0
+      DISTRIBUTION: 0
+      EXEC: 0
+      GRPC: 0
+      PING: 1
+      PLUGINS: 0
+      SECRETS: 0
+      SESSION: 0
+      VERSION: 1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - target: 2375
+        published: 2375
+        mode: host
+    networks:
+      - docker-proxy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  docker-proxy:
+    driver: overlay
+    attachable: true
+    ipam:
+      config:
+        - subnet: 10.20.0.0/16

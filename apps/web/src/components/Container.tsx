@@ -30,6 +30,7 @@ interface ContainerData {
   Status: string;
   Created: number;
   Labels: ContainerLabels;
+  Node?: string;
 }
 
 interface ContainerStats {
@@ -193,28 +194,68 @@ const AppName = styled.div`
 const MetaRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   font-size: 13px;
-  color: var(--text-muted, #5c7080);
+  color: #5c7080;
   flex-wrap: wrap;
-  
+  margin-top: 4px;
+
   @media (max-width: 768px) {
-    gap: 8px;
     font-size: 12px;
+    gap: 4px;
   }
-  
-  .container-tag {
-    background: rgba(255, 107, 138, 0.12);
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 500;
-    color: #ff6b8a;
-    
-    .bp5-dark & {
-      background: rgba(255, 133, 161, 0.25);
-      color: #ff85a1;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .hide-mobile {
+    @media (max-width: 768px) {
+      display: none;
     }
+  }
+
+  .container-tag {
+    font-family: monospace;
+    font-size: 12px;
+    background: rgba(16, 22, 26, 0.05);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .bp5-dark & {
+    color: #a7b6c2;
+
+    .container-tag {
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
+`;
+
+const NodeBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  background: rgba(92, 112, 128, 0.12);
+  border: 1px solid rgba(92, 112, 128, 0.25);
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 500;
+  color: #5c7080;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+
+  @media (max-width: 768px) {
+    font-size: 9px;
+    padding: 1px 4px;
+  }
+
+  .bp5-dark & {
+    background: rgba(167, 182, 194, 0.15);
+    border-color: rgba(167, 182, 194, 0.3);
+    color: #a7b6c2;
   }
 `;
 
@@ -934,6 +975,14 @@ class Container extends Component<ContainerProps, ContainerState> {
                     addSuffix: true,
                   })}
                 </span>
+                {container.Node && (
+                  <>
+                    <span>•</span>
+                    <NodeBadge title={`Running on ${container.Node}`}>
+                      {container.Node.length > 15 ? container.Node.substring(0, 12) + '...' : container.Node}
+                    </NodeBadge>
+                  </>
+                )}
                 {this.state.stats && (
                   <>
                     <span className="hide-mobile">•</span>

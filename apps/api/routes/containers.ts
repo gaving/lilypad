@@ -1,4 +1,4 @@
-import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+import * as dotenv from "dotenv";
 import type { Request, Response } from "express";
 import express from "express";
 import got from "got";
@@ -10,24 +10,48 @@ dotenv.config({ quiet: true });
 
 const router: express.Router = express.Router();
 
+// Support both legacy single-endpoint and new multi-endpoint configuration
 const DOCKER_SOCK = process.env.DOCKER_SOCK;
+const DOCKER_ENDPOINTS = process.env.DOCKER_ENDPOINTS;
 
-const CONTAINERS = `${DOCKER_SOCK}/containers/json?all=true`;
-const CONTAINER_STOP = (id: string) => `${DOCKER_SOCK}/containers/${id}/stop`;
-const CONTAINER_PRUNE = `${DOCKER_SOCK}/containers/prune`;
-const CONTAINER = (id: string) =>
-  `${DOCKER_SOCK}/containers/json?all=true&filters={"id":["${id}"]}`;
-const CONTAINER_REMOVE = (id: string) => `${DOCKER_SOCK}/containers/${id}?v=1`;
-const CONTAINER_START = (id: string) => `${DOCKER_SOCK}/containers/${id}/start`;
-const CONTAINER_RESTART = (id: string) => `${DOCKER_SOCK}/containers/${id}/restart`;
-const CONTAINER_RENAME = (id: string, name: string | undefined) =>
-  `${DOCKER_SOCK}/containers/${id}/rename?name=${name}`;
-const CONTAINER_PAUSE = (id: string) => `${DOCKER_SOCK}/containers/${id}/pause`;
-const CONTAINER_UNPAUSE = (id: string) => `${DOCKER_SOCK}/containers/${id}/unpause`;
-const CONTAINER_LOGS = (id: string) =>
-  `${DOCKER_SOCK}/containers/${id}/logs?stdout=true&stderr=true&tail=200`;
-const CONTAINER_STATS = (id: string) =>
-  `${DOCKER_SOCK}/containers/${id}/stats?stream=false`;
+// Parse endpoints - use DOCKER_ENDPOINTS if available, fall back to DOCKER_SOCK
+const ENDPOINTS: string[] = DOCKER_ENDPOINTS
+  ? DOCKER_ENDPOINTS.split(',').map(e => e.trim()).filter(e => e)
+  : DOCKER_SOCK
+  ? [DOCKER_SOCK]
+  : [];
+
+if (ENDPOINTS.length === 0) {
+  logger.error("No Docker endpoints configured. Set DOCKER_ENDPOINTS or DOCKER_SOCK");
+}
+
+// URL builders - now endpoint-aware
+const CONTAINERS = (endpoint: string) => `${endpoint}/containers/json?all=true`;
+const CONTAINER_STOP = (endpoint: string, id: string) => `${endpoint}/containers/${id}/stop`;
+const CONTAINER_PRUNE = (endpoint: string) => `${endpoint}/containers/prune`;
+const CONTAINER = (endpoint: string, id: string) =>
+  `${endpoint}/containers/json?all=true&filters={"id":["${id}"]}`;
+const CONTAINER_REMOVE = (endpoint: string, id: string) => `${endpoint}/containers/${id}?v=1`;
+const CONTAINER_START = (endpoint: string, id: string) => `${endpoint}/containers/${id}/start`;
+const CONTAINER_RESTART = (endpoint: string, id: string) => `${endpoint}/containers/${id}/restart`;
+const CONTAINER_RENAME = (endpoint: string, id: string, name: string | undefined) =>
+  `${endpoint}/containers/${id}/rename?name=${name}`;
+const CONTAINER_PAUSE = (endpoint: string, id: string) => `${endpoint}/containers/${id}/pause`;
+const CONTAINER_UNPAUSE = (endpoint: string, id: string) => `${endpoint}/containers/${id}/unpause`;
+const CONTAINER_LOGS = (endpoint: string, id: string) =>
+  `${endpoint}/containers/${id}/logs?stdout=true&stderr=true&tail=200`;
+const CONTAINER_STATS = (endpoint: string, id: string) =>
+  `${endpoint}/containers/${id}/stats?stream=false`;
+
+// Helper to extract hostname from endpoint URL
+const getNodeName = (endpoint: string): string => {
+  try {
+    const url = new URL(endpoint);
+    return url.hostname;
+  } catch {
+    return 'unknown';
+  }
+};
 
 // Validate container ID to prevent SSRF
 const VALID_CONTAINER_ID = /^[a-zA-Z0-9_-]+$/;
@@ -54,6 +78,7 @@ interface ContainerData {
   Status: string;
   Created: number;
   Labels: ContainerLabels;
+  Node?: string;
 }
 
 interface DockerError extends Error {
@@ -62,19 +87,54 @@ interface DockerError extends Error {
 
 router.get("/", async (_req: Request, res: Response) => {
   try {
-    const response = await _got(CONTAINERS);
-    let data: ContainerData[] = JSON.parse(response.body);
+    // Query all endpoints in parallel
+    const results = await Promise.allSettled(
+      ENDPOINTS.map(async (endpoint) => {
+        const response = await _got(CONTAINERS(endpoint));
+        const data: ContainerData[] = JSON.parse(response.body);
+        
+        // Add node information to each container
+        const nodeName = getNodeName(endpoint);
+        return data.map(container => ({
+          ...container,
+          Node: nodeName
+        }));
+      })
+    );
+
+    // Merge results from all nodes
+    let allContainers: ContainerData[] = [];
+    const nodeErrors: { node: string; error: string }[] = [];
+
+    results.forEach((result, index) => {
+      const nodeName = getNodeName(ENDPOINTS[index]);
+      if (result.status === 'fulfilled') {
+        allContainers = allContainers.concat(result.value);
+      } else {
+        logger.error(`Failed to fetch containers from ${nodeName}:`, result.reason);
+        nodeErrors.push({ node: nodeName, error: String(result.reason) });
+      }
+    });
 
     // Filter to only include containers with the Lilypad label
-    data = data.filter((c) => c.Labels && CONTAINER_TAG in c.Labels);
+    allContainers = allContainers.filter((c) => c.Labels && CONTAINER_TAG in c.Labels);
 
-    data.forEach((c) => {
+    // Apply pinned state
+    allContainers.forEach((c) => {
       if (PINNED.has(c.Names[0])) {
         c.State = "pinned";
       }
     });
 
-    res.send(data);
+    // Send response with optional error info
+    const response: { containers: ContainerData[]; errors?: typeof nodeErrors } = {
+      containers: allContainers
+    };
+    if (nodeErrors.length > 0) {
+      response.errors = nodeErrors;
+    }
+
+    res.send(response);
   } catch (error) {
     const err = error as DockerError;
     logger.error("Failed to fetch containers:", err.message);
@@ -109,9 +169,19 @@ router.post("/stop", async (req: Request, res: Response): Promise<void> => {
   logger.debug("Stopping container:", containerId?.substring(0, 12));
 
   try {
-    const data = await _got.post(CONTAINER_STOP(containerId));
-    logger.info(`Container ${containerId?.substring(0, 12)} stopped`);
-    res.sendStatus(data.statusCode);
+    // Try to stop on all endpoints - container will only exist on one
+    const results = await Promise.allSettled(
+      ENDPOINTS.map(endpoint => _got.post(CONTAINER_STOP(endpoint, containerId)))
+    );
+    
+    const success = results.find(r => r.status === 'fulfilled');
+    if (success) {
+      logger.info(`Container ${containerId?.substring(0, 12)} stopped`);
+      res.sendStatus(200);
+    } else {
+      const error = results.find(r => r.status === 'rejected') as PromiseRejectedResult;
+      throw error?.reason || new Error("Failed to stop container");
+    }
   } catch (error) {
     const err = error as DockerError;
     logger.error("Error stopping container:", err.message);
@@ -128,9 +198,18 @@ router.post("/start", async (req: Request, res: Response): Promise<void> => {
   logger.debug("Starting container:", containerId?.substring(0, 12));
 
   try {
-    const data = await _got.post(CONTAINER_START(containerId));
-    logger.info(`Container ${containerId?.substring(0, 12)} started`);
-    res.sendStatus(data.statusCode);
+    const results = await Promise.allSettled(
+      ENDPOINTS.map(endpoint => _got.post(CONTAINER_START(endpoint, containerId)))
+    );
+    
+    const success = results.find(r => r.status === 'fulfilled');
+    if (success) {
+      logger.info(`Container ${containerId?.substring(0, 12)} started`);
+      res.sendStatus(200);
+    } else {
+      const error = results.find(r => r.status === 'rejected') as PromiseRejectedResult;
+      throw error?.reason || new Error("Failed to start container");
+    }
   } catch (error) {
     const err = error as DockerError;
     logger.error("Error starting container:", err.message);
@@ -142,9 +221,14 @@ router.post("/prune", async (_req: Request, res: Response) => {
   logger.debug("Pruning containers");
 
   try {
-    const data = await _got.post(CONTAINER_PRUNE);
-    logger.info("Containers pruned");
-    res.send(data.body);
+    const results = await Promise.allSettled(
+      ENDPOINTS.map(endpoint => _got.post(CONTAINER_PRUNE(endpoint)))
+    );
+    
+    const successCount = results.filter(r => r.status === 'fulfilled').length;
+    logger.info(`Containers pruned on ${successCount}/${ENDPOINTS.length} nodes`);
+    
+    res.send({ success: true, nodesPruned: successCount });
   } catch (error) {
     const err = error as DockerError;
     logger.error("Error pruning containers:", err.message);
@@ -161,8 +245,31 @@ router.get("/:containerId", async (req: Request, res: Response): Promise<void> =
   logger.debug("Fetching container:", containerId?.substring(0, 12));
 
   try {
-    const data = await _got(CONTAINER(containerId));
-    res.send(data.body);
+    // Try all endpoints and return from the first successful one
+    const results = await Promise.allSettled(
+      ENDPOINTS.map(async (endpoint) => {
+        const data = await _got(CONTAINER(endpoint, containerId));
+        const containers: ContainerData[] = JSON.parse(data.body);
+        if (containers.length > 0) {
+          return {
+            ...containers[0],
+            Node: getNodeName(endpoint)
+          };
+        }
+        return null;
+      })
+    );
+    
+    // Find first successful result with container data
+    for (const result of results) {
+      if (result.status === 'fulfilled' && result.value) {
+        res.send(result.value);
+        return;
+      }
+    }
+    
+    // If no container found on any node
+    res.status(404).send({ error: "Container not found" });
   } catch (error) {
     const err = error as DockerError;
     logger.error("Error fetching container:", err.message);
@@ -180,12 +287,23 @@ router.delete("/:containerId", async (req: Request, res: Response): Promise<void
   logger.debug("Removing container:", containerId?.substring(0, 12), force ? "(force)" : "");
 
   try {
-    const url = force === "true" 
-      ? `${CONTAINER_REMOVE(containerId)}?force=true`
-      : CONTAINER_REMOVE(containerId);
-    const data = await _got.delete(url);
-    logger.info(`Container ${containerId?.substring(0, 12)} removed`);
-    res.sendStatus(data.statusCode);
+    const results = await Promise.allSettled(
+      ENDPOINTS.map(endpoint => {
+        const url = force === "true" 
+          ? `${CONTAINER_REMOVE(endpoint, containerId)}&force=true`
+          : CONTAINER_REMOVE(endpoint, containerId);
+        return _got.delete(url);
+      })
+    );
+    
+    const success = results.find(r => r.status === 'fulfilled');
+    if (success) {
+      logger.info(`Container ${containerId?.substring(0, 12)} removed`);
+      res.sendStatus(200);
+    } else {
+      const error = results.find(r => r.status === 'rejected') as PromiseRejectedResult;
+      throw error?.reason || new Error("Failed to remove container");
+    }
   } catch (error) {
     const err = error as DockerError;
     logger.error("Error removing container:", err.message);
@@ -202,9 +320,18 @@ router.post("/:containerId", async (req: Request, res: Response): Promise<void> 
   logger.debug("Starting container:", containerId?.substring(0, 12));
 
   try {
-    const data = await _got.post(CONTAINER_START(containerId));
-    logger.info(`Container ${containerId?.substring(0, 12)} started`);
-    res.sendStatus(data.statusCode);
+    const results = await Promise.allSettled(
+      ENDPOINTS.map(endpoint => _got.post(CONTAINER_START(endpoint, containerId)))
+    );
+    
+    const success = results.find(r => r.status === 'fulfilled');
+    if (success) {
+      logger.info(`Container ${containerId?.substring(0, 12)} started`);
+      res.sendStatus(200);
+    } else {
+      const error = results.find(r => r.status === 'rejected') as PromiseRejectedResult;
+      throw error?.reason || new Error("Failed to start container");
+    }
   } catch (error) {
     const err = error as DockerError;
     logger.error("Error starting container:", err.message);
@@ -221,17 +348,26 @@ router.get("/:containerId/logs", async (req: Request, res: Response): Promise<vo
   logger.debug("Fetching logs for container:", containerId?.substring(0, 12));
 
   try {
-    const data = await _got(CONTAINER_LOGS(containerId));
+    // Try all endpoints and return logs from the first successful one
+    const results = await Promise.allSettled(
+      ENDPOINTS.map(endpoint => _got(CONTAINER_LOGS(endpoint, containerId)))
+    );
+    
+    const success = results.find(r => r.status === 'fulfilled') as PromiseFulfilledResult<typeof _got>;
+    if (success) {
+      const logs = success.value.body.split("\n");
+      const text: string[] = [];
 
-    const logs = data.body.split("\n");
-    const text: string[] = [];
+      logs.forEach((log: string) => {
+        // header parsing can go here
+        text.push(`${log.slice(8)}`);
+      });
 
-    logs.forEach((log: string) => {
-      // header parsing can go here
-      text.push(`${log.slice(8)}`);
-    });
-
-    res.send(JSON.stringify(text));
+      res.send(JSON.stringify(text));
+    } else {
+      const error = results.find(r => r.status === 'rejected') as PromiseRejectedResult;
+      throw error?.reason || new Error("Failed to fetch logs");
+    }
   } catch (error) {
     const err = error as DockerError;
     logger.error("Error fetching logs:", err.message);
@@ -248,9 +384,18 @@ router.post("/:containerId/restart", async (req: Request, res: Response): Promis
   logger.debug("Restarting container:", containerId?.substring(0, 12));
 
   try {
-    const data = await _got.post(CONTAINER_RESTART(containerId));
-    logger.info(`Container ${containerId?.substring(0, 12)} restarted`);
-    res.sendStatus(data.statusCode);
+    const results = await Promise.allSettled(
+      ENDPOINTS.map(endpoint => _got.post(CONTAINER_RESTART(endpoint, containerId)))
+    );
+    
+    const success = results.find(r => r.status === 'fulfilled');
+    if (success) {
+      logger.info(`Container ${containerId?.substring(0, 12)} restarted`);
+      res.sendStatus(200);
+    } else {
+      const error = results.find(r => r.status === 'rejected') as PromiseRejectedResult;
+      throw error?.reason || new Error("Failed to restart container");
+    }
   } catch (error) {
     const err = error as DockerError;
     logger.error("Error restarting container:", err.message);
@@ -273,11 +418,20 @@ router.post("/:containerId/rename", async (req: Request, res: Response): Promise
   );
 
   try {
-    const data = await _got.post(CONTAINER_RENAME(containerId, name));
-    logger.info(
-      `Container ${containerId?.substring(0, 12)} renamed to ${name}`,
+    const results = await Promise.allSettled(
+      ENDPOINTS.map(endpoint => _got.post(CONTAINER_RENAME(endpoint, containerId, name)))
     );
-    res.sendStatus(data.statusCode);
+    
+    const success = results.find(r => r.status === 'fulfilled');
+    if (success) {
+      logger.info(
+        `Container ${containerId?.substring(0, 12)} renamed to ${name}`,
+      );
+      res.sendStatus(200);
+    } else {
+      const error = results.find(r => r.status === 'rejected') as PromiseRejectedResult;
+      throw error?.reason || new Error("Failed to rename container");
+    }
   } catch (error) {
     const err = error as DockerError;
     logger.error("Error renaming container:", err.message);
@@ -294,9 +448,18 @@ router.post("/:containerId/pause", async (req: Request, res: Response): Promise<
   logger.debug("Pausing container:", containerId?.substring(0, 12));
 
   try {
-    const data = await _got.post(CONTAINER_PAUSE(containerId));
-    logger.info(`Container ${containerId?.substring(0, 12)} paused`);
-    res.sendStatus(data.statusCode);
+    const results = await Promise.allSettled(
+      ENDPOINTS.map(endpoint => _got.post(CONTAINER_PAUSE(endpoint, containerId)))
+    );
+    
+    const success = results.find(r => r.status === 'fulfilled');
+    if (success) {
+      logger.info(`Container ${containerId?.substring(0, 12)} paused`);
+      res.sendStatus(200);
+    } else {
+      const error = results.find(r => r.status === 'rejected') as PromiseRejectedResult;
+      throw error?.reason || new Error("Failed to pause container");
+    }
   } catch (error) {
     const err = error as DockerError;
     logger.error("Error pausing container:", err.message);
@@ -313,9 +476,18 @@ router.post("/:containerId/unpause", async (req: Request, res: Response): Promis
   logger.debug("Unpausing container:", containerId?.substring(0, 12));
 
   try {
-    const data = await _got.post(CONTAINER_UNPAUSE(containerId));
-    logger.info(`Container ${containerId?.substring(0, 12)} unpaused`);
-    res.sendStatus(data.statusCode);
+    const results = await Promise.allSettled(
+      ENDPOINTS.map(endpoint => _got.post(CONTAINER_UNPAUSE(endpoint, containerId)))
+    );
+    
+    const success = results.find(r => r.status === 'fulfilled');
+    if (success) {
+      logger.info(`Container ${containerId?.substring(0, 12)} unpaused`);
+      res.sendStatus(200);
+    } else {
+      const error = results.find(r => r.status === 'rejected') as PromiseRejectedResult;
+      throw error?.reason || new Error("Failed to unpause container");
+    }
   } catch (error) {
     const err = error as DockerError;
     logger.error("Error unpausing container:", err.message);
@@ -351,29 +523,39 @@ router.get("/:containerId/stats", async (req: Request, res: Response): Promise<v
   logger.debug("Fetching stats for container:", containerId?.substring(0, 12));
 
   try {
-    const data = await _got(CONTAINER_STATS(containerId));
-    const stats: ContainerStats = JSON.parse(data.body);
+    // Try all endpoints and return stats from the first successful one
+    const results = await Promise.allSettled(
+      ENDPOINTS.map(endpoint => _got(CONTAINER_STATS(endpoint, containerId)))
+    );
+    
+    const success = results.find(r => r.status === 'fulfilled') as PromiseFulfilledResult<typeof _got>;
+    if (success) {
+      const stats: ContainerStats = JSON.parse(success.value.body);
 
-    // Calculate CPU percentage
-    const cpuDelta =
-      stats.cpu_stats.cpu_usage.total_usage -
-      stats.precpu_stats.cpu_usage.total_usage;
-    const systemDelta =
-      stats.cpu_stats.system_cpu_usage - stats.precpu_stats.system_cpu_usage;
-    const cpuPercent =
-      (cpuDelta / systemDelta) * stats.cpu_stats.online_cpus * 100;
+      // Calculate CPU percentage
+      const cpuDelta =
+        stats.cpu_stats.cpu_usage.total_usage -
+        stats.precpu_stats.cpu_usage.total_usage;
+      const systemDelta =
+        stats.cpu_stats.system_cpu_usage - stats.precpu_stats.system_cpu_usage;
+      const cpuPercent =
+        (cpuDelta / systemDelta) * stats.cpu_stats.online_cpus * 100;
 
-    // Calculate memory usage
-    const memoryUsage = stats.memory_stats.usage || 0;
-    const memoryLimit = stats.memory_stats.limit || 1;
-    const memoryPercent = (memoryUsage / memoryLimit) * 100;
+      // Calculate memory usage
+      const memoryUsage = stats.memory_stats.usage || 0;
+      const memoryLimit = stats.memory_stats.limit || 1;
+      const memoryPercent = (memoryUsage / memoryLimit) * 100;
 
-    res.send({
-      cpuPercent: Math.round(cpuPercent * 100) / 100,
-      memoryPercent: Math.round(memoryPercent * 100) / 100,
-      memoryUsage: Math.round((memoryUsage / 1024 / 1024) * 100) / 100, // MB
-      memoryLimit: Math.round((memoryLimit / 1024 / 1024) * 100) / 100, // MB
-    });
+      res.send({
+        cpuPercent: Math.round(cpuPercent * 100) / 100,
+        memoryPercent: Math.round(memoryPercent * 100) / 100,
+        memoryUsage: Math.round((memoryUsage / 1024 / 1024) * 100) / 100, // MB
+        memoryLimit: Math.round((memoryLimit / 1024 / 1024) * 100) / 100, // MB
+      });
+    } else {
+      const error = results.find(r => r.status === 'rejected') as PromiseRejectedResult;
+      throw error?.reason || new Error("Failed to get stats");
+    }
   } catch (error) {
     const err = error as DockerError;
     logger.error("Error fetching stats:", err.message);
