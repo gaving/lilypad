@@ -126,15 +126,13 @@ router.get("/", async (_req: Request, res: Response) => {
       }
     });
 
-    // Send response with optional error info
-    const response: { containers: ContainerData[]; errors?: typeof nodeErrors } = {
-      containers: allContainers
-    };
+    // Send response as array (backward compatibility)
+    // Note: Errors are logged but not included in response to maintain API compatibility
     if (nodeErrors.length > 0) {
-      response.errors = nodeErrors;
+      logger.warn(`Container fetch completed with ${nodeErrors.length} node errors:`, nodeErrors);
     }
 
-    res.send(response);
+    res.send(allContainers);
   } catch (error) {
     const err = error as DockerError;
     logger.error("Failed to fetch containers:", err.message);
