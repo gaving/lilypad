@@ -1,38 +1,17 @@
 import type { Request, Response } from "express";
 import express from "express";
 import got from "got";
+import { parseEndpoints, getNodeName } from "../utils/docker-endpoints.js";
 import logger from "../utils/logger.js";
 
 const router: express.Router = express.Router();
 
-// Support both legacy single-endpoint and new multi-endpoint configuration
-const DOCKER_SOCK = process.env.DOCKER_SOCK;
-const DOCKER_ENDPOINTS = process.env.DOCKER_ENDPOINTS;
-
-// Parse endpoints - use DOCKER_ENDPOINTS if available, fall back to DOCKER_SOCK
-const ENDPOINTS: string[] = DOCKER_ENDPOINTS
-  ? DOCKER_ENDPOINTS.split(',').map(e => e.trim()).filter(e => e)
-  : DOCKER_SOCK
-  ? [DOCKER_SOCK]
-  : [];
-
-if (ENDPOINTS.length === 0) {
-  logger.error("No Docker endpoints configured for images. Set DOCKER_ENDPOINTS or DOCKER_SOCK");
-}
+// Parse and normalize Docker endpoints
+const ENDPOINTS = parseEndpoints();
 
 // URL builders - now endpoint-aware
 const IMAGES = (endpoint: string) => `${endpoint}/images/json`;
 const IMAGE_REMOVE = (endpoint: string, id: string) => `${endpoint}/images/${id}`;
-
-// Helper to extract hostname from endpoint URL
-const getNodeName = (endpoint: string): string => {
-  try {
-    const url = new URL(endpoint);
-    return url.hostname;
-  } catch {
-    return 'unknown';
-  }
-};
 
 // Validate image ID to prevent SSRF
 const VALID_IMAGE_ID = /^[a-zA-Z0-9_:@.-]+$/;
@@ -87,7 +66,6 @@ router.get("/", async (_req: Request, res: Response) => {
     });
 
     // Send response as array (backward compatibility)
-    // Note: Errors are logged but not included in response to maintain API compatibility
     if (nodeErrors.length > 0) {
       logger.warn(`Image fetch completed with ${nodeErrors.length} node errors:`, nodeErrors);
     }

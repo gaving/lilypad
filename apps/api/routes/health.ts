@@ -1,30 +1,13 @@
 import type { Request, Response } from "express";
 import express from "express";
 import got from "got";
+import { parseEndpoints, getNodeName } from "../utils/docker-endpoints.js";
 import logger from "../utils/logger.js";
 
 const router: express.Router = express.Router();
 
-// Support both legacy single-endpoint and new multi-endpoint configuration
-const DOCKER_SOCK = process.env.DOCKER_SOCK;
-const DOCKER_ENDPOINTS = process.env.DOCKER_ENDPOINTS;
-
-// Parse endpoints - use DOCKER_ENDPOINTS if available, fall back to DOCKER_SOCK
-const ENDPOINTS: string[] = DOCKER_ENDPOINTS
-  ? DOCKER_ENDPOINTS.split(',').map(e => e.trim()).filter(e => e)
-  : DOCKER_SOCK
-  ? [DOCKER_SOCK]
-  : [];
-
-// Helper to extract hostname from endpoint URL
-const getNodeName = (endpoint: string): string => {
-  try {
-    const url = new URL(endpoint);
-    return url.hostname;
-  } catch {
-    return 'unknown';
-  }
-};
+// Parse and normalize Docker endpoints
+const ENDPOINTS = parseEndpoints();
 
 interface NodeStatus {
   name: string;
