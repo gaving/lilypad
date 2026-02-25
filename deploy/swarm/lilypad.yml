@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  lilypad:
+    image: ghcr.io/gaving/lilypad:latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.lilypad.rule=Host(`${LILYPAD_HOST:-lilypad.localhost}`)"
+        - "traefik.http.routers.lilypad.entrypoints=web"
+        - "traefik.http.services.lilypad.loadbalancer.server.port=8888"
+    environment:
+      # Multi-node Docker endpoints (comma-separated)
+      DOCKER_ENDPOINTS: ${DOCKER_ENDPOINTS}
+      
+      # Namespace for container labels (default: org.domain.review)
+      NAMESPACE: ${NAMESPACE:-org.domain.review}
+      
+      # Node Environment
+      NODE_ENV: production
+    networks:
+      - docker-proxy
+      - traefik-public
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  docker-proxy:
+    external: true
+    name: swarm_docker-proxy
+  traefik-public:
+    external: true
+    name: traefik-public

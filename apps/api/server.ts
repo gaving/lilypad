@@ -7,6 +7,7 @@ import rateLimit from "express-rate-limit";
 
 import config from "./routes/config.js";
 import containers from "./routes/containers.js";
+import health from "./routes/health.js";
 import images from "./routes/images.js";
 import info from "./routes/info.js";
 import networks from "./routes/networks.js";
@@ -28,6 +29,7 @@ const app = express();
 app.use(express.json());
 
 app.use("/api/config", config);
+app.use("/api/health", health);
 app.use("/api/info", info);
 app.use("/api/containers", containers);
 app.use("/api/images", images);

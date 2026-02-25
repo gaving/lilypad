@@ -91,6 +91,31 @@ docker run -d \
 
 See [AGENTS.md](./AGENTS.md) for Docker configuration details.
 
+## 🐳 Docker Swarm (Multi-Node)
+
+Deploy Lilypad across a Docker Swarm cluster to manage containers on multiple nodes from a single interface:
+
+```bash
+# 1. Deploy docker-socket-proxy on all nodes
+cd deploy/swarm
+docker stack deploy -c docker-socket-proxy.yml swarm
+
+# 2. Configure environment
+cp .env.example .env
+# Edit .env and set DOCKER_ENDPOINTS to your node hostnames
+
+# 3. Deploy Lilypad
+docker stack deploy -c lilypad.yml swarm
+```
+
+**Features:**
+- 🌐 **Single URL** - Access all containers across the cluster
+- 🔒 **Secure** - Uses docker-socket-proxy with restricted permissions
+- 🏷️ **Node Identification** - Each container shows which node it's running on
+- 📊 **Health Monitoring** - `/api/health` endpoint shows node status
+
+See [deploy/swarm/README.md](./deploy/swarm/README.md) for detailed setup.
+
 ## 🏷️ Container Labels
 
 Lilypad discovers containers using Docker labels:
@@ -117,6 +142,7 @@ See [docs/LABELS.md](./docs/LABELS.md) for more examples.
 - [Setup Guide](./docs/SETUP.md) - Installation and development
 - [Labels](./docs/LABELS.md) - Container label system
 - [Scripts](./docs/SCRIPTS.md) - Available npm/pnpm scripts
+- [Multi-Node Swarm](./deploy/swarm/README.md) - Deploy across Docker Swarm
 - [AGENTS.md](./AGENTS.md) - Full technical documentation
 
 ## 🛠️ Tech Stack
