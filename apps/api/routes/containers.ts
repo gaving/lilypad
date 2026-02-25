@@ -2,6 +2,7 @@ import * as dotenv from "dotenv";
 import type { Request, Response } from "express";
 import express from "express";
 import got, { type Response as GotResponse } from "got";
+import { parseEndpoints, getNodeName } from "../utils/docker-endpoints.js";
 import logger from "../utils/logger.js";
 
 const _got = got.extend({ enableUnixSockets: true });
@@ -10,39 +11,8 @@ dotenv.config({ quiet: true });
 
 const router: express.Router = express.Router();
 
-// Support both legacy single-endpoint and new multi-endpoint configuration
-const DOCKER_SOCK = process.env.DOCKER_SOCK;
-const DOCKER_NORMALIZED_ENDPOINTS = process.env.DOCKER_NORMALIZED_ENDPOINTS;
-
-// Parse endpoints - use DOCKER_NORMALIZED_ENDPOINTS if available, fall back to DOCKER_SOCK
-const NORMALIZED_ENDPOINTS: string[] = DOCKER_NORMALIZED_ENDPOINTS
-  ? DOCKER_NORMALIZED_ENDPOINTS.split(',').map(e => e.trim()).filter(e => e)
-  : DOCKER_SOCK
-  ? [DOCKER_SOCK]
-  : [];
-
-if (NORMALIZED_ENDPOINTS.length === 0) {
-  logger.error("No Docker endpoints configured. Set DOCKER_NORMALIZED_ENDPOINTS or DOCKER_SOCK");
-}
-
-// Helper to normalize endpoint URLs (supports both Unix sockets and HTTP)
-const normalizeEndpoint = (endpoint: string): string => {
-  const trimmed = endpoint.trim();
-  // If it's already HTTP(S), use as-is
-  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
-    return trimmed;
-  }
-  // If it's a Unix socket path, convert to got's format
-  if (trimmed.startsWith('/')) {
-    return `http://unix:${trimmed}:`;
-  }
-  // Unknown format, return as-is and let it fail
-  logger.warn(`Unknown endpoint format: ${trimmed}`);
-  return trimmed;
-};
-
-// Normalize all endpoints
-const NORMALIZED_NORMALIZED_ENDPOINTS = NORMALIZED_ENDPOINTS.map(normalizeEndpoint);
+// Parse and normalize Docker endpoints (supports both Unix sockets and HTTP)
+const ENDPOINTS = parseEndpoints();
 
 // URL builders - now endpoint-aware
 const CONTAINERS = (endpoint: string) => `${endpoint}/containers/json?all=true`;
@@ -61,16 +31,6 @@ const CONTAINER_LOGS = (endpoint: string, id: string) =>
   `${endpoint}/containers/${id}/logs?stdout=true&stderr=true&tail=200`;
 const CONTAINER_STATS = (endpoint: string, id: string) =>
   `${endpoint}/containers/${id}/stats?stream=false`;
-
-// Helper to extract hostname from endpoint URL
-const getNodeName = (endpoint: string): string => {
-  try {
-    const url = new URL(endpoint);
-    return url.hostname;
-  } catch {
-    return 'unknown';
-  }
-};
 
 // Validate container ID to prevent SSRF
 const VALID_CONTAINER_ID = /^[a-zA-Z0-9_-]+$/;
