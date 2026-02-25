@@ -10,12 +10,15 @@ services:
         delay: 5s
         max_attempts: 3
     environment:
-      # Full container management permissions
+      # Full container management permissions (using correct env var names)
+      # POST must be enabled for any write operations (stop, start, delete, etc.)
+      POST: 1
+      DELETE: 1
       CONTAINERS: 1
-      CONTAINERS_START: 1
-      CONTAINERS_STOP: 1
-      CONTAINERS_RESTART: 1
-      CONTAINERS_DELETE: 1
+      ALLOW_START: 1
+      ALLOW_STOP: 1
+      ALLOW_RESTARTS: 1
+      ALLOW_DELETE: 1
       CONTAINERS_PRUNE: 1
       CONTAINERS_ATTACH: 1
       CONTAINERS_EXEC: 1
