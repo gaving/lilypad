@@ -57,7 +57,6 @@ router.get("/", async (_req: Request, res: Response) => {
   }
 
   const nodeStatuses: NodeStatus[] = [];
-  const startTime = Date.now();
 
   // Check all endpoints in parallel
   const checks = await Promise.allSettled(
