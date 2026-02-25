@@ -1,7 +1,7 @@
 import * as dotenv from "dotenv";
 import type { Request, Response } from "express";
 import express from "express";
-import got from "got";
+import got, { type Response as GotResponse } from "got";
 import logger from "../utils/logger.js";
 
 const _got = got.extend({ enableUnixSockets: true });
@@ -351,7 +351,7 @@ router.get("/:containerId/logs", async (req: Request, res: Response): Promise<vo
       ENDPOINTS.map(endpoint => _got(CONTAINER_LOGS(endpoint, containerId)))
     );
     
-    const success = results.find(r => r.status === 'fulfilled') as PromiseFulfilledResult<typeof _got>;
+    const success = results.find(r => r.status === 'fulfilled') as PromiseFulfilledResult<GotResponse<string>>;
     if (success) {
       const logs = success.value.body.split("\n");
       const text: string[] = [];
@@ -526,7 +526,7 @@ router.get("/:containerId/stats", async (req: Request, res: Response): Promise<v
       ENDPOINTS.map(endpoint => _got(CONTAINER_STATS(endpoint, containerId)))
     );
     
-    const success = results.find(r => r.status === 'fulfilled') as PromiseFulfilledResult<typeof _got>;
+    const success = results.find(r => r.status === 'fulfilled') as PromiseFulfilledResult<GotResponse<string>>;
     if (success) {
       const stats: ContainerStats = JSON.parse(success.value.body);
 
