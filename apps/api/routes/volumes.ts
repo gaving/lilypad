@@ -85,15 +85,13 @@ router.get("/", async (_req: Request, res: Response) => {
       }
     });
 
-    // Send response with optional error info
-    const response: { volumes: VolumeData[]; errors?: typeof nodeErrors } = {
-      volumes: allVolumes
-    };
+    // Send response as array (backward compatibility)
+    // Note: Errors are logged but not included in response to maintain API compatibility
     if (nodeErrors.length > 0) {
-      response.errors = nodeErrors;
+      logger.warn(`Volume fetch completed with ${nodeErrors.length} node errors:`, nodeErrors);
     }
 
-    res.send(response);
+    res.send(allVolumes);
   } catch (error) {
     const err = error as DockerError;
     logger.error("Error fetching volumes:", err.message);

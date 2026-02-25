@@ -86,15 +86,13 @@ router.get("/", async (_req: Request, res: Response) => {
       }
     });
 
-    // Send response with optional error info
-    const response: { images: ImageData[]; errors?: typeof nodeErrors } = {
-      images: allImages
-    };
+    // Send response as array (backward compatibility)
+    // Note: Errors are logged but not included in response to maintain API compatibility
     if (nodeErrors.length > 0) {
-      response.errors = nodeErrors;
+      logger.warn(`Image fetch completed with ${nodeErrors.length} node errors:`, nodeErrors);
     }
 
-    res.send(response);
+    res.send(allImages);
   } catch (error) {
     const err = error as DockerError;
     logger.error("Error fetching images:", err.message);
