@@ -3,6 +3,9 @@ version: "3.8"
 services:
   lilypad:
     image: ghcr.io/gaving/lilypad:latest
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
     deploy:
       replicas: 1
       placement:

@@ -3,6 +3,9 @@ version: "3.8"
 services:
   docker-socket-proxy:
     image: tecnativa/docker-socket-proxy:latest
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
     deploy:
       mode: global
       restart_policy:
