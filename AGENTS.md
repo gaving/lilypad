@@ -337,6 +337,27 @@ When working on Lilypad:
 9. **Test with Docker** running to see actual containers
 10. **Bulk actions** should handle edge cases (running containers need force remove)
 
+## Agent Permissions
+
+### GitHub CLI Access
+Agents have access to the `gh` command-line tool for GitHub operations:
+
+- **Create branches**: `git checkout -b <branch-name>`
+- **Push branches**: `git push -u origin <branch-name>`
+- **Create pull requests**: `gh pr create --title "..." --body "..."`
+- **View PR status**: `gh pr status`
+
+The user has explicitly granted permission for agents to:
+- Create new branches
+- Push branches to origin
+- Create pull requests on their behalf
+
+When making changes, agents should:
+1. Create a new branch with a descriptive name
+2. Commit changes with appropriate gitmoji
+3. Push the branch
+4. Create a PR with clear title and description
+
 ## Commit Message Format (Gitmoji)
 
 Use [gitmoji](https://gitmoji.dev/) for all commits:
