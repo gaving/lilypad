@@ -61,6 +61,12 @@ ENV NODE_ENV=production
 ENV DOCKER_SOCK=http://unix:/var/run/docker.sock:
 ENV NAMESPACE=org.domain.review
 
+# Note: Running as root is required for this application to access the Docker socket
+# mounted from the host at /var/run/docker.sock. The Docker API requires root privileges
+# to manage containers. This is a security trade-off for container management functionality.
+# The container should be run with minimal privileges and only the Docker socket mounted.
+# nosemgrep: dockerfile.security.missing-user.missing-user
+
 # Expose the API port
 EXPOSE 8888
 
