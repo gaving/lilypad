@@ -975,14 +975,7 @@ class Container extends Component<ContainerProps, ContainerState> {
                     addSuffix: true,
                   })}
                 </span>
-                {container.Node && (
-                  <>
-                    <span>•</span>
-                    <NodeBadge title={`Running on ${container.Node}`}>
-                      {container.Node.length > 15 ? container.Node.substring(0, 12) + '...' : container.Node}
-                    </NodeBadge>
-                  </>
-                )}
+
                 {this.state.stats && (
                   <>
                     <span className="hide-mobile">•</span>
@@ -1070,6 +1063,16 @@ class Container extends Component<ContainerProps, ContainerState> {
                 <div className="detail-label">Image</div>
                 <div className="detail-value">{container.Image}</div>
               </DetailItem>
+              {container.Node && (
+                <DetailItem>
+                  <div className="detail-label">Node</div>
+                  <div className="detail-value">
+                    <NodeBadge title={`Running on ${container.Node}`}>
+                      {container.Node}
+                    </NodeBadge>
+                  </div>
+                </DetailItem>
+              )}
               <DetailItem className="hide-mobile">
                 <div className="detail-label">Created</div>
                 <div className="detail-value">
