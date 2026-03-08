@@ -65,10 +65,10 @@ ENV NAMESPACE=org.domain.review
 # mounted from the host at /var/run/docker.sock. The Docker API requires root privileges
 # to manage containers. This is a security trade-off for container management functionality.
 # The container should be run with minimal privileges and only the Docker socket mounted.
+# nosemgrep: dockerfile.security.missing-user.missing-user
 
 # Expose the API port
 EXPOSE 8888
 
 # Start the server
-# nosemgrep: dockerfile.security.missing-user.missing-user
 CMD ["node", "apps/api/build/server.js"]
