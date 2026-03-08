@@ -70,4 +70,5 @@ ENV NAMESPACE=org.domain.review
 EXPOSE 8888
 
 # Start the server
-CMD ["node", "apps/api/build/server.js"]  # nosemgrep: dockerfile.security.missing-user.missing-user
+# nosemgrep: dockerfile.security.missing-user.missing-user
+CMD ["node", "apps/api/build/server.js"]
