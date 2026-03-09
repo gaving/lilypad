@@ -913,8 +913,11 @@ class Container extends Component<ContainerProps, ContainerState> {
         : "package";
     // Trim whitespace from icon
     rawIcon = rawIcon.trim();
-    // Wrap icon in colons for emoji shortcode if not already wrapped
-    const icon = rawIcon.startsWith(":") ? rawIcon : `:${rawIcon}:`;
+    // Check if it's an actual emoji (contains non-word characters like emoji symbols)
+    // or a shortcode (alphanumeric with optional hyphens/underscores)
+    const isActualEmoji = /[^\w\s-]/.test(rawIcon);
+    // Wrap in colons only if it's a shortcode (not already wrapped and not an actual emoji)
+    const icon = rawIcon.startsWith(":") || isActualEmoji ? rawIcon : `:${rawIcon}:`;
     const name =
       containerDesc && container.Labels[containerDesc]
         ? container.Labels[containerDesc]
