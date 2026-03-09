@@ -20,6 +20,20 @@ jobs:
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
       
+      - name: Check for workflow changes
+        id: check-workflow-changes
+        run: |
+          CHANGED_FILES=$(gh pr view "$PR_URL" --json files --jq '.files[].path')
+          if echo "$CHANGED_FILES" | grep -q "^\.github/workflows/"; then
+            echo "Workflow files changed - skipping auto-merge"
+            echo "has_workflow_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_workflow_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
       - name: Wait for CI checks
         uses: lewagon/wait-on-check-action@v1.5.0
         with:
@@ -30,12 +44,14 @@ jobs:
           allowed-conclusions: success
       
       - name: Auto-approve Dependabot PR
+        if: steps.check-workflow-changes.outputs.has_workflow_changes == 'false'
         run: gh pr review --approve "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Enable auto-merge for Dependabot PRs
+        if: steps.check-workflow-changes.outputs.has_workflow_changes == 'false'
         run: gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
