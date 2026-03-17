@@ -1,0 +1,64 @@
+name: Cleanup Old Container Images
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+env:
+  PACKAGE_NAME: lilypad
+  PACKAGE_TYPE: container
+
+jobs:
+  cleanup-pr-images:
+    runs-on: ubuntu-22.04
+    permissions:
+      packages: write
+    steps:
+      - name: Delete old PR images
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Fetching package versions..."
+          
+          # Get all versions
+          versions=$(curl -s \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/users/${{ github.repository_owner }}/packages/container/$PACKAGE_NAME/versions?per_page=100")
+          
+          # Find PR versions older than 7 days
+          echo "$versions" | jq -r '
+            .[] | 
+            select(.metadata.container.tags[] | test("^pr-[0-9]+$")) |
+            select((now - (.updated_at | fromdateiso8601)) > (7 * 24 * 60 * 60)) |
+            {id: .id, tags: .metadata.container.tags, updated: .updated_at}
+          ' | while read -r version; do
+            version_id=$(echo "$version" | jq -r '.id')
+            tags=$(echo "$version" | jq -r '.tags | join(", ")')
+            echo "Deleting version $version_id (tags: $tags)"
+            
+            curl -s -X DELETE \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/users/${{ github.repository_owner }}/packages/container/$PACKAGE_NAME/versions/$version_id"
+          done
+          
+          echo "Cleanup complete!"
+
+  cleanup-untagged:
+    runs-on: ubuntu-22.04
+    permissions:
+      packages: write
+    steps:
+      - name: Delete untagged versions
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: 'lilypad'
+          package-type: 'container'
+          delete-only-untagged-versions: 'true'
+          min-versions-to-keep: 5
+          token: ${{ secrets.GITHUB_TOKEN }}
