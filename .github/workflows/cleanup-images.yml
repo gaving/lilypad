@@ -8,57 +8,73 @@ on:
 
 env:
   PACKAGE_NAME: lilypad
-  PACKAGE_TYPE: container
 
 jobs:
-  cleanup-pr-images:
+  cleanup:
     runs-on: ubuntu-22.04
-    permissions:
-      packages: write
     steps:
-      - name: Delete old PR images
+      - name: Delete untagged and stale images
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PACKAGES_PAT }}
         run: |
-          echo "Fetching package versions..."
-          
-          # Get all versions
-          versions=$(curl -s \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/users/${{ github.repository_owner }}/packages/container/$PACKAGE_NAME/versions?per_page=100")
-          
-          # Find PR versions older than 7 days
-          echo "$versions" | jq -r '
-            .[] | 
-            select(.metadata.container.tags[] | test("^pr-[0-9]+$")) |
-            select((now - (.updated_at | fromdateiso8601)) > (7 * 24 * 60 * 60)) |
-            {id: .id, tags: .metadata.container.tags, updated: .updated_at}
-          ' | while read -r version; do
-            version_id=$(echo "$version" | jq -r '.id')
-            tags=$(echo "$version" | jq -r '.tags | join(", ")')
-            echo "Deleting version $version_id (tags: $tags)"
-            
-            curl -s -X DELETE \
-              -H "Authorization: Bearer $GH_TOKEN" \
-              -H "Accept: application/vnd.github+json" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              "https://api.github.com/users/${{ github.repository_owner }}/packages/container/$PACKAGE_NAME/versions/$version_id"
-          done
-          
-          echo "Cleanup complete!"
+          echo "Fetching all package versions..."
 
-  cleanup-untagged:
-    runs-on: ubuntu-22.04
-    permissions:
-      packages: write
-    steps:
-      - name: Delete untagged versions
-        uses: actions/delete-package-versions@v5
-        with:
-          package-name: 'lilypad'
-          package-type: 'container'
-          delete-only-untagged-versions: 'true'
-          min-versions-to-keep: 5
-          token: ${{ secrets.GITHUB_TOKEN }}
+          deleted=0
+          kept=0
+
+          gh api --paginate \
+            /users/${{ github.repository_owner }}/packages/container/$PACKAGE_NAME/versions \
+            --jq '.[]' | jq -c '.' | while read -r version; do
+
+            id=$(echo "$version" | jq -r '.id')
+            tags=$(echo "$version" | jq -r '.metadata.container.tags // []')
+            tag_count=$(echo "$tags" | jq 'length')
+            tag_list=$(echo "$tags" | jq -r 'join(", ")')
+            updated=$(echo "$version" | jq -r '.updated_at')
+
+            # Keep versions with protected tags (latest, master, semver)
+            if echo "$tags" | jq -e '[.[] | test("^(latest|master|v?[0-9]+\\.[0-9]+)")]| any' > /dev/null 2>&1; then
+              echo "Keeping version $id (tags: $tag_list)"
+              kept=$((kept + 1))
+              continue
+            fi
+
+            # Delete untagged versions
+            if [ "$tag_count" -eq 0 ]; then
+              echo "Deleting untagged version $id (updated: $updated)"
+              gh api --method DELETE \
+                /users/${{ github.repository_owner }}/packages/container/$PACKAGE_NAME/versions/$id \
+                2>/dev/null || echo "  Warning: failed to delete version $id"
+              deleted=$((deleted + 1))
+              sleep 0.3
+              continue
+            fi
+
+            # Delete PR images older than 1 day
+            if echo "$tags" | jq -e '[.[] | test("^pr-[0-9]+$")] | any' > /dev/null 2>&1; then
+              age_seconds=$(( $(date +%s) - $(date -d "$updated" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "$updated" +%s 2>/dev/null || echo 0) ))
+              if [ "$age_seconds" -gt 86400 ]; then
+                echo "Deleting stale PR image $id (tags: $tag_list, updated: $updated)"
+                gh api --method DELETE \
+                  /users/${{ github.repository_owner }}/packages/container/$PACKAGE_NAME/versions/$id \
+                  2>/dev/null || echo "  Warning: failed to delete version $id"
+                deleted=$((deleted + 1))
+                sleep 0.3
+              else
+                echo "Keeping recent PR image $id (tags: $tag_list)"
+                kept=$((kept + 1))
+              fi
+              continue
+            fi
+
+            # Delete anything else not matching protected tags
+            echo "Deleting version $id (tags: $tag_list)"
+            gh api --method DELETE \
+              /users/${{ github.repository_owner }}/packages/container/$PACKAGE_NAME/versions/$id \
+              2>/dev/null || echo "  Warning: failed to delete version $id"
+            deleted=$((deleted + 1))
+            sleep 0.3
+          done
+
+          echo ""
+          echo "Cleanup complete!"
