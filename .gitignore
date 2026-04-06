@@ -29,3 +29,8 @@ test-results/
 
 # npm lockfiles (project uses pnpm)
 package-lock.json
+
+# devenv
+.devenv
+.devenv.flake.nix
+.direnv
