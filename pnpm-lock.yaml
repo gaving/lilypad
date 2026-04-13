@@ -56,34 +56,34 @@ importers:
     dependencies:
       '@blueprintjs/core':
         specifier: ^6.11.3
-        version: 6.11.3(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 6.11.3(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@blueprintjs/icons':
         specifier: ^6.8.0
-        version: 6.8.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 6.8.0(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@blueprintjs/select':
         specifier: ^6.1.8
-        version: 6.1.8(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 6.1.8(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
       qrcode.react:
         specifier: ^4.2.0
-        version: 4.2.0(react@19.2.4)
+        version: 4.2.0(react@19.2.5)
       react:
-        specifier: ^19.2.4
-        version: 19.2.4
+        specifier: ^19.2.5
+        version: 19.2.5
       react-dom:
-        specifier: ^19.2.4
-        version: 19.2.4(react@19.2.4)
+        specifier: ^19.2.5
+        version: 19.2.5(react@19.2.5)
       react-emoji-render:
         specifier: ^2.0.1
-        version: 2.0.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 2.0.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       react-router-dom:
         specifier: ^7.14.0
-        version: 7.14.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 7.14.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       styled-components:
         specifier: ^6.3.12
-        version: 6.3.12(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 6.3.12(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.4.10
@@ -1149,10 +1149,10 @@ packages:
     resolution: {integrity: sha512-K5zQjDllxWkf7Z5xJdV0/B0WTNqx6vxG70zJE4N0kBs4LovmEYWJzQGxC9bS9RAKu3bgM40lrd5zoLJ12MQ5BA==}
     engines: {node: '>= 0.10'}
 
-  react-dom@19.2.4:
-    resolution: {integrity: sha512-AXJdLo8kgMbimY95O2aKQqsz2iWi9jMgKJhRBAxECE4IFxfcazB2LmzloIoibJI3C12IlY20+KFaLv+71bUJeQ==}
+  react-dom@19.2.5:
+    resolution: {integrity: sha512-J5bAZz+DXMMwW/wV3xzKke59Af6CHY7G4uYLN1OvBcKEsWOs4pQExj86BBKamxl/Ik5bx9whOrvBlSDfWzgSag==}
     peerDependencies:
-      react: ^19.2.4
+      react: ^19.2.5
 
   react-emoji-render@2.0.1:
     resolution: {integrity: sha512-SKtsdwgEf2BFNiE9y4UBFZBWjkRcyWmhMprVly52+J77/zxThcfaQ3sCA0+2LtGJIRMpm4DGWSvyLg72fd1rXQ==}
@@ -1196,8 +1196,8 @@ packages:
       react: '>=16.6.0'
       react-dom: '>=16.6.0'
 
-  react@19.2.4:
-    resolution: {integrity: sha512-9nfp2hYpCwOjAN+8TZFGhtWEwgvWHXqESH8qT89AT/lWklpLON22Lc8pEtnpsZz7VmawabSU0gCjnj8aC0euHQ==}
+  react@19.2.5:
+    resolution: {integrity: sha512-llUJLzz1zTUBrskt2pwZgLq59AemifIftw4aB7JxOqf1HY2FDaGDxgwpAPVzHU1kdWabH7FauP4i1oEeer2WCA==}
     engines: {node: '>=0.10.0'}
 
   resolve-alpn@1.2.1:
@@ -1452,41 +1452,41 @@ snapshots:
     dependencies:
       tslib: 2.6.3
 
-  '@blueprintjs/core@6.11.3(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@blueprintjs/core@6.11.3(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
       '@blueprintjs/colors': 5.1.16
-      '@blueprintjs/icons': 6.8.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@floating-ui/react': 0.27.19(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@blueprintjs/icons': 6.8.0(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@floating-ui/react': 0.27.19(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@popperjs/core': 2.11.8
       classnames: 2.5.1
       normalize.css: 8.0.1
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
-      react-popper: 2.3.0(@popperjs/core@2.11.8)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react-transition-group: 4.4.5(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
+      react-popper: 2.3.0(@popperjs/core@2.11.8)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      react-transition-group: 4.4.5(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       tslib: 2.6.3
-      use-sync-external-store: 1.6.0(react@19.2.4)
+      use-sync-external-store: 1.6.0(react@19.2.5)
     optionalDependencies:
       '@types/react': 19.2.14
 
-  '@blueprintjs/icons@6.8.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@blueprintjs/icons@6.8.0(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
       change-case: 4.1.2
       classnames: 2.5.1
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
       tslib: 2.6.3
     optionalDependencies:
       '@types/react': 19.2.14
 
-  '@blueprintjs/select@6.1.8(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@blueprintjs/select@6.1.8(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
       '@blueprintjs/colors': 5.1.16
-      '@blueprintjs/core': 6.11.3(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@blueprintjs/icons': 6.8.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@blueprintjs/core': 6.11.3(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@blueprintjs/icons': 6.8.0(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       classnames: 2.5.1
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
       tslib: 2.6.3
     optionalDependencies:
       '@types/react': 19.2.14
@@ -1602,18 +1602,18 @@ snapshots:
       '@floating-ui/core': 1.7.5
       '@floating-ui/utils': 0.2.11
 
-  '@floating-ui/react-dom@2.1.8(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@floating-ui/react-dom@2.1.8(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
       '@floating-ui/dom': 1.7.6
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
-  '@floating-ui/react@0.27.19(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@floating-ui/react@0.27.19(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@floating-ui/react-dom': 2.1.8(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@floating-ui/react-dom': 2.1.8(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@floating-ui/utils': 0.2.11
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
       tabbable: 6.4.0
 
   '@floating-ui/utils@0.2.11': {}
@@ -2319,9 +2319,9 @@ snapshots:
       forwarded: 0.2.0
       ipaddr.js: 1.9.1
 
-  qrcode.react@4.2.0(react@19.2.4):
+  qrcode.react@4.2.0(react@19.2.5):
     dependencies:
-      react: 19.2.4
+      react: 19.2.5
 
   qs@6.14.2:
     dependencies:
@@ -2338,57 +2338,57 @@ snapshots:
       iconv-lite: 0.7.2
       unpipe: 1.0.0
 
-  react-dom@19.2.4(react@19.2.4):
+  react-dom@19.2.5(react@19.2.5):
     dependencies:
-      react: 19.2.4
+      react: 19.2.5
       scheduler: 0.27.0
 
-  react-emoji-render@2.0.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  react-emoji-render@2.0.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
     dependencies:
       classnames: 2.5.1
       emoji-regex: 8.0.0
       lodash.flatten: 4.4.0
       prop-types: 15.8.1
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
       string-replace-to-array: 1.0.3
 
   react-fast-compare@3.2.2: {}
 
   react-is@16.13.1: {}
 
-  react-popper@2.3.0(@popperjs/core@2.11.8)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  react-popper@2.3.0(@popperjs/core@2.11.8)(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
     dependencies:
       '@popperjs/core': 2.11.8
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
       react-fast-compare: 3.2.2
       warning: 4.0.3
 
-  react-router-dom@7.14.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  react-router-dom@7.14.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
     dependencies:
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
-      react-router: 7.14.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
+      react-router: 7.14.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
 
-  react-router@7.14.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  react-router@7.14.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
     dependencies:
       cookie: 1.1.1
-      react: 19.2.4
+      react: 19.2.5
       set-cookie-parser: 2.7.2
     optionalDependencies:
-      react-dom: 19.2.4(react@19.2.4)
+      react-dom: 19.2.5(react@19.2.5)
 
-  react-transition-group@4.4.5(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  react-transition-group@4.4.5(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
     dependencies:
       '@babel/runtime': 7.29.2
       dom-helpers: 5.2.1
       loose-envify: 1.4.0
       prop-types: 15.8.1
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
-  react@19.2.4: {}
+  react@19.2.5: {}
 
   resolve-alpn@1.2.1: {}
 
@@ -2518,7 +2518,7 @@ snapshots:
       lodash.flatten: 4.4.0
       lodash.isstring: 4.0.1
 
-  styled-components@6.3.12(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  styled-components@6.3.12(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
     dependencies:
       '@emotion/is-prop-valid': 1.4.0
       '@emotion/unitless': 0.10.0
@@ -2526,12 +2526,12 @@ snapshots:
       css-to-react-native: 3.2.0
       csstype: 3.2.3
       postcss: 8.4.49
-      react: 19.2.4
+      react: 19.2.5
       shallowequal: 1.1.0
       stylis: 4.3.6
       tslib: 2.8.1
     optionalDependencies:
-      react-dom: 19.2.4(react@19.2.4)
+      react-dom: 19.2.5(react@19.2.5)
 
   stylis@4.3.6: {}
 
@@ -2592,9 +2592,9 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  use-sync-external-store@1.6.0(react@19.2.4):
+  use-sync-external-store@1.6.0(react@19.2.5):
     dependencies:
-      react: 19.2.4
+      react: 19.2.5
 
   vary@1.1.2: {}
 
