@@ -21,11 +21,11 @@
     "got": "^15.0.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.11",
+    "@biomejs/biome": "^2.4.12",
     "@lilypad/config": "workspace:*",
     "@types/express": "^5.0.6",
     "@types/node": "^25.6.0",
     "tsx": "^4.21.0",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.3"
   }
 }
