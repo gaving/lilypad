@@ -1,6 +1,6 @@
 # Dockerfile for Lilypad - Container management in full bloom
 # Build stage
-FROM node:25-alpine AS builder
+FROM node:26-alpine AS builder
 
 # Install pnpm and turbo
 RUN npm install -g pnpm@10 turbo
@@ -33,7 +33,7 @@ RUN cd apps/api && pnpm run build
 RUN mkdir -p apps/api/build/public && cp -r apps/web/build/* apps/api/build/public/
 
 # Production stage - minimal image
-FROM node:25-alpine AS release
+FROM node:26-alpine AS release
 
 WORKDIR /lilypad
 
