@@ -55,14 +55,14 @@ importers:
   apps/web:
     dependencies:
       '@blueprintjs/core':
-        specifier: ^6.13.0
-        version: 6.13.0(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^6.15.0
+        version: 6.15.0(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@blueprintjs/icons':
         specifier: ^6.10.0
         version: 6.10.0(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@blueprintjs/select':
-        specifier: ^6.1.11
-        version: 6.1.11(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^6.2.1
+        version: 6.2.1(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       date-fns:
         specifier: ^4.4.0
         version: 4.4.0
@@ -114,8 +114,8 @@ importers:
 
 packages:
 
-  '@babel/runtime@7.29.2':
-    resolution: {integrity: sha512-JiDShH45zKHWyGe4ZNVRrCjBz8Nh9TMmZG1kh4QTK8hCBTWBi8Da+i7s1fJw7/lYpM4ccepSNfqzZ/QvABBi5g==}
+  '@babel/runtime@7.29.7':
+    resolution: {integrity: sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw==}
     engines: {node: '>=6.9.0'}
 
   '@biomejs/biome@2.4.15':
@@ -174,8 +174,8 @@ packages:
   '@blueprintjs/colors@5.1.16':
     resolution: {integrity: sha512-P9uX0Aj2TP9+6aUcori1iPl4snxM/Vgq0LZbhUl1l5bHTgNxxwm/0+IoS/SlQg93HBRl8KTAM1evEqtPbwV10A==}
 
-  '@blueprintjs/core@6.13.0':
-    resolution: {integrity: sha512-2gKXoe7ve0X1zSK0Svqmp6rwrLXvvN1QghByVHksTuTXwBisJahBgzcbeG8h9eg7VAXbUXYE1vvlUlQdn8LWvw==}
+  '@blueprintjs/core@6.15.0':
+    resolution: {integrity: sha512-g0CcgoZltOHd142EJfLkLpsgQ5/JjFaJmMkTclef1Z5bZUrkJl8pLS8GZfjdhLp/ZGWqFUZRXvKV2jEnbd/W1Q==}
     hasBin: true
     peerDependencies:
       '@types/react': '18'
@@ -195,8 +195,8 @@ packages:
       '@types/react':
         optional: true
 
-  '@blueprintjs/select@6.1.11':
-    resolution: {integrity: sha512-Zf32IiagGYFHzfp2N3qIqF+6dV4K8Lk0XzVDSnGGLhYdOChpzOp0K9aisfXHbqtDjDtH25d9UvqlVqp7TmT8wQ==}
+  '@blueprintjs/select@6.2.1':
+    resolution: {integrity: sha512-NBMxdAR7PE4Oyn5tN9AfKVzFpCRoQHaIuhNCCGFFjt22efgQscQF+ppHPe1+pUy4YIWB2KBwfBUT5bpIvNFPfA==}
     peerDependencies:
       '@types/react': '18'
       react: '18'
@@ -1390,7 +1390,7 @@ packages:
 
 snapshots:
 
-  '@babel/runtime@7.29.2': {}
+  '@babel/runtime@7.29.7': {}
 
   '@biomejs/biome@2.4.15':
     optionalDependencies:
@@ -1431,7 +1431,7 @@ snapshots:
     dependencies:
       tslib: 2.6.3
 
-  '@blueprintjs/core@6.13.0(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@blueprintjs/core@6.15.0(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@blueprintjs/colors': 5.1.16
       '@blueprintjs/icons': 6.10.0(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -1457,10 +1457,10 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.16
 
-  '@blueprintjs/select@6.1.11(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@blueprintjs/select@6.2.1(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@blueprintjs/colors': 5.1.16
-      '@blueprintjs/core': 6.13.0(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@blueprintjs/core': 6.15.0(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@blueprintjs/icons': 6.10.0(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       classnames: 2.5.1
       react: 19.2.7
@@ -1883,7 +1883,7 @@ snapshots:
 
   dom-helpers@5.2.1:
     dependencies:
-      '@babel/runtime': 7.29.2
+      '@babel/runtime': 7.29.7
       csstype: 3.2.3
 
   dot-case@3.0.4:
@@ -2346,7 +2346,7 @@ snapshots:
 
   react-transition-group@4.4.5(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
     dependencies:
-      '@babel/runtime': 7.29.2
+      '@babel/runtime': 7.29.7
       dom-helpers: 5.2.1
       loose-envify: 1.4.0
       prop-types: 15.8.1
