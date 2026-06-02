@@ -15,7 +15,7 @@
     "@blueprintjs/core": "^6.13.0",
     "@blueprintjs/icons": "^6.10.0",
     "@blueprintjs/select": "^6.1.11",
-    "date-fns": "^4.2.1",
+    "date-fns": "^4.4.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
