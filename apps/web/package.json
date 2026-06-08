@@ -20,7 +20,7 @@
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-emoji-render": "^2.0.1",
-    "react-router-dom": "^7.15.1",
+    "react-router-dom": "^7.17.0",
     "styled-components": "^6.4.2"
   },
   "devDependencies": {
