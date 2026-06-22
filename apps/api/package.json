@@ -18,7 +18,7 @@
     "dotenv": "^17.4.2",
     "express": "^5.1.0",
     "express-rate-limit": "^8.5.2",
-    "got": "^15.0.5"
+    "got": "^15.0.6"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.0",
