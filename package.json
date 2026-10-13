@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.64.0",
-    "turbo": "^2.11.6"
+    "turbo": "^2.11.7"
   },
   "packageManager": "pnpm@10.0.0",
   "engines": {
