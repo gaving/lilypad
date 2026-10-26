@@ -21,7 +21,7 @@
     "got": "^16.1.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.15",
+    "@biomejs/biome": "^2.6.2",
     "@lilypad/config": "workspace:*",
     "@types/express": "^5.0.6",
     "@types/node": "^26.6.5",
