@@ -24,7 +24,7 @@
     "styled-components": "^6.6.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.15",
+    "@biomejs/biome": "^2.6.2",
     "@lilypad/config": "workspace:*",
     "@types/node": "^26.6.5",
     "@types/react": "^19.3.0",
