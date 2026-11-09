@@ -55,14 +55,14 @@ importers:
   apps/web:
     dependencies:
       '@blueprintjs/core':
-        specifier: ^6.21.0
-        version: 6.21.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        specifier: ^6.22.0
+        version: 6.22.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@blueprintjs/icons':
-        specifier: ^6.14.1
-        version: 6.14.1(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        specifier: ^6.15.0
+        version: 6.15.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@blueprintjs/select':
-        specifier: ^6.4.0
-        version: 6.4.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        specifier: ^6.4.1
+        version: 6.4.1(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       date-fns:
         specifier: ^4.4.0
         version: 4.4.0
@@ -114,8 +114,8 @@ importers:
 
 packages:
 
-  '@babel/runtime@7.29.7':
-    resolution: {integrity: sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw==}
+  '@babel/runtime@7.29.13':
+    resolution: {integrity: sha512-v+oN26xP4YIlQsbQ/CbTH1WG5m/l/DjKKZNy/Kp3f/AFvbgt7Em/D0FeMM3O2hX0YzeN2M16W8lOpyhIkfCBcQ==}
     engines: {node: '>=6.9.0'}
 
   '@biomejs/biome@2.6.4':
@@ -186,8 +186,8 @@ packages:
   '@blueprintjs/colors@5.1.16':
     resolution: {integrity: sha512-P9uX0Aj2TP9+6aUcori1iPl4snxM/Vgq0LZbhUl1l5bHTgNxxwm/0+IoS/SlQg93HBRl8KTAM1evEqtPbwV10A==}
 
-  '@blueprintjs/core@6.21.0':
-    resolution: {integrity: sha512-s4RrTRir+5cze76oHZp0jgodk1UR7RyzcbdDklIiDV1swgdTvOI4cZxcVJNhQBHdU9Sl0wCdKbXwo3J0nSEhvA==}
+  '@blueprintjs/core@6.22.0':
+    resolution: {integrity: sha512-hzcX+QsW52EBfbP7IPNaVLqHLJwAN1Eu8ZRivY652Fs6jyADf6rTjyv4ep6iL4m9holwxa1ZMhhZYdmc3diaJg==}
     hasBin: true
     peerDependencies:
       '@types/react': 18 || 19
@@ -197,8 +197,8 @@ packages:
       '@types/react':
         optional: true
 
-  '@blueprintjs/icons@6.14.1':
-    resolution: {integrity: sha512-90HyoIIxaBTj+4whFUPU+lkdKLSx/R5GpSbbVug2xDZNSy6sptvAFSTmIVWvdFnFI8T1mlJPMniA/yP2s5GgZg==}
+  '@blueprintjs/icons@6.15.0':
+    resolution: {integrity: sha512-wIOcNZ76MX7Pn/GcIbEHGsFWlSuoy5oTE103DsRwH4ShbFsZSKYs310XASsqWm6rQU3pVvmLWiQaNLmReRnRfQ==}
     peerDependencies:
       '@types/react': 18 || 19
       react: 18 || 19
@@ -207,8 +207,8 @@ packages:
       '@types/react':
         optional: true
 
-  '@blueprintjs/select@6.4.0':
-    resolution: {integrity: sha512-thGEmK+khwp16oYN5C8pXzRXD3u5Mu91NDC6nYkqtwvgOM9GiH+AqogeTufyUdxgp+LfRDtPZkEggcB7oV1wjg==}
+  '@blueprintjs/select@6.4.1':
+    resolution: {integrity: sha512-g+/Y4fl4DSsAyxmmG+BqZo1TwZqb1yaNRawI20vh5qPOyjfV59XG61TGzg01lVp7cMIX2tR4sjrGtRZFr9s0BQ==}
     peerDependencies:
       '@types/react': 18 || 19
       react: 18 || 19
@@ -1377,8 +1377,8 @@ packages:
   stylis@4.3.6:
     resolution: {integrity: sha512-yQ3rwFWRfwNUY7H5vpU0wfdkNSnvnJinhF9830Swlaxl03zsOjCfmX0ugac+3LtK0lYSgwL/KXc8oYL3mG4YFQ==}
 
-  tabbable@6.5.0:
-    resolution: {integrity: sha512-wieBHXygIm7OyQOu5hQlkk62/WyCFYGlWg7L6/ZCUZwx0o398Zkn4pVmMyfYhfMG8kGrj/Krt8eIk6UKC6VzwA==}
+  tabbable@6.5.1:
+    resolution: {integrity: sha512-dMCuwDUY6Noz3zVKLefBC4wq+aJV20yc7vWmM7uTNGwtQSFF5kX7OUIUsxuVajz/bdt5Xqdah3/0NLjth+cM5A==}
 
   tagged-tag@1.0.0:
     resolution: {integrity: sha512-yEFYrVhod+hdNyx7g5Bnkkb0G6si8HJurOoOEgC8B/O0uXLHlaey/65KRv6cuWBNhBgHKAROVpc7QyYqE5gFng==}
@@ -1489,7 +1489,7 @@ packages:
 
 snapshots:
 
-  '@babel/runtime@7.29.7': {}
+  '@babel/runtime@7.29.13': {}
 
   '@biomejs/biome@2.6.4':
     optionalDependencies:
@@ -1538,10 +1538,10 @@ snapshots:
     dependencies:
       tslib: 2.6.3
 
-  '@blueprintjs/core@6.21.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+  '@blueprintjs/core@6.22.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
       '@blueprintjs/colors': 5.1.16
-      '@blueprintjs/icons': 6.14.1(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@blueprintjs/icons': 6.15.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@floating-ui/react': 0.27.20(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@popperjs/core': 2.11.8
       classnames: 2.5.1
@@ -1554,7 +1554,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.3.0
 
-  '@blueprintjs/icons@6.14.1(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+  '@blueprintjs/icons@6.15.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
       change-case: 4.1.2
       classnames: 2.5.1
@@ -1564,11 +1564,11 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.3.0
 
-  '@blueprintjs/select@6.4.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+  '@blueprintjs/select@6.4.1(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
       '@blueprintjs/colors': 5.1.16
-      '@blueprintjs/core': 6.21.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      '@blueprintjs/icons': 6.14.1(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@blueprintjs/core': 6.22.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@blueprintjs/icons': 6.15.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       classnames: 2.5.1
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
@@ -1681,7 +1681,7 @@ snapshots:
       '@floating-ui/utils': 0.2.12
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
-      tabbable: 6.5.0
+      tabbable: 6.5.1
 
   '@floating-ui/utils@0.2.12': {}
 
@@ -2018,7 +2018,7 @@ snapshots:
 
   dom-helpers@5.2.1:
     dependencies:
-      '@babel/runtime': 7.29.7
+      '@babel/runtime': 7.29.13
       csstype: 3.2.3
 
   dot-case@3.0.4:
@@ -2473,7 +2473,7 @@ snapshots:
 
   react-transition-group@4.4.5(react-dom@19.3.1(react@19.3.1))(react@19.3.1):
     dependencies:
-      '@babel/runtime': 7.29.7
+      '@babel/runtime': 7.29.13
       dom-helpers: 5.2.1
       loose-envify: 1.4.0
       prop-types: 15.8.1
@@ -2614,7 +2614,7 @@ snapshots:
 
   stylis@4.3.6: {}
 
-  tabbable@6.5.0: {}
+  tabbable@6.5.1: {}
 
   tagged-tag@1.0.0: {}
 
